@@ -73,3 +73,4 @@ bun run start
 
 Note: It is compatible with all 3 major package managers (NPM, Yarn & Bun)
 We recommended using bun for faster deps installation
+# b2b_travel_portal_frontend
