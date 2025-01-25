@@ -1,8 +1,0 @@
-{
-  "/(admin)/apps/ecommerce/orders/page": "app/(admin)/apps/ecommerce/orders/page.js",
-  "/(admin)/apps/ecommerce/products/page": "app/(admin)/apps/ecommerce/products/page.js",
-  "/(admin)/apps/ecommerce/customers/page": "app/(admin)/apps/ecommerce/customers/page.js",
-  "/(admin)/apps/ecommerce/customers/create/page": "app/(admin)/apps/ecommerce/customers/create/page.js",
-  "/(admin)/apps/ecommerce/customers/[id]/page": "app/(admin)/apps/ecommerce/customers/[id]/page.js",
-  "/(admin)/apps/ecommerce/products/[id]/page": "app/(admin)/apps/ecommerce/products/[id]/page.js"
-}
