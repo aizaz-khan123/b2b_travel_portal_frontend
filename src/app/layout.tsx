@@ -8,10 +8,10 @@ import AppProvider from "@/app/AppProvider";
 
 export const metadata: Metadata = {
     title: {
-        template: "%s - Nexus ",
+        template: "Nexus - %s ",
         default: "",
     },
-    description: "It's a admin & client dashboard. DaisyUI React Admin",
+    description: "It's an admin & client dashboard. DaisyUI React Admin",
     icons: {
         icon: [
             {
@@ -28,6 +28,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
     const primary = "oklch(var(--p))";
+
     return (
         <html lang="en">
             <head>
