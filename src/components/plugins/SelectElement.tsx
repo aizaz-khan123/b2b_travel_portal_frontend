@@ -62,6 +62,22 @@ const SelectElement = forwardRef(
             });
         }, [value]);
 
+        // Custom styles based on size
+        const customStyles = useMemo(() => {
+            const sizeStyles = {
+                sm: { control: (base: any) => ({ ...base, minHeight: '2.3rem', height: '2.3rem' }) },
+                md: { control: (base: any) => ({ ...base, minHeight: '3rem', height: '3rem' }) },
+                lg: { control: (base: any) => ({ ...base, minHeight: '4rem', height: '4rem' }) },
+            };
+
+            return {
+                ...sizeStyles[size],
+                // Additional customizations can go here
+                valueContainer: (base: any) => ({ ...base, padding: '0 8px' }),
+                singleValue: (base: any) => ({ ...base, fontSize: size === 'sm' ? '0.875rem' : size === 'lg' ? '1.125rem' : '1rem' }),
+            };
+        }, [size]);
+
         return (
             <Select<SelectElementOption<T>, IsMulti>
                 {...props}
@@ -70,12 +86,14 @@ const SelectElement = forwardRef(
                 value={valueObject}
                 formatOptionLabel={children}
                 onChange={handleChange}
-                className={`react-select react-select__size-sm ${props.className}`}
+                styles={customStyles} // Apply custom styles
+                className={`react-select ${props.className}`}
                 classNamePrefix="react-select"
             />
         );
     },
 );
+
 
 SelectElement.displayName = "SE";
 
