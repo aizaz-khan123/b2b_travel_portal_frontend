@@ -45,23 +45,38 @@ export const adminMenuItems: IMenuItem[] = [
             },
         ],
     },
-    {
-        key: "label-organization",
-        isTitle: true,
-        label: "Organization Management",
-    },
+    // {
+    //     key: "label-organization",
+    //     isTitle: true,
+    //     label: "Organization Management",
+    // },
     {
         key: "apps-organization",
         icon: profileIcon,
-        label: "Organization",
+        label: "Organizations",
         children: [
+            {
+                key: "branches",
+                label: "Branches",
+                url: routes.apps.flight.search,
+            },
+            {
+                key: "agencies",
+                label: "Agencies",
+                url: routes.apps.flight.search,
+            },
+            {
+                key: "employees",
+                label: "Employess",
+                url: routes.apps.flight.search,
+            },
         ],
     },
-    {
-        key: "label-settings",
-        isTitle: true,
-        label: "Settings",
-    },
+    // {
+    //     key: "label-settings",
+    //     isTitle: true,
+    //     label: "Settings",
+    // },
     {
         key: "apps-settings",
         icon: settingIcon,
@@ -114,15 +129,47 @@ export const adminMenuItems: IMenuItem[] = [
             },
         ],
     },
-    {
-        key: "label-accounts",
-        isTitle: true,
-        label: "Accounts",
-    },
+    // {
+    //     key: "label-accounts",
+    //     isTitle: true,
+    //     label: "Accounts",
+    // },
     {
         key: "apps-accounts",
         icon: accountIcon,
         label: "Accounts",
+        children: [
+            // {
+            //     key: "sales-report",
+            //     label: "Sales Report",
+            //     url: routes.apps.flight.search,
+            // },
+            // {
+            //     key: "ledger-history",
+            //     label: "Ledger History",
+            //     url: routes.apps.flight.search,
+            // },
+            {
+                key: "agency-payment-request",
+                label: "Agency Deposites",
+                url: routes.apps.flight.search,
+            },
+            {
+                key: "agency-payment-request",
+                label: "Branch Deposites",
+                url: routes.apps.flight.search,
+            },
+        ]
+    },
+    // {
+    //     key: "label-reports",
+    //     isTitle: true,
+    //     label: "Reports",
+    // },
+    {
+        key: "apps-reports",
+        icon: accountIcon,
+        label: "Reports",
         children: [
             {
                 key: "sales-report",
@@ -135,10 +182,20 @@ export const adminMenuItems: IMenuItem[] = [
                 url: routes.apps.flight.search,
             },
             {
-                key: "agency-payment-request",
-                label: "Agency Payment Request",
+                key: "unused-tickets",
+                label: "Un-used Tickets",
                 url: routes.apps.flight.search,
             },
+            // {
+            //     key: "agency-payment-request",
+            //     label: "Agency Deposites",
+            //     url: routes.apps.flight.search,
+            // },
+            // {
+            //     key: "agency-payment-request",
+            //     label: "Branch Deposites",
+            //     url: routes.apps.flight.search,
+            // },
         ]
     },
 ];

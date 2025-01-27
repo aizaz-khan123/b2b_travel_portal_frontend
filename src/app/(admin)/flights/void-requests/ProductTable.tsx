@@ -94,7 +94,7 @@ const ProductRow = ({ product }: { product: IEcommerceProduct }) => {
                 <div className="text-sm">{dateHelper.formatted(date)}</div>
                 <div className="inline-flex w-fit">
                     <Link
-                        href={routes.apps.ecommerce.products.edit(id)}
+                        href={routes.apps.flight.search}
                         aria-label={"Edit product link"}
                         onClick={(event) => {
                             event.stopPropagation();
