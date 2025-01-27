@@ -1,13 +1,11 @@
-import airplayIcon from "@iconify/icons-lucide/airplay";
-import barChartBigIcon from "@iconify/icons-lucide/bar-chart-big";
-import bookOpenTextIcon from "@iconify/icons-lucide/book-open-text";
-import fileIcon from "@iconify/icons-lucide/file";
-import fileTextIcon from "@iconify/icons-lucide/file-text";
-import messagesSquareIcon from "@iconify/icons-lucide/messages-square";
-import packageIcon from "@iconify/icons-lucide/package";
-import serverIcon from "@iconify/icons-lucide/server";
-import shieldCheckIcon from "@iconify/icons-lucide/shield-check";
+import airplayIcon from "@iconify/icons-lucide/layout-dashboard";
 import storeIcon from "@iconify/icons-lucide/store";
+import planeIcon from "@iconify/icons-lucide/plane";
+import bookingIcon from "@iconify/icons-lucide/book";
+import settingIcon from "@iconify/icons-lucide/settings";
+import profileIcon from "@iconify/icons-lucide/building";
+// import accountIcon from "@iconify/icons-lucide/settings";
+import accountIcon from '@iconify/icons-lucide/calculator';
 
 import { routes } from "@/lib/routes";
 import { IMenuItem } from "@/types/layout/admin";
@@ -22,298 +20,182 @@ export const adminMenuItems: IMenuItem[] = [
     {
         key: "apps-label",
         isTitle: true,
-        label: "Apps",
+        label: "Sales",
     },
     {
-        key: "apps-ecommerce",
-        icon: storeIcon,
-        label: "Ecommerce",
+        key: "flight-search",
+        icon: planeIcon,
+        label: "Flight Search",
+        url: routes.apps.flight.search,
+    },
+    {
+        key: "apps-my-booking",
+        icon: bookingIcon,
+        label: "Bookings",
         children: [
             {
-                key: "apps-ecommerce-orders",
-                label: "Orders",
-                url: routes.apps.ecommerce.orders.index,
+                key: "apps-bookings-reservations",
+                label: "Reservations",
+                url: routes.apps.flight.reservation,
             },
             {
-                key: "apps-ecommerce-products",
-                label: "Products",
-                url: routes.apps.ecommerce.products.index,
-            },
-            {
-                key: "apps-ecommerce-sellers",
-
-                label: "Sellers",
-                url: routes.apps.ecommerce.sellers.index,
-            },
-            {
-                key: "apps-ecommerce-customers",
-
-                label: "Customers",
-                url: routes.apps.ecommerce.customers.index,
-            },
-            {
-                key: "apps-ecommerce-shops",
-                label: "Shops",
-                url: routes.apps.ecommerce.shops.index,
+                key: "apps-void-requests",
+                label: "Void Requests",
+                url: routes.apps.flight.void_requests,
             },
         ],
     },
+    // {
+    //     key: "label-organization",
+    //     isTitle: true,
+    //     label: "Organization Management",
+    // },
     {
-        key: "apps-file-manager",
-        icon: serverIcon,
-        label: "File Manager",
-        url: routes.apps.fileManager.home,
-    },
-    {
-        key: "apps-chat",
-        icon: messagesSquareIcon,
-        label: "Chat",
-        url: routes.apps.chat.home,
-    },
-
-    {
-        key: "label-pages",
-        isTitle: true,
-        label: "Pages",
-    },
-    {
-        key: "landing",
-        icon: fileIcon,
-        label: "Landing",
-        url: routes.landing,
-    },
-    {
-        key: "auth",
-        icon: shieldCheckIcon,
-        label: "Auth",
+        key: "apps-organization",
+        icon: profileIcon,
+        label: "Organizations",
         children: [
             {
-                key: "auth-login",
-                label: "Login",
-                url: routes.auth.login,
+                key: "branches",
+                label: "Branches",
+                url: routes.apps.flight.search,
             },
             {
-                key: "auth-register",
-                label: "Register",
-                url: routes.auth.register,
+                key: "agencies",
+                label: "Agencies",
+                url: routes.apps.flight.search,
             },
             {
-                key: "auth-forgot-password",
-                label: "Forgot Password",
-                url: routes.auth.forgotPassword,
-            },
-            {
-                key: "auth-reset-password",
-                label: "Reset Password",
-                url: routes.auth.resetPassword,
+                key: "employees",
+                label: "Employess",
+                url: routes.apps.flight.search,
             },
         ],
     },
+    // {
+    //     key: "label-settings",
+    //     isTitle: true,
+    //     label: "Settings",
+    // },
     {
-        key: "label-ui-showcase",
-        isTitle: true,
-        label: "UI Showcase",
-    },
-    {
-        key: "components",
-        icon: packageIcon,
-        label: "Components",
+        key: "apps-settings",
+        icon: settingIcon,
+        label: "Settings",
         children: [
             {
-                key: "components-accordion",
-                label: "Accordion",
-                url: routes.ui.components.accordion,
+                key: "bank-accounts",
+                label: "Bank Accounts",
+                url: routes.apps.flight.search,
             },
             {
-                key: "components-alert",
-                label: "Alert",
-                url: routes.ui.components.alert,
+                key: "airline-margins",
+                label: "Airline Margins",
+                url: routes.apps.flight.search,
             },
             {
-                key: "components-avatar",
-                label: "Avatar",
-                url: routes.ui.components.avatar,
+                key: "providers",
+                label: "Providers",
+                url: routes.apps.flight.search,
             },
             {
-                key: "components-badge",
-                label: "Badge",
-                url: routes.ui.components.badge,
+                key: "suppliers",
+                label: "Suppliers",
+                url: routes.apps.flight.search,
             },
             {
-                key: "components-breadcrumb",
-                label: "Breadcrumb",
-                url: routes.ui.components.breadcrumb,
+                key: "airlines",
+                label: "Airlines",
+                url: routes.apps.flight.search,
             },
             {
-                key: "components-button",
-                label: "Button",
-                url: routes.ui.components.button,
+                key: "airports",
+                label: "Airports",
+                url: routes.apps.flight.search,
             },
             {
-                key: "components-countdown",
-                label: "Countdown",
-                url: routes.ui.components.countdown,
+                key: "countries",
+                label: "Countries",
+                url: routes.apps.flight.search,
             },
             {
-                key: "components-drawer",
-                label: "Drawer",
-                url: routes.ui.components.drawer,
+                key: "cities",
+                label: "Cities",
+                url: routes.apps.flight.search,
             },
             {
-                key: "components-dropdown",
-                label: "Dropdown",
-                url: routes.ui.components.dropdown,
-            },
-
-            {
-                key: "components-loading",
-                label: "Loading",
-                url: routes.ui.components.loading,
-            },
-            {
-                key: "components-menu",
-                label: "Menu",
-                url: routes.ui.components.menu,
-            },
-            {
-                key: "components-modal",
-                label: "Modal",
-                url: routes.ui.components.modal,
-            },
-
-            {
-                key: "components-pagination",
-                label: "Pagination",
-                url: routes.ui.components.pagination,
-            },
-            {
-                key: "components-progress",
-                label: "Progress",
-                url: routes.ui.components.progress,
-            },
-            {
-                key: "components-step",
-                label: "Step",
-                url: routes.ui.components.step,
-            },
-            {
-                key: "components-tab",
-                label: "Tab",
-                url: routes.ui.components.tab,
-            },
-            {
-                key: "components-timeline",
-                label: "Timeline",
-                url: routes.ui.components.timeline,
-            },
-            {
-                key: "components-toast",
-                label: "Toast",
-                url: routes.ui.components.toast,
-            },
-
-            {
-                key: "components-tooltip",
-                label: "Tooltip",
-                url: routes.ui.components.tooltip,
+                key: "new-and-alerts",
+                label: "News & Alerts",
+                url: routes.apps.flight.search,
             },
         ],
     },
+    // {
+    //     key: "label-accounts",
+    //     isTitle: true,
+    //     label: "Accounts",
+    // },
     {
-        key: "ui-forms",
-        icon: fileTextIcon,
-        label: "Forms",
+        key: "apps-accounts",
+        icon: accountIcon,
+        label: "Accounts",
+        children: [
+            // {
+            //     key: "sales-report",
+            //     label: "Sales Report",
+            //     url: routes.apps.flight.search,
+            // },
+            // {
+            //     key: "ledger-history",
+            //     label: "Ledger History",
+            //     url: routes.apps.flight.search,
+            // },
+            {
+                key: "agency-payment-request",
+                label: "Agency Deposites",
+                url: routes.apps.flight.search,
+            },
+            {
+                key: "agency-payment-request",
+                label: "Branch Deposites",
+                url: routes.apps.flight.search,
+            },
+        ]
+    },
+    // {
+    //     key: "label-reports",
+    //     isTitle: true,
+    //     label: "Reports",
+    // },
+    {
+        key: "apps-reports",
+        icon: accountIcon,
+        label: "Reports",
         children: [
             {
-                key: "ui-forms-checkbox",
-                label: "Checkbox",
-                url: routes.ui.forms.checkbox,
+                key: "sales-report",
+                label: "Sales Report",
+                url: routes.apps.flight.search,
             },
-
             {
-                key: "ui-forms-file",
-                label: "File",
-                url: routes.ui.forms.file,
+                key: "ledger-history",
+                label: "Ledger History",
+                url: routes.apps.flight.search,
             },
-
             {
-                key: "ui-forms-input",
-                label: "Input",
-                url: routes.ui.forms.input,
+                key: "unused-tickets",
+                label: "Un-used Tickets",
+                url: routes.apps.flight.search,
             },
-
-            {
-                key: "ui-forms-radio",
-                label: "Radio",
-                url: routes.ui.forms.radio,
-            },
-
-            {
-                key: "ui-forms-range",
-                label: "Range",
-                url: routes.ui.forms.range,
-            },
-
-            {
-                key: "ui-forms-rating",
-                label: "Rating",
-                url: routes.ui.forms.rating,
-            },
-
-            {
-                key: "ui-forms-toggle",
-                label: "Toggle",
-                url: routes.ui.forms.toggle,
-            },
-        ],
-    },
-    {
-        key: "charts",
-        icon: barChartBigIcon,
-        label: "Charts",
-        children: [
-            {
-                key: "charts-apex",
-                label: "Apex",
-                children: [
-                    {
-                        key: "charts-apex-area",
-                        label: "Area",
-                        url: routes.ui.charts.apex.area,
-                    },
-                    {
-                        key: "charts-apex-bar",
-                        label: "Bar",
-                        url: routes.ui.charts.apex.bar,
-                    },
-                    {
-                        key: "charts-apex-column",
-                        label: "Column",
-                        url: routes.ui.charts.apex.column,
-                    },
-                    {
-                        key: "charts-apex-line",
-                        label: "Line",
-                        url: routes.ui.charts.apex.line,
-                    },
-                    {
-                        key: "charts-apex-pie",
-                        label: "Pie",
-                        url: routes.ui.charts.apex.pie,
-                    },
-                ],
-            },
-        ],
-    },
-    {
-        key: "label-other",
-        isTitle: true,
-        label: "Other",
-    },
-    {
-        key: "docs",
-        icon: bookOpenTextIcon,
-        label: "Documentation",
-        url: routes.docs,
+            // {
+            //     key: "agency-payment-request",
+            //     label: "Agency Deposites",
+            //     url: routes.apps.flight.search,
+            // },
+            // {
+            //     key: "agency-payment-request",
+            //     label: "Branch Deposites",
+            //     url: routes.apps.flight.search,
+            // },
+        ]
     },
 ];

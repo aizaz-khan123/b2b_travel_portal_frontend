@@ -8,11 +8,11 @@ import {
   PURGE,
   REGISTER,
 } from "redux-persist";
+import { api } from "../services/api";
 import authSlice from "./authSlice";
 import { persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
-import { combineReducers } from 'redux';
-import { api } from "@/services/api";
+import { combineReducers } from "redux";
 
 const persistConfig = {
   key: "rootSlice",
@@ -37,7 +37,10 @@ export const store = configureStore({
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
     }).concat(api.middleware),
-    devTools: process.env.NODE_ENV !== 'production',
+  devTools: process.env.NODE_ENV !== "production",
 });
+
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
 
 export const persistor = persistStore(store);

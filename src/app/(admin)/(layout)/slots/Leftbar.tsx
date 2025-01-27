@@ -14,10 +14,6 @@ import { cn, menuHelper } from "@/helpers";
 import { routes } from "@/lib/routes";
 import { IMenuItem } from "@/types/layout/admin";
 
-const ProBadge = ({ url }: { url: string | undefined }) => {
-    return <>{url != routes.dashboards.ecommerce && !url?.includes("/docs") && <div className="pro-badge">Pro</div>}</>;
-};
-
 const LeftMenuItem = ({ menuItem, activated }: { menuItem: IMenuItem; activated: Set<string> }) => {
     const { icon, isTitle, label, children, url } = menuItem;
 
@@ -38,7 +34,6 @@ const LeftMenuItem = ({ menuItem, activated }: { menuItem: IMenuItem; activated:
                     <div className="flex items-center gap-2">
                         {icon && <Icon icon={icon} fontSize={18} />}
                         {label}
-                        <ProBadge url={url} />
                     </div>
                 </Link>
             </MenuItem>
@@ -53,7 +48,6 @@ const LeftMenuItem = ({ menuItem, activated }: { menuItem: IMenuItem; activated:
                     <div className="flex items-center gap-2">
                         {icon && <Icon icon={icon} fontSize={18} />}
                         {label}
-                        <ProBadge url={url} />
                     </div>
                 }>
                 {children.map((item, index) => (
@@ -92,25 +86,13 @@ const Leftbar = ({ menuItems }: { menuItems: IMenuItem[] }) => {
             <Link href={routes.home} className="flex h-16 items-center justify-center">
                 <Logo />
             </Link>
-            <SimpleBar ref={scrollRef} className="h-[calc(100vh-64px)] lg:h-[calc(100vh-230px)]">
+            <SimpleBar ref={scrollRef} className="h-[calc(100vh)] lg:h-[calc(100vh)]">
                 <Menu className="mb-6">
                     {menuItems.map((item, index) => (
                         <LeftMenuItem menuItem={item} key={index} activated={activatedParents} />
                     ))}
                 </Menu>
             </SimpleBar>
-
-            <div className={"mx-4 hidden rounded bg-base-200 px-3 py-4 lg:block"}>
-                <p className="text-center text-base font-medium">Need Premium?</p>
-                <p className="mt-3 text-center text-sm">Access all features with single time purchase</p>
-                <div className="mt-3 text-center">
-                    <Link href={routes.externalLinks.purchase} target={"_blank"}>
-                        <Button color={"primary"} size={"sm"}>
-                            Purchase
-                        </Button>
-                    </Link>
-                </div>
-            </div>
         </div>
     );
 };

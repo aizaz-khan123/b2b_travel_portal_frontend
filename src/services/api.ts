@@ -1,34 +1,30 @@
-import { API_END_POINTS } from "./ApiEndPoints";
-import { emptySplitApi } from "./emptySplitApi";
+import { API_END_POINTS } from './ApiEndPoints';
+import { emptySplitApi } from './emptySplitApi';
 
 export const api = emptySplitApi.injectEndpoints({
-  overrideExisting: true, // Correct placement of overrideExisting
   endpoints: (builder) => ({
     getUser: builder.query({
       query: () => ({
         url: API_END_POINTS.getUser,
-        method: "GET",
+        method: 'GET',
       }),
     }),
     login: builder.mutation({
       query: (body) => ({
         url: API_END_POINTS.login,
-        method: "POST",
+        method: 'POST',
         body,
       }),
     }),
     logout: builder.mutation({
       query: (body) => ({
         url: API_END_POINTS.logout,
-        method: "POST",
+        method: 'POST',
         body,
       }),
     }),
   }),
+  overrideExisting: false,
 });
 
-export const {
-  useGetUserQuery,
-  useLoginMutation,
-  useLogoutMutation,
-} = api;
+export const { useGetUserQuery, useLoginMutation, useLogoutMutation } = api;

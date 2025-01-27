@@ -1,5 +1,5 @@
 {
-  "name": "nexus-pro-nextjs-ts",
+  "name": "b2b_travel_portal",
   "version": "1.1.1",
   "private": true,
   "scripts": {
@@ -36,7 +36,7 @@
     "react-select": "^5.8.0",
     "react-svg-worldmap": "^2.0.0-alpha.16",
     "redux": "^5.0.1",
-    "redux-persist": "^6.0.0",
+    "redux-persist": "6.x",
     "simplebar-react": "^3.2.5",
     "sonner": "^1.5.0",
     "tailwind-merge": "^2.3.0",
