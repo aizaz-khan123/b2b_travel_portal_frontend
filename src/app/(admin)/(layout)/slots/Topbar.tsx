@@ -24,21 +24,38 @@ import {
     NavbarStart,
     maskClassesFn,
 } from "@/components/daisyui";
-import { useAuthContext } from "@/contexts/auth";
 import { useLayoutContext } from "@/contexts/layout";
 import { routes } from "@/lib/routes";
 
 import { NotificationButton } from "../components/NotificationButton";
 import { SearchButton } from "../components/SearchButton";
+import { useLogoutMutation } from "@/services/api";
+import { useDispatch } from "react-redux";
+import { useToast } from "@/hooks/use-toast";
+import { updateAuthCookie } from "@/lib/cookie/auth";
 
 const Topbar = () => {
     const { hideLeftbar, state } = useLayoutContext();
-    const { logout } = useAuthContext();
+    const [ logout ] = useLogoutMutation();
     const navigate = useRouter();
+    const dispatch = useDispatch();
+    const toaster = useToast();
 
     const onLogout = async () => {
-        await logout();
-        navigate.push(routes.auth.login);
+        logout()
+            .unwrap()
+            .then(async(payload) => {
+                toaster.success("Logout successfully...");
+                await updateAuthCookie({ user: undefined });
+                dispatch(userLogout(null));
+                navigate.push(routes.auth.login)
+            })
+            .catch(async(error) => {
+                toaster.success("Logout successfully...");
+                await updateAuthCookie({ user: undefined });
+                dispatch(userLogout(null));
+                navigate.push(routes.auth.login)
+            });
     };
 
     return (
