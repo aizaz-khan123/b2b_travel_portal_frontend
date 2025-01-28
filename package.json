@@ -33,6 +33,7 @@
     "react-hook-form": "^7.51.5",
     "react-quill": "^2.0.0",
     "react-redux": "^9.2.0",
+    "react-responsive-carousel": "^3.2.23",
     "react-select": "^5.8.0",
     "react-svg-worldmap": "^2.0.0-alpha.16",
     "redux": "^5.0.1",

@@ -1,12 +1,20 @@
 "use client";
-import { Button, Card, CardBody, FormLabel } from "@/components/daisyui";
-import { Icon } from "@/components/Icon";
-import React from "react";
-import pencilIcon from "@iconify/icons-lucide/pencil";
-import searchIcon from "@iconify/icons-lucide/search";
-
+import { Button, Card, CardBody, FormLabel, maskClassesFn } from "@/components/daisyui";
 import { FormInput, FormRadio, FormSelect } from "@/components/forms";
+import { Icon } from "@/components/Icon";
+import calendarIcon from "@iconify/icons-lucide/calendar";
+import searchIcon from "@iconify/icons-lucide/search";
+import Image from "next/image";
 import { useForm } from "react-hook-form";
+import { Carousel } from 'react-responsive-carousel';
+import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
+import authImage from "@/assets/images/auth/auth-hero.png";
+import refreshCcw from "@iconify/icons-lucide/refresh-ccw";
+import plus from "@iconify/icons-lucide/plus";
+import info from "@iconify/icons-lucide/info";
+
+
+
 
 const countries = [
     {
@@ -24,6 +32,27 @@ const countries = [
     },
 ];
 
+const FlightCarousal = () => {
+    return (
+        <Carousel autoPlay className="rounded-lg shadow-md mb-5">
+            <div>
+                <Image src={authImage}
+                    className="max-h-[400px] object-contain"
+                    alt="Auth Image" />
+            </div>
+            <div>
+                <Image src={authImage}
+                    className="max-h-[400px] object-contain"
+                    alt="Auth Image" />
+            </div>
+            <div>
+                <Image src={authImage}
+                    className="max-h-[400px] object-contain"
+                    alt="Auth Image" />
+            </div>
+        </Carousel>
+    );
+};
 const FlightSearch = () => {
     // Initialize react-hook-form
     const { control, handleSubmit } = useForm();
@@ -34,7 +63,7 @@ const FlightSearch = () => {
     };
 
     return (
-        <Card className="bg-base-100/80 backdrop-blur-lg rounded-lg shadow-md">
+        <Card className="bg-base-100/80 backdrop-blur-lg rounded-lg shadow-md mb-5">
             <CardBody className="p-6">
                 <div>
                     <h2 className="text-xl font-semibold mb-4">Search Flights</h2>
@@ -46,17 +75,17 @@ const FlightSearch = () => {
                                 <FormRadio name={"travelType"} control={control} id="oneWay" value="oneWay" size="sm" />
                                 <FormLabel title="One Way" htmlFor="oneWay" />
                             </div>
-                            <div className="ml-6 flex items-center gap-1">
-                                <FormRadio name={"travelType"} control={control} id="roundTrip" value="roundTrip" />
+                            <div className="flex items-center gap-1">
+                                <FormRadio name={"travelType"} control={control} id="roundTrip" value="roundTrip" size="sm" />
                                 <FormLabel title="Round Trip" htmlFor="roundTrip" />
                             </div>
-                            <div className="ml-6 flex items-center gap-1">
-                                <FormRadio name={"travelType"} control={control} id="multiCity" value="multiCity" />
+                            <div className="flex items-center gap-1">
+                                <FormRadio name={"travelType"} control={control} id="multiCity" value="multiCity" size="sm" />
                                 <FormLabel title="Multi City" htmlFor="multiCity" />
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 items-end">
+                        <div className="grid grid-cols-1  md:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
                             <div>
                                 <FormLabel title={"From"} htmlFor="from" />
                                 <FormSelect
@@ -165,8 +194,8 @@ const FlightSearch = () => {
                                 />
                             </div>
                             <div>
-                                <Button color="primary" size="md" aria-label="Search Flights" className="px-10">
-                                    <Icon icon={searchIcon} className="text-base-content/70" fontSize={15} />
+                                <Button color="primary" size="md" aria-label="Search Flights" className="px-5">
+                                    <Icon icon={searchIcon} className="text-white" fontSize={18} />
                                     Search Flights
                                 </Button>
                             </div>
@@ -179,7 +208,7 @@ const FlightSearch = () => {
 };
 const RecentSearch = () => {
     return (
-        <Card className="bg-base-100/80 backdrop-blur-lg rounded-lg shadow-md mt-5">
+        <Card className="bg-base-100/80 backdrop-blur-lg rounded-lg shadow-md mb-5">
             <CardBody className="p-6">
                 <div>
                     <h2 className="text-lg font-semibold mb-4">Recent Searches</h2>
@@ -240,23 +269,13 @@ const RecentSearch = () => {
                                     </a>
                                 </div>
                                 <div className="text-sm text-gray-500 mt-2 flex items-center gap-2">
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
-                                        strokeWidth="2"
-                                        stroke="currentColor"
-                                        className="w-5 h-5 text-gray-400"
-                                    >
-                                        <path
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            d="M8.25 15.75a6.75 6.75 0 1113.5 0v.75h-13.5v-.75zm-2 4.5h13.5m-13.5 0a3 3 0 013-3h7.5a3 3 0 013 3m-13.5 0v1.5h13.5v-1.5"
-                                        />
-                                    </svg>
+                                    <Icon icon={calendarIcon} className="text-base-content/70" fontSize={15} />
                                     {item.date}
                                 </div>
-                                <div className="text-sm text-gray-600 mt-1">{item.details}</div>
+                                <div className="text-sm text-gray-500 mt-1 flex items-center gap-2">
+                                    <Icon icon={calendarIcon} className="text-base-content/70" fontSize={15} />
+                                    {item.details}
+                                </div>
                             </div>
                         ))}
                     </div>
@@ -266,11 +285,259 @@ const RecentSearch = () => {
     );
 };
 
+const FlightFound = () => {
+    const { control, handleSubmit } = useForm();
+    const onSubmit = (data: any) => {
+        console.log("Form submitted:", data);
+    };
+
+    return (
+        <div className="p-6 bg-gray-100 min-h-screen">
+            {/* Flight Filters & Results */}
+            <div className="grid grid-cols-12 gap-6">
+                {/* Filters Section */}
+                <div className="col-span-3">
+                    <div className=" bg-white p-4 rounded-md shadow-md mb-4">
+                        <h4 className="text-gray-700 font-medium text-center gap-2">
+                            ⏳ 00:09:53
+                        </h4>
+                    </div>
+                    <p className="text-sm text-center my-2">Book before the search expires!</p>
+                    <div className="bg-white p-4 rounded-md shadow-md">
+                        <h3 className="text-lg font-semibold mb-4">Filters</h3>
+                        <div className="mb-2">
+                            <FormLabel title={"Price Range"} htmlFor="priceRange" />
+                            <FormSelect
+                                control={control}
+                                name="priceRange"
+                                // instanceId="priceRange"
+                                size="md"
+                                id="priceRange"
+                                className="w-full border-0 text-base"
+                                options={countries.map((location) => ({
+                                    label: location.title,
+                                    value: location.id,
+                                }))}
+                                placeholder="Price Range"
+                            />
+                        </div>
+                        <div className="mb-2">
+                            <FormLabel title={"Stops"} htmlFor="stops" />
+                            <FormSelect
+                                control={control}
+                                name="stops"
+                                // instanceId="stops"
+                                size="md"
+                                id="stops"
+                                className="w-full border-0 text-base"
+                                options={countries.map((location) => ({
+                                    label: location.title,
+                                    value: location.id,
+                                }))}
+                                placeholder="Stops"
+                            />
+                        </div>
+                        <div className="mb-2">
+                            <FormLabel title={"Departure Time"} htmlFor="departureTime" />
+                            <FormSelect
+                                control={control}
+                                name="departureTime"
+                                // instanceId="departureTime"
+                                size="md"
+                                id="departureTime"
+                                className="w-full border-0 text-base"
+                                options={countries.map((location) => ({
+                                    label: location.title,
+                                    value: location.id,
+                                }))}
+                                placeholder="Departure Time"
+                            />
+                        </div>
+                    </div>
+                </div>
+
+                {/* Flight Results */}
+                <div className="col-span-9">
+                    <Card className="bg-base-100/80 backdrop-blur-lg rounded-lg shadow-md mb-5">
+                        <CardBody>
+                            <div className="flex justify-between items-center">
+                                <div>
+                                    <div className="flex items-center gap-2">
+                                        <h3 className="font-semibold text-lg mb-0">LHR</h3>
+                                        <span>✈</span>
+                                        <h3 className="font-semibold text-lg mb-0">ISL</h3>
+                                        <span>|</span>
+                                    </div>
+                                    <span className="text-gray-500 text-sm">Round-Trip • 2 Travelers Mon • Economy</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <Button color="primary" variant="outline" size="md">
+                                        <Icon icon={plus} className="text-primary" fontSize={22} />
+                                        Add Commission
+                                    </Button>
+
+                                    <Button color="primary" size="md">
+                                        <Icon icon={refreshCcw} className="text-white" fontSize={17} />
+                                        Change Search
+                                    </Button>
+
+                                </div>
+                            </div>
+                        </CardBody>
+                    </Card>
+                    <Card className="bg-base-100/80 backdrop-blur-lg rounded-lg shadow-md mb-5">
+                        <CardBody>
+                            <div className="flex justify-between items-center">
+                                <div className="flex items-center gap-2 mb-2">
+                                    <img src="" alt="img" />
+                                    <div>
+                                        <h3 className="font-semibold text-lg">Pakistan International Airlines</h3>
+                                        <span className="text-gray-500">PK-233 • Mon, Jan 27, 2025</span>
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <div>
+                                        <h3 className="font-semibold text-lg mb-0">LHR</h3>
+                                        <span className="text-gray-500">02:15</span>
+                                    </div>
+                                    <div className="text-center">
+                                        <h3 className="text-gray-500 text-md mb-0">1 hr 15 mins</h3>
+                                        <span className="text-gray-500">----------✈----------</span>
+                                        <h3 className="text-gray-500 text-md mb-0">Non-Stop</h3>
+                                    </div>
+                                    <div>
+                                        <h3 className="font-semibold text-lg mb-0">ISL</h3>
+                                        <span className="text-gray-500">02:15</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div className="flex items-center gap-2">
+                                        <h1 className="bg-gray-300 w-fit px-3 py-1 rounded-md">PIAAPI</h1>
+                                        <span>|</span>
+                                        <Icon icon={calendarIcon} className="text-primary" fontSize={22} />
+                                    </div>
+                                    <Button color="secondary" variant="outline" className="border-0" size="md">
+                                        <Icon icon={calendarIcon} className="text-secondary" fontSize={17} />
+                                        View Detail
+                                    </Button>
+                                </div>
+                            </div>
+                            <div>
+                                {[
+                                    { label: "VALUE", baggage: "No Baggage", price: "PKR 205,021.8" },
+                                    { label: "FLEXI", baggage: "Total 10.0 KGs (1 pc)", price: "PKR 205,021.8" },
+                                    { label: "XTRA", baggage: "Total 20.0 KGs (1 pc)", price: "PKR 205,021.8" },
+                                ].map((option, idx) => (
+                                    <>
+                                        <div className="grid grid-cols-12 items-center gap-6 border-t border-b py-2">
+                                            <div className="col-span-4 border-r-2 pe-5">
+                                                <div className="flex justify-between items-center">
+                                                    <p className="font-medium">{option.label}</p>
+                                                    <Icon icon={calendarIcon} className="text-primary" fontSize={22} />
+                                                </div>
+                                            </div>
+                                            <div className="col-span-4">
+                                                <div className="flex gap-2 justify-start">
+                                                    <Icon icon={calendarIcon} className="text-primary" fontSize={22} />
+                                                    <p className="font-medium">{option.baggage}</p>
+                                                </div>
+                                            </div>
+                                            <div className="col-span-4">
+                                                <div className="flex items-center justify-end gap-2">
+                                                    <span className="font-semibold">{option.price}</span>
+                                                    <Icon icon={info} className="text-primary" fontSize={22} />
+                                                    <Button color="primary" className="py-1">Book Fare</Button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </>
+                                ))}
+                            </div>
+                        </CardBody>
+                    </Card>
+                    <Card className="bg-base-100/80 backdrop-blur-lg rounded-lg shadow-md mb-5">
+                        <CardBody>
+                            <div className="flex justify-between items-center">
+                                <div className="flex items-center gap-2 mb-2">
+                                    <img src="" alt="img" />
+                                    <div>
+                                        <h3 className="font-semibold text-lg">Airblue</h3>
+                                        <span className="text-gray-500">PK-233 • Mon, Jan 27, 2025</span>
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <div>
+                                        <h3 className="font-semibold text-lg mb-0">LHR</h3>
+                                        <span className="text-gray-500">02:15</span>
+                                    </div>
+                                    <div className="text-center">
+                                        <h3 className="text-gray-500 text-md mb-0">1 hr 15 mins</h3>
+                                        <span className="text-gray-500">----------✈----------</span>
+                                        <h3 className="text-gray-500 text-md mb-0">Non-Stop</h3>
+                                    </div>
+                                    <div>
+                                        <h3 className="font-semibold text-lg mb-0">ISL</h3>
+                                        <span className="text-gray-500">02:15</span>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div className="flex items-center gap-2">
+                                        <h1 className="bg-gray-300 w-fit px-3 py-1 rounded-md">PIAAPI</h1>
+                                        <span>|</span>
+                                        <Icon icon={calendarIcon} className="text-primary" fontSize={22} />
+                                    </div>
+                                    <Button color="secondary" variant="outline" className="border-0" size="md">
+                                        <Icon icon={calendarIcon} className="text-secondary" fontSize={17} />
+                                        View Detail
+                                    </Button>
+                                </div>
+                            </div>
+                            <div>
+                                {[
+                                    { label: "VALUE", baggage: "No Baggage", price: "PKR 205,021.8" },
+                                    { label: "FLEXI", baggage: "Total 10.0 KGs (1 pc)", price: "PKR 205,021.8" },
+                                    { label: "XTRA", baggage: "Total 20.0 KGs (1 pc)", price: "PKR 205,021.8" },
+                                ].map((option, idx) => (
+                                    <>
+                                        <div className="grid grid-cols-12 items-center gap-6 border-t border-b py-2">
+                                            <div className="col-span-4 border-r-2 pe-5">
+                                                <div className="flex justify-between items-center">
+                                                    <p className="font-medium">{option.label}</p>
+                                                    <Icon icon={calendarIcon} className="text-primary" fontSize={22} />
+                                                </div>
+                                            </div>
+                                            <div className="col-span-4">
+                                                <div className="flex gap-2 justify-start">
+                                                    <Icon icon={calendarIcon} className="text-primary" fontSize={22} />
+                                                    <p className="font-medium">{option.baggage}</p>
+                                                </div>
+                                            </div>
+                                            <div className="col-span-4">
+                                                <div className="flex items-center justify-end gap-2">
+                                                    <span className="font-semibold">{option.price}</span>
+                                                    <Icon icon={info} className="text-primary" fontSize={22} />
+                                                    <Button color="primary" className="py-1">Book Fare</Button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </>
+                                ))}
+                            </div>
+                        </CardBody>
+                    </Card>
+                </div>
+            </div>
+        </div >
+    );
+};
+
 const Page = () => {
     return (
         <div>
+            <FlightCarousal />
             <FlightSearch />
             <RecentSearch />
+            <FlightFound />
         </div>
     );
 };
