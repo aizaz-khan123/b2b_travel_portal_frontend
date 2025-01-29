@@ -71,6 +71,6 @@ const useHook = () => {
     };
 };
 
-const [useAuthContext, AuthContextProvider] = createHookedContext(useHook);
+const [useAuthContext] = createHookedContext(useHook);
 
-export { useAuthContext, AuthContextProvider };
+export { useAuthContext };

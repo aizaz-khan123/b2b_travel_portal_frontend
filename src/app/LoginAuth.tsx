@@ -1,25 +1,87 @@
 "use client";
 
-import googleMiniImage from "@/assets/images/brand-logo/google-mini.svg";
-
 import keyRoundIcon from "@iconify/icons-lucide/key-round";
 import logInIcon from "@iconify/icons-lucide/log-in";
 import mailIcon from "@iconify/icons-lucide/mail";
-
-import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect } from "react";
 
 import { Icon } from "@/components/Icon";
-import { Button, Checkbox, FormLabel } from "@/components/daisyui";
+import { Button, FormLabel } from "@/components/daisyui";
 import { FormInput } from "@/components/forms/FormInput";
 import { FormInputPassword } from "@/components/forms/FormInputPassword";
 import { routes } from "@/lib/routes";
 
-import { useLogin } from "./use-login";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { useToast } from "@/hooks/use-toast";
+import { useLoginMutation } from "@/services/api";
+import { loggedIn } from "@/redux/authSlice";
+import { useDispatch } from "react-redux";
+import { updateAuthCookie } from "@/lib/cookie/auth";
 
 const LoginAuth = ({ redirectTo }: { redirectTo?: string }) => {
-    const { isLoading, control, onSubmit } = useLogin({ redirectTo });
+
+    const router = useRouter();
+    const toaster = useToast();
+    const dispatch = useDispatch();
+
+    const loginSchema = z.object({
+        email: z.string().email("Please enter a valid email address"),
+        password: z.string()
+        .min(5, "Password must be at least 5 characters").max(15, "Password must not exceed 8 characters"),
+    });
+
+    type LoginSchemaType = z.infer<typeof loginSchema>;
+
+    const defaultValues = {
+        email: 'headoffice@gmail.com',
+        password: 'admin@test.com',
+    }
+    const { control, handleSubmit } = useForm<LoginSchemaType>({
+        resolver: zodResolver(loginSchema),
+        defaultValues,
+    });
+
+    const [loginUser, {
+        data,
+        isError,
+        isSuccess: isLoginSuccess,
+        error,
+        isLoading }] = useLoginMutation();
+
+
+    const onSubmit = handleSubmit(async (data) => {  
+        await loginUser(data);
+    });
+
+    useEffect(() => {
+        const handleLoginSuccess = async () => {
+          if (isLoginSuccess) {
+            const userDetail = data?.data;
+            try {
+              dispatch(loggedIn({userDetail}));
+              await updateAuthCookie({ user: userDetail?.user });
+              toaster.success("Login successfully...");
+              router.push(redirectTo ?? routes.home);
+            } catch (error) {
+              toaster.error("An error occurred. Please try again.");
+            }
+          }
+        };
+        handleLoginSuccess();
+      }, [isLoginSuccess, data, dispatch, redirectTo, router]);
+      
+
+      useEffect(() => {
+        if (isError && error) {
+          const errorMessage =
+            error?.data?.message || "Something went wrong. Please try againa.";
+          toaster.error(errorMessage);
+        }
+      }, [isError, error, toaster]);
 
     return (
         <>
@@ -37,7 +99,7 @@ const LoginAuth = ({ redirectTo }: { redirectTo?: string }) => {
                         bordered={false}
                         borderOffset={false}></FormInput>
                 </div>
-                <div className="form-control mt-3">
+                <div className="form-control">
                     <FormLabel title={"Password"} htmlFor="password" />
                     <FormInputPassword
                         size="sm"
@@ -57,14 +119,8 @@ const LoginAuth = ({ redirectTo }: { redirectTo?: string }) => {
                         </Link>
                     </label>
                 </div>
-                <div className="mt-4 flex items-center gap-3 md:mt-6">
-                    <Checkbox name="agreement" id="agreement" size="xs" color="primary" />
-                    <label htmlFor="agreement">
-                        I agree with <span className="cursor-pointer text-primary underline">terms and conditions</span>
-                    </label>
-                </div>
             </div>
-            <div className="mt-4 md:mt-12">
+            <div className="mt-4 md:mt-4">
                 <Button
                     color="primary"
                     loading={isLoading}

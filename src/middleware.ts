@@ -5,7 +5,19 @@ import { getAuthCookie } from "@/lib/cookie/auth";
 import { routes } from "@/lib/routes";
 
 export const middleware: NextMiddleware = async (request: NextRequest) => {
+    const { pathname } = request.nextUrl;
+    if (
+        pathname.startsWith("/_next/") ||
+        pathname.startsWith("/api/") ||
+        pathname.startsWith("/favicon.ico") ||
+        pathname.startsWith("/public/") ||
+        pathname.match(/\.(jpg|jpeg|png|gif|css|js|svg|ico|webp|ttf|woff|woff2|eot)$/)
+      ) {
+        return NextResponse.next();
+      }
+
     const loggedInUser = await getAuthCookie();
+
     if (!loggedInUser?.user) {
         return NextResponse.redirect(
             new URL(`${routes.auth.login}?redirectTo=${request.nextUrl.pathname}`, request.url),
@@ -14,5 +26,5 @@ export const middleware: NextMiddleware = async (request: NextRequest) => {
 };
 
 export const config = {
-    matcher: ["/dashboards/:path*", "/apps/:path*", "/ui/:path*"],
+    matcher: [ "/((?!api|_next/static|_next/image|favicon.ico).*)"],
 };

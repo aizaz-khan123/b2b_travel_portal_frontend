@@ -17,10 +17,9 @@ export const api = emptySplitApi.injectEndpoints({
       }),
     }),
     logout: builder.mutation({
-      query: (body) => ({
+      query: () => ({
         url: API_END_POINTS.logout,
         method: 'POST',
-        body,
       }),
     }),
   }),
