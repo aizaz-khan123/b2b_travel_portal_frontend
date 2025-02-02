@@ -45,7 +45,7 @@ const FormInput = <
                             },
                         )}>
                         {startIcon}
-                        <Input
+                        {/* <Input
                             {...field}
                             {...other}
                             onChange={(event) => {
@@ -56,6 +56,27 @@ const FormInput = <
                                             : other.min
                                         : event.target.value,
                                 );
+                            }}
+                            placeholder={fieldState.invalid ? " " : placeholder}
+                            className={cn(className, "transition-all", {
+                                "focus:!-outline-offset-1 focus:outline-red-500": fieldState.invalid,
+                            })}
+                        /> */}
+                        <Input
+                            {...field}
+                            {...other}
+                            onChange={(event) => {
+                                const value =
+                                    other.type === "number"
+                                        ? event.target.value.length > 0
+                                            ? parseFloat(event.target.value) + ""
+                                            : other.min
+                                        : event.target.value;
+
+                                field.onChange(value);
+                                if (other.onChange) {
+                                    other.onChange(event);
+                                }
                             }}
                             placeholder={fieldState.invalid ? " " : placeholder}
                             className={cn(className, "transition-all", {

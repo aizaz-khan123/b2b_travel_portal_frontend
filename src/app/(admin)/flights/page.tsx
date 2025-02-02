@@ -1,5 +1,6 @@
 "use client";
-import { Button, Card, CardBody, FormLabel, maskClassesFn } from "@/components/daisyui";
+
+import { Button, Card, CardBody, FormLabel } from "@/components/daisyui";
 import { FormInput, FormRadio, FormSelect } from "@/components/forms";
 import { Icon } from "@/components/Icon";
 import calendarIcon from "@iconify/icons-lucide/calendar";
@@ -7,14 +8,11 @@ import searchIcon from "@iconify/icons-lucide/search";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { Carousel } from 'react-responsive-carousel';
-import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
+import "react-responsive-carousel/lib/styles/carousel.min.css";
 import authImage from "@/assets/images/auth/auth-hero.png";
 import refreshCcw from "@iconify/icons-lucide/refresh-ccw";
 import plus from "@iconify/icons-lucide/plus";
 import info from "@iconify/icons-lucide/info";
-
-
-
 
 const countries = [
     {
@@ -54,10 +52,7 @@ const FlightCarousal = () => {
     );
 };
 const FlightSearch = () => {
-    // Initialize react-hook-form
     const { control, handleSubmit } = useForm();
-
-    // Handle form submission
     const onSubmit = (data: any) => {
         console.log("Form submitted:", data);
     };

@@ -10,34 +10,42 @@ const routes = {
         ecommerce: "/dashboard",
     },
     apps: {
-        orders: {
-            index: "/apps/ecommerce/orders",
-            show: (id: number | string) => `/apps/ecommerce/orders/${id}`,
-        },
-        products: {
-            index: "/apps/ecommerce/products",
-            create: "/apps/ecommerce/products/create",
-            edit: (id: number) => `/apps/ecommerce/products/${id}`,
-        },
-        customers: {
-            index: "/apps/ecommerce/customers",
-            create: "/apps/ecommerce/customers/create",
-            edit: (id: number) => `/apps/ecommerce/customers/${id}`,
-        },
-        sellers: {
-            index: "/apps/ecommerce/sellers",
-            create: "/apps/ecommerce/sellers/create",
-            edit: (id: number) => `/apps/ecommerce/sellers/${id}`,
-        },
-        shops: {
-            index: "/apps/ecommerce/shops",
-            create: "/apps/ecommerce/shops/create",
-            edit: (id: number) => `/apps/ecommerce/shops/${id}`,
-        },
         flight: {
-            search: "/flights",
+            search: '/flights',
             reservation: '/flights/reservations',
             void_requests: '/flights/void-requests',
+        },
+        organizations: {
+            branches: '/organizations/branches',
+            branch_employees: '/organizations/branch/employees',
+            agencies: '/organizations/agencies',
+            agency_employees: '/organizations/agency/employees',
+            agency_subagent: '/organizations/agency/sub-agents',
+            headoffice_employees: '/organizations/employees',
+        },
+        reports:{
+            ledger_history: '/reports/ledger-history',
+            sales_report: '/reports/sales-report',
+            unused_tickets: '/reports/unused-tickets'
+        },
+        settings:{
+            airlines: '/settings/airlines',
+            airline_create: '/settings/airlines/create',
+            airline_edit: (id: string) => `/settings/airlines/${id}`,
+            airline_margins: '/settings/airline-margins',
+            bank_accounts: '/settings/bank-accounts',
+            bank_account_create: '/settings/bank-accounts/create',
+            bank_account_edit: (id: string) => `/settings/bank-accounts/${id}`,
+            cities:'/settings/cities',
+            countries :'/settings/countries',
+            news:'/settings/news',
+            suppliers:'/settings/suppliers',
+            connectors: '/settings/connectors',
+            airports: '/settings/airports',
+        },
+        accounts: {
+            agency_deposites: '/accounts/agency-deposites',
+            branch_deposites: '/accounts/branch-deposites',
         }
     },
 };
