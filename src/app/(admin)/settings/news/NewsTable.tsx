@@ -26,44 +26,42 @@ import Pagination from "@/components/Pagination/Pagination";
 import { FormInput } from "@/components/forms";
 import { routes } from "@/lib/routes";
 
-import { IBankAccount } from "@/types/settings/bank_accounts";
-import { useDeleteBankAccountMutation, useGetBankAccountsQuery } from "@/services/api";
+import {INews} from "@/types/settings/news";
+import { useDeleteNewsMutation, useGetNewsQuery } from "@/services/api";
 
 import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useToast } from "@/hooks/use-toast";
 import Image from "next/image";
 
-const BankAccountRow = ({
-    bank_account,
-    showDeleteBankAccountConfirmation
+const NewsRow = ({
+    news,
+    showDeleteNewsConfirmation
 }: {
-    bank_account: IBankAccount;
-    showDeleteBankAccountConfirmation: (uuid: string) => void;
+    news: INews;
+    showDeleteNewsConfirmation: (uuid: string) => void;
 }) => {
 
-    const { id, uuid, account_number, bank_name, account_holder_name, bank_address, contact_number, iban } = bank_account;
+    const { id, uuid, title, image,is_feature, news_url, description } = news;
 
     return (
         <>
             <TableRow className="hover:bg-base-200/40">
                 <div className="font-medium">{id}</div>
-                <div className="flex items-center space-x-3 truncate">{account_holder_name}</div>
                 <div className="flex items-center space-x-3 truncate">
                     <Image src={product1Img.src} height={40} width={40} className="size-10 rounded-box" alt="Product Image" />
                     <div>
-                        <div className="font-medium">{bank_name}</div>
+                        <div className="font-medium">{title}</div>
                     </div>
                 </div>
-                <div className="text-sm font-medium">{account_number}</div>
-                <div className="flex items-center gap-2">{iban}</div>
-                <div>{contact_number}</div>
+                <div>{is_feature ? (<span className="text-success cursor-pointer">Feature</span>) : (<span className="text-warning cursor-pointer">Normal</span>)}</div>
+                <div className="text-sm font-medium">{news_url}</div>
                 <div className="text-sm">
-                    {bank_address?.length > 20 ? `${bank_address.slice(0, 20)}...` : bank_address}
+                    {description?.length > 20 ? `${description.slice(0, 20)}...` : description}
                 </div>
                 <div className="inline-flex w-fit">
                     <Link
-                        href={routes.apps.settings.bank_account_edit(uuid)}
+                        href={routes.apps.settings.news_edit(uuid)}
                         aria-label="Edit bank account"
                         onClick={(event) => event.stopPropagation()}
                     >
@@ -79,7 +77,7 @@ const BankAccountRow = ({
                         aria-label="Delete bank account"
                         onClick={(event) => {
                             event.stopPropagation();
-                            showDeleteBankAccountConfirmation(uuid);
+                            showDeleteNewsConfirmation(uuid);
                         }}
                     >
                         <Icon icon={trashIcon} fontSize={16} />
@@ -90,19 +88,19 @@ const BankAccountRow = ({
     );
 };
 
-const BankAccountTable = () => {
+const NewsTable = () => {
     const toaster = useToast();
     const [searchText, setSearchText] = useState<string>("");
     const [pageUrl, setPageUrl] = useState<string>("");
-    const { data:detail_data } = useGetBankAccountsQuery({searchText,  pageUrl});
-    const bank_accounts = detail_data?.data;
+    const { data: detail_data } = useGetNewsQuery({ searchText, pageUrl });
+    const news = detail_data?.data;
     const links = detail_data?.links;
-    const [deleteBankAccount, {
-        isLoading: deleteBankAccountLoading,
-    }] = useDeleteBankAccountMutation();
+    const [deleteNews, {
+        isLoading: deleteNewsLoading,
+    }] = useDeleteNewsMutation();
 
-    const [bankAccountToBeDelete, setBankAccountToBeDelete] = useState<IBankAccount>();
-    const bankAccountDeleteConfirmationRef = useRef<HTMLDialogElement | null>(null);
+    const [NewsToBeDelete, setNewsToBeDelete] = useState<INews>();
+    const NewsDeleteConfirmationRef = useRef<HTMLDialogElement | null>(null);
 
     const { control: filterControl } = useForm({
         defaultValues: {
@@ -111,15 +109,14 @@ const BankAccountTable = () => {
         },
     });
 
-    const showDeleteBankAccountConfirmation = (uuid: any) => {
-        bankAccountDeleteConfirmationRef.current?.showModal();
-        setBankAccountToBeDelete(bank_accounts?.find((b) => uuid === b.uuid));
+    const showDeleteNewsConfirmation = (uuid: any) => {
+        NewsDeleteConfirmationRef.current?.showModal();
+        setNewsToBeDelete(news?.find((b) => uuid === b.uuid));
     };
 
-    const handleDeleteBankAccount = async () => {
-        if (bankAccountToBeDelete) {
-            deleteBankAccount(bankAccountToBeDelete.uuid).then((response: any) => {
-                console.log(response?.data.code);
+    const handleDeleteNews = async () => {
+        if (NewsToBeDelete) {
+            deleteNews(NewsToBeDelete.uuid).then((response: any) => {
                 if (response?.data.code == 200) {
                     toaster.success(response?.data.message);
                 } else {
@@ -150,14 +147,14 @@ const BankAccountTable = () => {
                                 control={filterControl}
                                 name="search"
                                 className="w-full focus:border-transparent focus:outline-0"
-                                onChange={(e)=>setSearchText(e.target.value)}
+                                onChange={(e) => setSearchText(e.target.value)}
                             />
                         </div>
                         <div className="inline-flex items-center gap-3">
-                            <Link href={routes.apps.settings.bank_account_create} aria-label={"Create product link"}>
+                            <Link href={routes.apps.settings.news_create} aria-label={"Create product link"}>
                                 <Button color="primary" size="md" className="hidden md:flex">
                                     <Icon icon={plusIcon} fontSize={16} />
-                                    <span>New Bank Account</span>
+                                    <span>New News</span>
                                 </Button>
                             </Link>
                         </div>
@@ -166,50 +163,30 @@ const BankAccountTable = () => {
                         <Table className="mt-2 rounded-box">
                             <TableHead>
                                 <span className="text-sm font-medium text-base-content/80">ID</span>
-                                <span className="text-sm font-medium text-base-content/80">Account Holder Name</span>
-                                <span className="text-sm font-medium text-base-content/80">Bank Name</span>
-                                <span className="text-sm font-medium text-base-content/80">Account Number</span>
-                                <span className="text-sm font-medium text-base-content/80">IBAN</span>
-                                <span className="text-sm font-medium text-base-content/80">Contact Number</span>
-                                <span className="text-sm font-medium text-base-content/80">Bank Address</span>
+                                <span className="text-sm font-medium text-base-content/80">News Title</span>
+                                <span className="text-sm font-medium text-base-content/80">Is Feature</span>
+                                <span className="text-sm font-medium text-base-content/80">News URL</span>
+                                <span className="text-sm font-medium text-base-content/80">Description</span>
                                 <span className="text-sm font-medium text-base-content/80">Action</span>
                             </TableHead>
 
                             <TableBody>
-                                {bank_accounts?.map((bank_account:any, index:any) => (
-                                    <BankAccountRow
-                                        bank_account={bank_account}
+                                {news?.map((news: any, index: any) => (
+                                    <NewsRow
+                                        news={news}
                                         key={index}
-                                        showDeleteBankAccountConfirmation={showDeleteBankAccountConfirmation}
+                                        showDeleteNewsConfirmation={showDeleteNewsConfirmation}
                                     />
                                 ))}
                             </TableBody>
                         </Table>
                     </div>
                     <div className="flex items-center justify-end px-5 pb-5 pt-3">
-                        {/* <Pagination>
-                            <Button
-                                size="sm"
-                                aria-label="pagination-prev"
-                                className="join-item"
-                                startIcon={<Icon icon={chevronLeftIcon} fontSize={16} />}></Button>
-                            <Button size="sm" className="join-item" active color="primary" aria-label="pagination-1">
-                                1
-                            </Button>
-                            <Button size="sm" className="join-item" aria-label="pagination-2">
-                                2
-                            </Button>
-                            <Button
-                                size="sm"
-                                aria-label="pagination-next"
-                                className="join-item"
-                                startIcon={<Icon icon={chevronRightIcon} fontSize={16} />}></Button>
-                        </Pagination> */}
                         <Pagination pagination={links} clickHandler={paginationClickHandler} />
                     </div>
                 </CardBody>
             </Card>
-            <Modal ref={bankAccountDeleteConfirmationRef} backdrop>
+            <Modal ref={NewsDeleteConfirmationRef} backdrop>
                 <form method="dialog">
                     <Button
                         size="sm"
@@ -222,7 +199,7 @@ const BankAccountTable = () => {
                 </form>
                 <ModalHeader className="font-bold">Confirm Delete</ModalHeader>
                 <ModalBody>
-                    You are about to delete <b>{bankAccountToBeDelete?.bank_name}</b>. Would you like to proceed further ?
+                    You are about to delete <b>{NewsToBeDelete?.title}</b>. Would you like to proceed further ?
                 </ModalBody>
                 <ModalActions>
                     <form method="dialog">
@@ -231,7 +208,7 @@ const BankAccountTable = () => {
                         </Button>
                     </form>
                     <form method="dialog">
-                        <Button loading={deleteBankAccountLoading} color="primary" size="sm" onClick={() => handleDeleteBankAccount()}>
+                        <Button loading={deleteNewsLoading} color="primary" size="sm" onClick={() => handleDeleteNews()}>
                             Yes
                         </Button>
                     </form>
@@ -241,4 +218,4 @@ const BankAccountTable = () => {
     );
 };
 
-export { BankAccountTable };
+export { NewsTable };

@@ -105,11 +105,11 @@ export const adminMenuItems: IMenuItem[] = [
                 label: "Countries",
                 url: routes.apps.settings.countries,
             },
-            {
-                key: "cities",
-                label: "Cities",
-                url: routes.apps.settings.cities,
-            },
+            // {
+            //     key: "cities",
+            //     label: "Cities",
+            //     url: routes.apps.settings.cities,
+            // },
             {
                 key: "new-and-alerts",
                 label: "News & Alerts",

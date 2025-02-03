@@ -30,5 +30,5 @@ export const emptySplitApi = createApi({
     },
   }),
   endpoints: () => ({}),
-  tagTypes: ['BankAccounts', 'Airlines'],
+  tagTypes: ['BankAccounts', 'Airlines', 'Airports', 'Countries','News', 'Suppliers'],
 });
