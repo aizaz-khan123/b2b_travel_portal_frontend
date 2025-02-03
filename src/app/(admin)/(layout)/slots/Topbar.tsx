@@ -33,6 +33,7 @@ import { useLogoutMutation } from "@/services/api";
 import { useDispatch } from "react-redux";
 import { useToast } from "@/hooks/use-toast";
 import { updateAuthCookie } from "@/lib/cookie/auth";
+import { userLogout } from "@/redux/authSlice";
 
 const Topbar = () => {
     const { hideLeftbar, state } = useLayoutContext();
@@ -42,18 +43,18 @@ const Topbar = () => {
     const toaster = useToast();
 
     const onLogout = async () => {
-        logout()
+        logout({})
             .unwrap()
             .then(async(payload) => {
-                toaster.success("Logout successfully...");
+                toaster.success(payload.message);
                 await updateAuthCookie({ user: undefined });
-                dispatch(userLogout(null));
+                dispatch(userLogout());
                 navigate.push(routes.auth.login)
             })
             .catch(async(error) => {
                 toaster.success("Logout successfully...");
                 await updateAuthCookie({ user: undefined });
-                dispatch(userLogout(null));
+                dispatch(userLogout());
                 navigate.push(routes.auth.login)
             });
     };
