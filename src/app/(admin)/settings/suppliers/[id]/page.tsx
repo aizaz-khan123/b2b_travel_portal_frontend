@@ -2,27 +2,27 @@ import { Metadata } from "next";
 import React from "react";
 import { PageTitle } from "@/components/PageTitle";
 import { routes } from "@/lib/routes";
-import { EditAirline } from "./EditAirline";
+import { EditSupplier } from "./EditSupplier";
 
 export const metadata: Metadata = {
-    title: "Edit Airlines",
+    title: "Edit Supplier",
 };
 
-const EditAirlinePage = async ({ params }: { params: { id: string } }) => {
+const EditSupplierPage = async ({ params }: { params: { id: string } }) => {
     return (
         <div>
             <PageTitle
-                title={"Edit Airline"}
+                title={"Edit Supplier"}
                 breadCrumbItems={[
-                    { label: "Airlines", path: routes.apps.settings.airlines },
+                    { label: "Suppliers", path: routes.apps.settings.suppliers },
                     { label: "Edit", active: true },
                 ]}
             />
             <div className="mt-5">
-                <EditAirline airlineId={params.id} />
+                <EditSupplier supplierId={params.id} />
             </div>
         </div>
     );
 };
 
-export default EditAirlinePage;
+export default EditSupplierPage;

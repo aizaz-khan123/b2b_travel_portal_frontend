@@ -19,4 +19,33 @@ export const API_END_POINTS = {
   deleteAirline: BASE_URL_V1 + '/settings/airline/delete',
   updateAirline: BASE_URL_V1 + '/settings/airline/update',
   getCountryDropDown: BASE_URL_V1 + '/settings/country/drop-down',
+  getAirports: BASE_URL_V1 + '/settings/airport/index',
+  createAirport: BASE_URL_V1 + '/settings/airport/store',
+  showAirport: BASE_URL_V1 + '/settings/airport/show',
+  deleteAirport: BASE_URL_V1 + '/settings/airport/delete',
+  updateAirport: BASE_URL_V1 + '/settings/airport/update',
+
+  getCountries: BASE_URL_V1 + '/settings/country/index',
+  createCountry: BASE_URL_V1 + '/settings/country/store',
+  showCountry: BASE_URL_V1 + '/settings/country/show',
+  deleteCountry: BASE_URL_V1 + '/settings/country/delete',
+  updateCountry: BASE_URL_V1 + '/settings/country/update',
+
+  getNews: BASE_URL_V1 + '/settings/news/index',
+  createNews: BASE_URL_V1 + '/settings/news/store',
+  showNews: BASE_URL_V1 + '/settings/news/show',
+  deleteNews: BASE_URL_V1 + '/settings/news/delete',
+  updateNews: BASE_URL_V1 + '/settings/news/update',
+
+
+  getSuppliers: BASE_URL_V1 + '/settings/supplier/index',
+  createSupplier: BASE_URL_V1 + '/settings/supplier/store',
+  showSupplier: BASE_URL_V1 + '/settings/supplier/show',
+  updateSupplier: BASE_URL_V1 + '/settings/supplier/update',
+  deleteSupplier: BASE_URL_V1 + '/settings/supplier/delete',
+
+
+  supplierDropDownList: BASE_URL_V1 + '/settings/supplier/drop-down',
+  showConnector: BASE_URL_V1 + '/settings/connector/show',
+  updateConnector: BASE_URL_V1 + '/settings/connector/update',
 };
