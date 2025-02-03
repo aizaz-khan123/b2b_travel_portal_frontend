@@ -3,21 +3,21 @@
 import checkIcon from "@iconify/icons-lucide/check";
 import xIcon from "@iconify/icons-lucide/x";
 import { Icon } from "@/components/Icon";
-import { Button, Card, CardBody, CardTitle, Form, FormLabel, Select, SelectOption } from "@/components/daisyui";
+import { Button, Card, CardBody, Form, FormLabel} from "@/components/daisyui";
 import { FormInput, FormSelect, FormTextarea, FormToggle } from "@/components/forms";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { useToast } from "@/hooks/use-toast";
 import { routes } from "@/lib/routes";
-import { useAirlineDropDownQuery, useConnectorDropDownQuery, useCreateAirportMutation } from "@/services/api";
+import { useAirlineDropDownQuery, useConnectorDropDownQuery, useCreateAirlineMarginMutation } from "@/services/api";
 import { airlineMarginSchemaType, airlineMarginSchema } from "../helpers";
 
 const CreateAirlineMargin = () => {
 
     const toaster = useToast();
     const router = useRouter();
-    const [createAirport, { isLoading }] = useCreateAirportMutation();
+    const [createAirlineMargin, { isLoading }] = useCreateAirlineMarginMutation();
 
     const { data: airlineDropDown } = useAirlineDropDownQuery();
     const { data: connectorDropDown } = useConnectorDropDownQuery();
@@ -32,11 +32,11 @@ const CreateAirlineMargin = () => {
     };
 
     const onSubmit = handleSubmit(async (data: airlineMarginSchemaType) => {
-        await createAirport(data).then((response: any) => {
+        await createAirlineMargin(data).then((response: any) => {
             const { status, data } = response?.data;
             if (status) {
                 toaster.success(`${data.name} has been created`);
-                router.push(routes.apps.settings.airports);
+                router.push(routes.apps.settings.airline_margins);
             } else {
                 setErrors(response?.data?.errors);
             }

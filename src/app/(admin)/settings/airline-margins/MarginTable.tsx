@@ -10,6 +10,7 @@ import Link from "next/link";
 
 import { Icon } from "@/components/Icon";
 import {
+    Badge,
     Button,
     Card,
     CardBody,
@@ -26,8 +27,8 @@ import Pagination from "@/components/Pagination/Pagination";
 import { FormInput } from "@/components/forms";
 import { routes } from "@/lib/routes";
 
-import { IAirport } from "@/types/settings/airports";
-import { useDeleteAirportMutation, useGetAirportsQuery } from "@/services/api";
+import { IAirlineMargin } from "@/types/settings/airline_margins";
+import { useDeleteAirlineMarginMutation, useGetAirlineMarginsQuery } from "@/services/api";
 
 import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -35,27 +36,32 @@ import { useToast } from "@/hooks/use-toast";
 import Image from "next/image";
 
 const AirlineMarginRow = ({
-    airport,
-    showDeleteAirportConfirmation
+    airline_margin,
+    showDeleteAirlineMarginConfirmation
 }: {
-    airport: IAirport;
-    showDeleteAirportConfirmation: (uuid: string) => void;
+    airline_margin: IAirlineMargin;
+    showDeleteAirlineMarginConfirmation: (uuid: string) => void;
 }) => {
 
-    const { id, uuid, name, municipality,iso_country, iata_code } = airport;
+    const { id, uuid, sales_channel, airline, region, margin, margin_type, rbds, is_apply_on_gross, status, remarks } = airline_margin;
 
     return (
         <>
             <TableRow className="hover:bg-base-200/40">
                 <div className="font-medium">{id}</div>
-                <div className="flex items-center space-x-3 truncate">{name}</div>
-                <div className="flex items-center space-x-3 truncate">{iso_country}</div>
-                <div className="text-sm font-medium">{iata_code}</div>
-                <div className="font-medium">{municipality}</div>
-
+                <div className="flex items-center space-x-3 truncate">{sales_channel}</div>
+                <div className="flex items-center space-x-3 truncate">{airline?.name}</div>
+                <div className="text-sm font-medium">{Number(margin) > 0 ? (<Badge color="success">{margin}{margin_type == 'amount' ? 'PKR' : '%'}</Badge>) : (<Badge color="warning">{margin}{margin_type == 'amount' ? 'PKR' : '%'}</Badge>)}</div>
+                <div className="font-medium">{region}</div>
+                <div className="font-medium">{is_apply_on_gross ? <Badge color="success">Yes</Badge> : <Badge color="warning">No</Badge>}</div>
+                <div className="font-medium">{status ? <Badge color="success" outline>Active</Badge> : <Badge color="warning" outline>In-Active</Badge>}</div>
+                <div className="font-medium">{rbds}</div>
+                <div className="text-sm">
+                    {remarks?.length > 20 ? `${remarks.slice(0, 20)}...` : remarks}
+                </div>
                 <div className="inline-flex w-fit">
                     <Link
-                        href={routes.apps.settings.airport_edit(uuid)}
+                        href={routes.apps.settings.airline_margin_edit(uuid)}
                         aria-label="Edit bank account"
                         onClick={(event) => event.stopPropagation()}
                     >
@@ -68,10 +74,9 @@ const AirlineMarginRow = ({
                         className="text-error/70 hover:bg-error/20"
                         size="sm"
                         shape="square"
-                        aria-label="Delete bank account"
                         onClick={(event) => {
                             event.stopPropagation();
-                            showDeleteAirportConfirmation(uuid);
+                            showDeleteAirlineMarginConfirmation(uuid);
                         }}
                     >
                         <Icon icon={trashIcon} fontSize={16} />
@@ -86,15 +91,15 @@ const MarginTable = () => {
     const toaster = useToast();
     const [searchText, setSearchText] = useState<string>("");
     const [pageUrl, setPageUrl] = useState<string>("");
-    const { data: detail_data } = useGetAirportsQuery({ searchText, pageUrl });
-    const airports = detail_data?.data;
+    const { data: detail_data } = useGetAirlineMarginsQuery({ searchText, pageUrl });
+    const airline_margins = detail_data?.data;
     const links = detail_data?.links;
-    const [deleteAirport, {
-        isLoading: deleteAirportLoading,
-    }] = useDeleteAirportMutation();
+    const [deleteAirlineMargin, {
+        isLoading: deleteAirlineMarginLoading,
+    }] = useDeleteAirlineMarginMutation();
 
-    const [AirportToBeDelete, setAirportToBeDelete] = useState<IAirport>();
-    const AirportDeleteConfirmationRef = useRef<HTMLDialogElement | null>(null);
+    const [AirlineMarginToBeDelete, setAirlineMarginToBeDelete] = useState<IAirlineMargin>();
+    const AirlineMarginDeleteConfirmationRef = useRef<HTMLDialogElement | null>(null);
 
     const { control: filterControl } = useForm({
         defaultValues: {
@@ -103,14 +108,14 @@ const MarginTable = () => {
         },
     });
 
-    const showDeleteAirportConfirmation = (uuid: any) => {
-        AirportDeleteConfirmationRef.current?.showModal();
-        setAirportToBeDelete(airports?.find((b) => uuid === b.uuid));
+    const showDeleteAirlineMarginConfirmation = (uuid: any) => {
+        AirlineMarginDeleteConfirmationRef.current?.showModal();
+        setAirlineMarginToBeDelete(airline_margins?.find((b) => uuid === b.uuid));
     };
 
-    const handleDeleteAirport = async () => {
-        if (AirportToBeDelete) {
-            deleteAirport(AirportToBeDelete.uuid).then((response: any) => {
+    const handleDeleteAirlineMargin = async () => {
+        if (AirlineMarginToBeDelete) {
+            deleteAirlineMargin(AirlineMarginToBeDelete.uuid).then((response: any) => {
                 if (response?.data.code == 200) {
                     toaster.success(response?.data.message);
                 } else {
@@ -162,17 +167,18 @@ const MarginTable = () => {
                                 <span className="text-sm font-medium text-base-content/80">Pricing</span>
                                 <span className="text-sm font-medium text-base-content/80">Region</span>
                                 <span className="text-sm font-medium text-base-content/80">Apply on gross fare</span>
+                                <span className="text-sm font-medium text-base-content/80">Status</span>
                                 <span className="text-sm font-medium text-base-content/80">Rbds</span>
                                 <span className="text-sm font-medium text-base-content/80">Remarks</span>
                                 <span className="text-sm font-medium text-base-content/80">Action</span>
                             </TableHead>
 
                             <TableBody>
-                                {airports?.map((airport: any, index: any) => (
+                                {airline_margins?.map((airline_margin: any, index: any) => (
                                     <AirlineMarginRow
-                                        airport={airport}
+                                        airline_margin={airline_margin}
                                         key={index}
-                                        showDeleteAirportConfirmation={showDeleteAirportConfirmation}
+                                        showDeleteAirlineMarginConfirmation={showDeleteAirlineMarginConfirmation}
                                     />
                                 ))}
                             </TableBody>
@@ -183,7 +189,7 @@ const MarginTable = () => {
                     </div>
                 </CardBody>
             </Card>
-            <Modal ref={AirportDeleteConfirmationRef} backdrop>
+            <Modal ref={AirlineMarginDeleteConfirmationRef} backdrop>
                 <form method="dialog">
                     <Button
                         size="sm"
@@ -196,7 +202,7 @@ const MarginTable = () => {
                 </form>
                 <ModalHeader className="font-bold">Confirm Delete</ModalHeader>
                 <ModalBody>
-                    You are about to delete <b>{AirportToBeDelete?.name}</b>. Would you like to proceed further ?
+                    You are about to delete. Would you like to proceed further ?
                 </ModalBody>
                 <ModalActions>
                     <form method="dialog">
@@ -205,7 +211,7 @@ const MarginTable = () => {
                         </Button>
                     </form>
                     <form method="dialog">
-                        <Button loading={deleteAirportLoading} color="primary" size="sm" onClick={() => handleDeleteAirport()}>
+                        <Button loading={deleteAirlineMarginLoading} color="primary" size="sm" onClick={() => handleDeleteAirlineMargin()}>
                             Yes
                         </Button>
                     </form>
