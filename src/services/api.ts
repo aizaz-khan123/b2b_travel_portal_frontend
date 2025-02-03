@@ -194,8 +194,6 @@ export const api = emptySplitApi.injectEndpoints({
       }),
       invalidatesTags: ['Countries'],
     }),
-
-
     getNews: builder.query<any, { pageUrl?: string; searchText?: string }>({
       query: ({ pageUrl, searchText }) => ({
         url: pageUrl || API_END_POINTS.getNews,
@@ -237,8 +235,6 @@ export const api = emptySplitApi.injectEndpoints({
       }),
       invalidatesTags: ['News'],
     }),
-
-
     getSuppliers: builder.query<any, { pageUrl?: string; searchText?: string }>({
       query: ({ pageUrl, searchText }) => ({
         url: pageUrl || API_END_POINTS.getSuppliers,
@@ -280,7 +276,6 @@ export const api = emptySplitApi.injectEndpoints({
       }),
       invalidatesTags: ['Suppliers'],
     }),
-
     showConnector: builder.query<any, string>({
       query: (type) => ({
         url: `${API_END_POINTS.showConnector}/${type}`,
@@ -295,6 +290,61 @@ export const api = emptySplitApi.injectEndpoints({
         body: updated_data,
       }),
       invalidatesTags: ['Suppliers'],
+    }),
+    airlineDropDown: builder.query<any, void>({
+      query: () => ({
+        url: API_END_POINTS.airlineDropDown,
+        method: "GET",
+      }),
+      transformResponse: (response: any) => response.data,
+    }),
+    connectorDropDown: builder.query<any, void>({
+      query: () => ({
+        url: API_END_POINTS.connectorDropDown,
+        method: "GET",
+      }),
+      transformResponse: (response: any) => response.data,
+    }),
+    getAirlineMargins: builder.query<any, { pageUrl?: string; searchText?: string }>({
+      query: ({ pageUrl, searchText }) => ({
+        url: pageUrl || API_END_POINTS.getAirlineMargins,
+        method: "GET",
+        params: {
+          q: searchText,
+        }
+      }),
+      providesTags: ["AirlineMargins"],
+      transformResponse: (response: any) => response.data,
+    }),
+    createAirlineMargin: builder.mutation({
+      query: (body) => ({
+        url: API_END_POINTS.createAirlinMargin,
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: ['AirlineMargins'],
+    }),
+    showAirlineMargin: builder.query<any, string>({
+      query: (uuid) => ({
+        url: `${API_END_POINTS.showAirlinMargin}/${uuid}`,
+        method: 'GET',
+      }),
+      transformResponse: (response: any) => response.data,
+    }),
+    updateAirlineMargin: builder.mutation({
+      query: ({ supplierId, updated_data }) => ({
+        url: `${API_END_POINTS.updateAirlinMargin}/${supplierId}`,
+        method: "POST",
+        body: updated_data,
+      }),
+      invalidatesTags: ['AirlineMargins'],
+    }),
+    deleteAirlineMargin: builder.mutation({
+      query: (id) => ({
+        url: `${API_END_POINTS.deleteAirlinMargin}/${id}`,
+        method: "GET",
+      }),
+      invalidatesTags: ['AirlineMargins'],
     }),
   }),
   overrideExisting: false,
@@ -336,5 +386,13 @@ export const {
   useDeleteSupplierMutation,
   useUpdateSupplierMutation,
   useShowConnectorQuery,
-  useUpdateConnectorMutation
+  useUpdateConnectorMutation,
+  useAirlineDropDownQuery,
+  useConnectorDropDownQuery,
+  /////////////////////////
+  useGetAirlineMarginsQuery,
+  useShowAirlineMarginQuery,
+  useCreateAirlineMarginMutation,
+  useDeleteAirlineMarginMutation,
+  useUpdateAirlineMarginMutation,
 } = api;
