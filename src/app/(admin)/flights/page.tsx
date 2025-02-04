@@ -19,6 +19,25 @@ import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { LocalizationProvider } from '@mui/x-date-pickers-pro';
 import { AdapterDayjs } from '@mui/x-date-pickers-pro/AdapterDayjs';
 import { DateRangePicker } from '@mui/x-date-pickers-pro/DateRangePicker';
+import {
+    TextField,
+    MenuItem,
+    InputAdornment,
+    IconButton,
+    ListItemIcon,
+    ListItemText,
+    Box,
+} from "@mui/material";
+import MuiDropdown from "@/components/mui/MuiDropdown";
+import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
+
+const airports = [
+    { city: "Islamabad, Pakistan", code: "ISB", name: "Islamabad International Airport" },
+    { city: "Lahore, Pakistan", code: "LHE", name: "Allama Iqbal International Airport" },
+    { city: "Bahawalpur, Pakistan", code: "BHV", name: "Bahawalpur Airport" },
+    { city: "Bannu, Pakistan", code: "BNP", name: "Bannu Airport" },
+];
+
 
 const countries = [
     {
@@ -62,7 +81,10 @@ const FlightCarousal = () => {
 
 const FlightSearch = () => {
     const { control, handleSubmit, setValue, watch } = useForm();
-
+    const cities = [
+        { city: "Karachi, Pakistan", code: "KHI", name: "Jinnah International Airport", icon: <FlightTakeoffIcon color="success" /> },
+        { city: "Multan, Pakistan", code: "MUX", name: "Multan International Airport",icon: <FlightTakeoffIcon color="success" /> },
+    ];
     const [flights, setFlights] = useState([
         { id: 1, from: null, to: null, departureDate: "" },
         { id: 2, from: null, to: null, departureDate: "" },
@@ -83,6 +105,13 @@ const FlightSearch = () => {
 
     const removeFlight = (id: any) => {
         setFlights(flights.filter((flight) => flight.id !== id));
+    };
+    const handleAirportChange = (value: string) => {
+        console.log("Selected Airport:", value);
+    };
+
+    const handleCityChange = (value: string) => {
+        console.log("Selected City:", value);
     };
 
     const onSubmit = (data: any) => {
@@ -109,9 +138,48 @@ const FlightSearch = () => {
                             </div>
                         ))}
                     </div>
-
                     {travelType !== "multiCity" ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
+                            <div className="relative">
+                                <MuiDropdown
+                                    control={control}
+                                    name="from"
+                                    label="From"
+                                    options={airports.map((city) => ({
+                                        value: city.code,  
+                                        label: `${city.city} (${city.code})`,
+                                        icon: <FlightTakeoffIcon color="success" />
+                                    }))}
+                                    onChange={handleAirportChange}
+                                />
+                                 <button
+                                    onClick={swapLocations}
+                                    type="button"
+                                    className="absolute right-[-30px] bottom-1 p-2 bg-white border border-gray-300 rounded-full shadow hover:bg-gray-300"
+                                >
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <path d="M8 3 4 7l4 4" />
+                                        <path d="M4 7h16" />
+                                        <path d="m16 21 4-4-4-4" />
+                                        <path d="M20 17H4" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <div>
+                                <MuiDropdown
+                                    control={control}
+                                    name="to"
+                                    label="To"
+                                    options={cities.map((city) => ({
+                                        value: city.code,  
+                                        label: `${city.city} (${city.code})`,
+                                        icon: <FlightTakeoffIcon color="success" />
+                                    }))}
+                                    
+                                    onChange={handleCityChange}
+                                />
+
+                            </div>
                             <div className="relative">
                                 <FormLabel title="From" htmlFor="from" />
                                 <FormSelect
