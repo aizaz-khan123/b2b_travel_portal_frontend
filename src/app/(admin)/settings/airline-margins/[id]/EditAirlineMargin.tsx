@@ -1,18 +1,26 @@
 "use client";
 
-import checkIcon from "@iconify/icons-lucide/check";
+import arrowUpFromLineIcon from "@iconify/icons-lucide/arrow-up-from-line";
 import xIcon from "@iconify/icons-lucide/x";
+import React from "react";
 import { Icon } from "@/components/Icon";
 import { Button, Card, CardBody, Form, FormLabel } from "@/components/daisyui";
-import Select from "react-select";
 import { FormInput, FormSelect, FormTextarea, FormToggle } from "@/components/forms";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useToast } from "@/hooks/use-toast";
 import { routes } from "@/lib/routes";
-import { useAirlineDropDownQuery, useConnectorDropDownQuery, useCreateAirlineMarginMutation } from "@/services/api";
+
 import { airlineMarginSchemaType, airlineMarginSchema } from "../helpers";
+import { useAirlineDropDownQuery, useConnectorDropDownQuery, useShowAirlineMarginQuery, useUpdateAirlineMarginMutation } from "@/services/api";
+import Select from "react-select";
+
+type EditAirlineMargin = {
+    airlineMarginId: string;
+};
 
 const regionOptions = [
     { label: "ALL-SECTORS", value: "ALL-SECTORS" },
@@ -23,49 +31,102 @@ const regionOptions = [
     { label: "EX-PAKISTAN", value: "EX-PAKISTAN" },
 ];
 
-const CreateAirlineMargin = () => {
+const EditAirlineMargin = ({ airlineMarginId }: EditAirlineMargin) => {
 
     const toaster = useToast();
     const router = useRouter();
-    const [createAirlineMargin, { isLoading }] = useCreateAirlineMarginMutation();
 
     const { data: airlineDropDown } = useAirlineDropDownQuery();
     const { data: connectorDropDown } = useConnectorDropDownQuery();
 
-
-    const { control, handleSubmit, setError } = useForm<airlineMarginSchemaType>({
-        resolver: zodResolver(airlineMarginSchema),
-        defaultValues:{
-            is_apply_on_gross: false,
-            status: true
-        }
+    const {
+        data: airline_margin,
+        isSuccess: isAirlineMarginSuccess,
+        error,
+        isLoading: isShowLoading,
+        refetch
+    } = useShowAirlineMarginQuery(airlineMarginId, {
+        refetchOnMountOrArgChange: true,
     });
+
+    const [updateAirlineMargin, { error: errorAirlineMargin, isLoading: isLoadingAirlineMargin }] = useUpdateAirlineMarginMutation();
+
+    const { control, handleSubmit, setError, reset } = useForm<airlineMarginSchemaType>({
+        resolver: zodResolver(airlineMarginSchema),
+    });
+
+    useEffect(() => {
+        refetch();
+    }, []);
+
+    useEffect(() => {
+        if (isAirlineMarginSuccess && airline_margin) {
+            reset({
+                sales_channel:airline_margin.sales_channel,
+                airline_id:airline_margin.airline_id,
+                region:airline_margin.region.split(", ").map((item: string) => item.trim()),
+                margin:airline_margin.margin.toString(),
+                margin_type:airline_margin.margin_type,
+                sale_start_continue:airline_margin.sale_start_continue,
+                sale_end_continue:airline_margin.sale_end_continue,
+                travel_start_continue:airline_margin.travel_start_continue,
+                travel_end_continue:airline_margin.travel_end_continue,
+                rbds:airline_margin.rbds,
+                is_apply_on_gross:airline_margin.is_apply_on_gross,
+                status:airline_margin.status,
+                remarks:airline_margin.remarks
+            });
+        }
+    }, [airline_margin, isAirlineMarginSuccess, reset]);
 
     const setErrors = (errors: Record<string, any>) => {
         Object.entries(errors).forEach(([key, value]: any[]) => setError(key, { message: value }));
     };
 
-    const onSubmit = handleSubmit(async (data: airlineMarginSchemaType) => {
-        await createAirlineMargin(data).then((response: any) => {
-            const { status, data } = response?.data;
-            if (status) {
-                toaster.success(`Airline Margin has been created`);
+    const onSubmit = handleSubmit(async (data) => {
+
+        const updated_data = {
+            _method: 'put',
+            ...data
+        }
+        
+        await updateAirlineMargin({ airlineMarginId, updated_data }).then((response: any) => {
+            if (response.data?.code == 200) {
+                toaster.success(response?.data?.message);
+                refetch();
                 router.push(routes.apps.settings.airline_margins);
             } else {
-                setErrors(response?.data?.errors);
+                setErrors(errorAirlineMargin?.data?.errors)
             }
         });
     });
-
 
     const handleCancel = () => {
         router.back();
     };
 
+    if (isShowLoading) {
+        return (
+            <div className="flex items-center justify-center h-64">
+                <span className="loading loading-spinner loading-lg"></span>
+                <p className="ml-2">Loading airline margin details...</p>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="flex flex-col items-center justify-center h-64 text-red-500">
+                <p>Error fetching bank account details.</p>
+                <p>{error?.message || "Something went wrong!"}</p>
+            </div>
+        );
+    }
+
     return (
         <div>
             <div className="grid grid-cols-1 gap-6 xl:grid-cols-1">
-                <Card className="bg-base-100">
+            <Card className="bg-base-100">
                     <CardBody className="gap-0">
                         <div className="mt-1 grid grid-cols-1 gap-5 gap-y-3 md:grid-cols-2">
                             <div>
@@ -244,7 +305,7 @@ const CreateAirlineMargin = () => {
                     </CardBody>
                 </Card>
             </div>
-            <div className="mt-6 flex justify-end gap-6">
+            <div className="mt-5 flex justify-end gap-4">
                 <Button
                     color="ghost"
                     size="md"
@@ -257,13 +318,13 @@ const CreateAirlineMargin = () => {
                     color="primary"
                     size="md"
                     onClick={onSubmit}
-                    startIcon={<Icon icon={checkIcon} fontSize={18} />}
-                    loading={isLoading}>
-                    Save
+                    startIcon={<Icon icon={arrowUpFromLineIcon} fontSize={18} />}
+                    loading={isLoadingAirlineMargin}>
+                    Update
                 </Button>
             </div>
         </div>
     );
 };
 
-export { CreateAirlineMargin };
+export { EditAirlineMargin };

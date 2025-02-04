@@ -332,8 +332,8 @@ export const api = emptySplitApi.injectEndpoints({
       transformResponse: (response: any) => response.data,
     }),
     updateAirlineMargin: builder.mutation({
-      query: ({ supplierId, updated_data }) => ({
-        url: `${API_END_POINTS.updateAirlinMargin}/${supplierId}`,
+      query: ({ airlineMarginId, updated_data }) => ({
+        url: `${API_END_POINTS.updateAirlinMargin}/${airlineMarginId}`,
         method: "POST",
         body: updated_data,
       }),

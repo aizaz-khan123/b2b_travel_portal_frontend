@@ -1,6 +1,5 @@
 "use client";
 
-import product1Img from "@/assets/images/apps/ecommerce/products/1.jpg";
 import pencilIcon from "@iconify/icons-lucide/pencil";
 import searchIcon from "@iconify/icons-lucide/search";
 import trashIcon from "@iconify/icons-lucide/trash";
@@ -33,7 +32,6 @@ import { useDeleteAirlineMarginMutation, useGetAirlineMarginsQuery } from "@/ser
 import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useToast } from "@/hooks/use-toast";
-import Image from "next/image";
 
 const AirlineMarginRow = ({
     airline_margin,
@@ -51,7 +49,7 @@ const AirlineMarginRow = ({
                 <div className="font-medium">{id}</div>
                 <div className="flex items-center space-x-3 truncate">{sales_channel}</div>
                 <div className="flex items-center space-x-3 truncate">{airline?.name}</div>
-                <div className="text-sm font-medium">{Number(margin) > 0 ? (<Badge color="success">{margin}{margin_type == 'amount' ? 'PKR' : '%'}</Badge>) : (<Badge color="warning">{margin}{margin_type == 'amount' ? 'PKR' : '%'}</Badge>)}</div>
+                <div className="text-sm font-medium">{Number(margin) > 0 ? (<Badge color="warning">{margin}{margin_type == 'amount' ? 'PKR' : '%'}</Badge>) : (<Badge color="success">{margin}{margin_type == 'amount' ? 'PKR' : '%'}</Badge>)}</div>
                 <div className="font-medium">{region}</div>
                 <div className="font-medium">{is_apply_on_gross ? <Badge color="success">Yes</Badge> : <Badge color="warning">No</Badge>}</div>
                 <div className="font-medium">{status ? <Badge color="success" outline>Active</Badge> : <Badge color="warning" outline>In-Active</Badge>}</div>
@@ -66,7 +64,7 @@ const AirlineMarginRow = ({
                         onClick={(event) => event.stopPropagation()}
                     >
                         <Button color="ghost" size="sm" shape="square" aria-label="Edit bank account">
-                            <Icon icon={pencilIcon} className="text-base-content/70" fontSize={15} />
+                            <Icon icon={pencilIcon} className="text-base-content/70" fontSize={20} />
                         </Button>
                     </Link>
                     <Button
@@ -79,7 +77,7 @@ const AirlineMarginRow = ({
                             showDeleteAirlineMarginConfirmation(uuid);
                         }}
                     >
-                        <Icon icon={trashIcon} fontSize={16} />
+                        <Icon icon={trashIcon} fontSize={22} />
                     </Button>
                 </div>
             </TableRow>
@@ -137,7 +135,7 @@ const MarginTable = () => {
                 <CardBody className={"p-0"}>
                     <div className="flex items-center justify-between px-5 pt-5">
                         <div className="inline-flex items-center gap-3">
-                            <FormInput
+                            {/* <FormInput
                                 startIcon={<Icon icon={searchIcon} className="text-base-content/70" fontSize={20} />}
                                 size="md"
                                 placeholder="Search Here"
@@ -147,7 +145,7 @@ const MarginTable = () => {
                                 name="search"
                                 className="w-full focus:border-transparent focus:outline-0"
                                 onChange={(e) => setSearchText(e.target.value)}
-                            />
+                            /> */}
                         </div>
                         <div className="inline-flex items-center gap-3">
                             <Link href={routes.apps.settings.airline_margin_create} aria-label={"Create product link"}>

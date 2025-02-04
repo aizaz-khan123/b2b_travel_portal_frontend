@@ -2,27 +2,27 @@ import { Metadata } from "next";
 import React from "react";
 import { PageTitle } from "@/components/PageTitle";
 import { routes } from "@/lib/routes";
-import { EditAirport } from "./EditAirport";
+import { EditAirlineMargin } from "./EditAirlineMargin";
 
 export const metadata: Metadata = {
-    title: "Edit Airport",
+    title: "Edit Airline Margin & Commission",
 };
 
-const EditAirlinePage = async ({ params }: { params: { id: string } }) => {
+const EditAirlineMarginPage = async ({ params }: { params: { id: string } }) => {
     return (
         <div>
             <PageTitle
-                title={"Edit Airport"}
+                title={"Edit Airline Margin & Commission"}
                 breadCrumbItems={[
-                    { label: "Airports", path: routes.apps.settings.airports },
+                    { label: "Airline Margin & Commission", path: routes.apps.settings.airline_margins },
                     { label: "Edit", active: true },
                 ]}
             />
             <div className="mt-5">
-                <EditAirport airportId={params.id} />
+                <EditAirlineMargin airlineMarginId={params.id} />
             </div>
         </div>
     );
 };
 
-export default EditAirlinePage;
+export default EditAirlineMarginPage;

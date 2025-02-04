@@ -5,7 +5,7 @@ import xIcon from "@iconify/icons-lucide/x";
 import React from "react";
 import { Icon } from "@/components/Icon";
 import { Button, Card, CardBody, CardTitle, Form, FormLabel } from "@/components/daisyui";
-import { FileUploader, FormInput, FormSelect, FormToggle } from "@/components/forms";
+import { FileUploader, FormInput, FormSelect, FormTextarea, FormToggle } from "@/components/forms";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
@@ -14,31 +14,31 @@ import { useForm } from "react-hook-form";
 import { useToast } from "@/hooks/use-toast";
 import { routes } from "@/lib/routes";
 
-import { AirportSchemaType, airportSchema } from "../helpers";
-import { useShowAirportQuery, useUpdateAirportMutation } from "@/services/api";
+import { SupplierSchemaType, supplierSchema } from "../helpers";
+import { useShowSupplierQuery, useUpdateSupplierMutation } from "@/services/api";
 
-type EditAirportProps = {
-    airportId: string;
+type EditSupplierProps = {
+    supplierId: string;
 };
 
-const EditAirport = ({ airportId }: EditAirportProps) => {
+const EditSupplier = ({ supplierId }: EditSupplierProps) => {
 
     const toaster = useToast();
     const router = useRouter();
     const {
-        data: airport,
-        isSuccess: isAirportSuccess,
+        data: supplier,
+        isSuccess: isSupplierSuccess,
         error,
         isLoading: isShowLoading,
         refetch
-    } = useShowAirportQuery(airportId, {
+    } = useShowSupplierQuery(supplierId, {
         refetchOnMountOrArgChange: true,
     });
 
-    const [updateAirport, { error: errorAirport, isLoading: isLoadingAirport }] = useUpdateAirportMutation();
+    const [updateSupplier, { error: errorSupplier, isLoading: isLoadingSupplier }] = useUpdateSupplierMutation();
 
-    const { control, handleSubmit, setError, setValue, watch, reset } = useForm<AirportSchemaType>({
-        resolver: zodResolver(airportSchema),
+    const { control, handleSubmit, setError, setValue, watch, reset } = useForm<SupplierSchemaType>({
+        resolver: zodResolver(supplierSchema),
     });
 
     useEffect(() => {
@@ -46,15 +46,14 @@ const EditAirport = ({ airportId }: EditAirportProps) => {
     }, []);
 
     useEffect(() => {
-        if (isAirportSuccess && airport) {
+        if (isSupplierSuccess && supplier) {
             reset({
-                name: airport.name,
-                municipality: airport.municipality,
-                iso_country: airport.iso_country,
-                iata_code: airport.iata_code
+                name: supplier.name,
+                description: supplier.description,
+                status: supplier.status,
             });
         }
-    }, [airport, isAirportSuccess, reset]);
+    }, [supplier, isSupplierSuccess, reset]);
 
     const setErrors = (errors: Record<string, any>) => {
         Object.entries(errors).forEach(([key, value]: any[]) => setError(key, { message: value }));
@@ -66,13 +65,13 @@ const EditAirport = ({ airportId }: EditAirportProps) => {
             _method: 'put',
             ...data
         }
-        await updateAirport({ airportId, updated_data }).then((response: any) => {
+        await updateSupplier({ supplierId, updated_data }).then((response: any) => {
             if (response.data?.code == 200) {
                 toaster.success(response?.data?.message);
                 refetch();
-                router.push(routes.apps.settings.airports);
+                router.push(routes.apps.settings.suppliers);
             } else {
-                setErrors(errorAirport?.data?.errors)
+                setErrors(errorSupplier?.data?.errors)
             }
         });
     });
@@ -85,7 +84,7 @@ const EditAirport = ({ airportId }: EditAirportProps) => {
         return (
             <div className="flex items-center justify-center h-64">
                 <span className="loading loading-spinner loading-lg"></span>
-                <p className="ml-2">Loading bank account details...</p>
+                <p className="ml-2">Loading supplier details...</p>
             </div>
         );
     }
@@ -93,7 +92,7 @@ const EditAirport = ({ airportId }: EditAirportProps) => {
     if (error) {
         return (
             <div className="flex flex-col items-center justify-center h-64 text-red-500">
-                <p>Error fetching bank account details.</p>
+                <p>Error fetching supplier details.</p>
                 <p>{error?.message || "Something went wrong!"}</p>
             </div>
         );
@@ -104,50 +103,37 @@ const EditAirport = ({ airportId }: EditAirportProps) => {
             <div className="grid grid-cols-1 gap-6 xl:grid-cols-1">
             <Card className="bg-base-100">
                     <CardBody className="gap-0">
-                        <CardTitle>Airport Information</CardTitle>
+                        <CardTitle>Supplier Information</CardTitle>
                         <div className="mt-1 grid grid-cols-1 gap-5 gap-y-3 md:grid-cols-2">
                             <div>
-                                <FormLabel title={"Airport Name"} htmlFor="name"></FormLabel>
+                                <FormLabel title={"Supplier Name"} htmlFor="name"></FormLabel>
                                 <FormInput
                                     className="w-full border-0 focus:outline-0"
                                     control={control}
                                     size="md"
                                     id="name"
                                     name="name"
-                                    placeholder="Enter Airport Name"
+                                    placeholder="Enter Supplier Name"
                                 />
                             </div>
+
                             <div>
-                                <FormLabel title={"ISO Country"} htmlFor="iso_country"></FormLabel>
-                                <FormInput
-                                    className="w-full border-0 focus:outline-0"
-                                    control={control}
-                                    size="md"
-                                    id="iso_country"
-                                    name="iso_country"
-                                    placeholder="Enter ISO Country"
-                                />
+                                <Form className="mt-7 w-fit rounded-lg">
+                                    <FormLabel title="Status">
+                                        <FormToggle control={control} aria-label="Toggle" name="status" className="m-2" color="primary"/>
+                                    </FormLabel>
+                                </Form>
                             </div>
-                            <div>
-                                <FormLabel title={"Municipality"} htmlFor="municipality"></FormLabel>
-                                <FormInput
-                                    className="w-full border-0 focus:outline-0"
+
+                            <div className="col-span-1 md:col-span-2">
+                                <FormLabel title={"Description"} htmlFor="description"></FormLabel>
+                                <FormTextarea
+                                    className="w-full border-0 px-0 focus:outline-0"
                                     control={control}
-                                    size="md"
-                                    id="municipality"
-                                    name="municipality"
-                                    placeholder="Enter Municipality"
-                                />
-                            </div>
-                            <div>
-                                <FormLabel title={"IATA Code"} htmlFor="iata_code"></FormLabel>
-                                <FormInput
-                                    className="w-full border-0 focus:outline-0"
-                                    control={control}
-                                    size="md"
-                                    id="iata_code"
-                                    name="iata_code"
-                                    placeholder="Enter IATA Code"
+                                    size={"md"}
+                                    id="description"
+                                    name={"description"}
+                                    placeholder="Description"
                                 />
                             </div>
                         </div>
@@ -168,7 +154,7 @@ const EditAirport = ({ airportId }: EditAirportProps) => {
                     size="md"
                     onClick={onSubmit}
                     startIcon={<Icon icon={arrowUpFromLineIcon} fontSize={18} />}
-                    loading={isLoadingAirport}>
+                    loading={isLoadingSupplier}>
                     Update
                 </Button>
             </div>
@@ -176,4 +162,4 @@ const EditAirport = ({ airportId }: EditAirportProps) => {
     );
 };
 
-export { EditAirport };
+export { EditSupplier };

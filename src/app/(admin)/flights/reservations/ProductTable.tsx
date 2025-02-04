@@ -100,7 +100,7 @@ const ProductRow = ({ product }: { product: IEcommerceProduct }) => {
                             event.stopPropagation();
                         }}>
                         <Button color="ghost" size="sm" shape={"square"} aria-label="Edit product">
-                            <Icon icon={pencilIcon} className="text-base-content/70" fontSize={15} />
+                            <Icon icon={pencilIcon} className="text-base-content/70" fontSize={20} />
                         </Button>
                     </Link>
                     <Button color="ghost" size="sm" shape={"square"} aria-label="Dummy show product">
@@ -116,7 +116,7 @@ const ProductRow = ({ product }: { product: IEcommerceProduct }) => {
                             event.stopPropagation();
                             showDeleteProductConfirmation(id);
                         }}>
-                        <Icon icon={trashIcon} fontSize={16} />
+                        <Icon icon={trashIcon} fontSize={22} />
                     </Button>
                 </div>
             </TableRow>
