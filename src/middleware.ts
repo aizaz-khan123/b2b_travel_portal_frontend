@@ -18,14 +18,14 @@ export const middleware: NextMiddleware = async (request: NextRequest) => {
 
   const loggedInUser = await getAuthCookie();
 
-  if (!loggedInUser?.user) {
-    if (request.nextUrl.pathname == '/') {
-      return NextResponse.next();
-    }
-    return NextResponse.redirect(
-        new URL(`${routes.auth.login}?redirectTo=${request.nextUrl.pathname}`, request.url),
-    );
-  }
+//   if (!loggedInUser?.user) {
+//     if (request.nextUrl.pathname == '/') {
+//       return NextResponse.next();
+//     }
+//     return NextResponse.redirect(
+//         new URL(`${routes.auth.login}?redirectTo=${request.nextUrl.pathname}`, request.url),
+//     );
+//   }
 };
 
 export const config = {
