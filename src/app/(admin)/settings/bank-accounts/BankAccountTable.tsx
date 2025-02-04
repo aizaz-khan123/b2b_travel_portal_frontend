@@ -68,7 +68,7 @@ const BankAccountRow = ({
                         onClick={(event) => event.stopPropagation()}
                     >
                         <Button color="ghost" size="sm" shape="square" aria-label="Edit bank account">
-                            <Icon icon={pencilIcon} className="text-base-content/70" fontSize={15} />
+                            <Icon icon={pencilIcon} className="text-base-content/70" fontSize={20} />
                         </Button>
                     </Link>
                     <Button
@@ -82,7 +82,7 @@ const BankAccountRow = ({
                             showDeleteBankAccountConfirmation(uuid);
                         }}
                     >
-                        <Icon icon={trashIcon} fontSize={16} />
+                        <Icon icon={trashIcon} fontSize={22} />
                     </Button>
                 </div>
             </TableRow>

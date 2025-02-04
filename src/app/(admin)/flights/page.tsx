@@ -84,7 +84,7 @@ const FlightSearch = () => {
                             <div>
                                 <FormLabel title={"From"} htmlFor="from" />
                                 <FormSelect
-                                    // startIcon={<Icon icon={pencilIcon} className="text-base-content/70" fontSize={15} />}
+                                    // startIcon={<Icon icon={pencilIcon} className="text-base-content/70" fontSize={20} />}
                                     control={control}
                                     name="from"
                                     // instanceId="from"
