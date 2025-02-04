@@ -9,6 +9,7 @@ import Link from "next/link";
 
 import { Icon } from "@/components/Icon";
 import {
+    Badge,
     Button,
     Card,
     CardBody,
@@ -25,35 +26,40 @@ import Pagination from "@/components/Pagination/Pagination";
 import { FormInput } from "@/components/forms";
 import { routes } from "@/lib/routes";
 
-import { ICountry } from "@/types/settings/countries";
-import { useDeleteCountryMutation, useGetCountriesQuery } from "@/services/api";
+import { IAirlineMargin } from "@/types/settings/airline_margins";
+import { useDeleteAirlineMarginMutation, useGetAirlineMarginsQuery } from "@/services/api";
 
 import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useToast } from "@/hooks/use-toast";
 
-const CountryRow = ({
-    country,
-    showDeleteCountryConfirmation
+const AirlineMarginRow = ({
+    airline_margin,
+    showDeleteAirlineMarginConfirmation
 }: {
-    country: ICountry;
-    showDeleteCountryConfirmation: (uuid: string) => void;
+    airline_margin: IAirlineMargin;
+    showDeleteAirlineMarginConfirmation: (uuid: string) => void;
 }) => {
 
-    const { id, uuid, name, nice_name,iso, iso3 } = country;
+    const { id, uuid, sales_channel, airline, region, margin, margin_type, rbds, is_apply_on_gross, status, remarks } = airline_margin;
 
     return (
         <>
             <TableRow className="hover:bg-base-200/40">
                 <div className="font-medium">{id}</div>
-                <div className="flex items-center space-x-3 truncate">{name}</div>
-                <div className="flex items-center space-x-3 truncate">{nice_name}</div>
-                <div className="text-sm font-medium">{iso}</div>
-                <div className="font-medium">{iso3}</div>
-
+                <div className="flex items-center space-x-3 truncate">{sales_channel}</div>
+                <div className="flex items-center space-x-3 truncate">{airline?.name}</div>
+                <div className="text-sm font-medium">{Number(margin) > 0 ? (<Badge color="warning">{margin}{margin_type == 'amount' ? 'PKR' : '%'}</Badge>) : (<Badge color="success">{margin}{margin_type == 'amount' ? 'PKR' : '%'}</Badge>)}</div>
+                <div className="font-medium">{region}</div>
+                <div className="font-medium">{is_apply_on_gross ? <Badge color="success">Yes</Badge> : <Badge color="warning">No</Badge>}</div>
+                <div className="font-medium">{status ? <Badge color="success" outline>Active</Badge> : <Badge color="warning" outline>In-Active</Badge>}</div>
+                <div className="font-medium">{rbds}</div>
+                <div className="text-sm">
+                    {remarks?.length > 20 ? `${remarks.slice(0, 20)}...` : remarks}
+                </div>
                 <div className="inline-flex w-fit">
                     <Link
-                        href={routes.apps.settings.country_edit(uuid)}
+                        href={routes.apps.settings.airline_margin_edit(uuid)}
                         aria-label="Edit bank account"
                         onClick={(event) => event.stopPropagation()}
                     >
@@ -66,10 +72,9 @@ const CountryRow = ({
                         className="text-error/70 hover:bg-error/20"
                         size="sm"
                         shape="square"
-                        aria-label="Delete bank account"
                         onClick={(event) => {
                             event.stopPropagation();
-                            showDeleteCountryConfirmation(uuid);
+                            showDeleteAirlineMarginConfirmation(uuid);
                         }}
                     >
                         <Icon icon={trashIcon} fontSize={22} />
@@ -80,20 +85,19 @@ const CountryRow = ({
     );
 };
 
-const CountryTable = () => {
+const MarginTable = () => {
     const toaster = useToast();
     const [searchText, setSearchText] = useState<string>("");
     const [pageUrl, setPageUrl] = useState<string>("");
-    const { data: detail_data } = useGetCountriesQuery({ searchText, pageUrl });
-    const countries = detail_data?.data;
-    console.log(countries);
+    const { data: detail_data } = useGetAirlineMarginsQuery({ searchText, pageUrl });
+    const airline_margins = detail_data?.data;
     const links = detail_data?.links;
-    const [deleteCountry, {
-        isLoading: deleteCountryLoading,
-    }] = useDeleteCountryMutation();
+    const [deleteAirlineMargin, {
+        isLoading: deleteAirlineMarginLoading,
+    }] = useDeleteAirlineMarginMutation();
 
-    const [CountryToBeDelete, setCountryToBeDelete] = useState<ICountry>();
-    const CountryDeleteConfirmationRef = useRef<HTMLDialogElement | null>(null);
+    const [AirlineMarginToBeDelete, setAirlineMarginToBeDelete] = useState<IAirlineMargin>();
+    const AirlineMarginDeleteConfirmationRef = useRef<HTMLDialogElement | null>(null);
 
     const { control: filterControl } = useForm({
         defaultValues: {
@@ -102,14 +106,14 @@ const CountryTable = () => {
         },
     });
 
-    const showDeleteCountryConfirmation = (uuid: any) => {
-        CountryDeleteConfirmationRef.current?.showModal();
-        setCountryToBeDelete(countries?.find((b) => uuid === b.uuid));
+    const showDeleteAirlineMarginConfirmation = (uuid: any) => {
+        AirlineMarginDeleteConfirmationRef.current?.showModal();
+        setAirlineMarginToBeDelete(airline_margins?.find((b) => uuid === b.uuid));
     };
 
-    const handleDeleteCountry = async () => {
-        if (CountryToBeDelete) {
-            deleteCountry(CountryToBeDelete.uuid).then((response: any) => {
+    const handleDeleteAirlineMargin = async () => {
+        if (AirlineMarginToBeDelete) {
+            deleteAirlineMargin(AirlineMarginToBeDelete.uuid).then((response: any) => {
                 if (response?.data.code == 200) {
                     toaster.success(response?.data.message);
                 } else {
@@ -131,7 +135,7 @@ const CountryTable = () => {
                 <CardBody className={"p-0"}>
                     <div className="flex items-center justify-between px-5 pt-5">
                         <div className="inline-flex items-center gap-3">
-                            <FormInput
+                            {/* <FormInput
                                 startIcon={<Icon icon={searchIcon} className="text-base-content/70" fontSize={20} />}
                                 size="md"
                                 placeholder="Search Here"
@@ -141,13 +145,13 @@ const CountryTable = () => {
                                 name="search"
                                 className="w-full focus:border-transparent focus:outline-0"
                                 onChange={(e) => setSearchText(e.target.value)}
-                            />
+                            /> */}
                         </div>
                         <div className="inline-flex items-center gap-3">
-                            <Link href={routes.apps.settings.country_create} aria-label={"Create product link"}>
+                            <Link href={routes.apps.settings.airline_margin_create} aria-label={"Create product link"}>
                                 <Button color="primary" size="md" className="hidden md:flex">
                                     <Icon icon={plusIcon} fontSize={16} />
-                                    <span>New Country</span>
+                                    <span>New Airline Margin</span>
                                 </Button>
                             </Link>
                         </div>
@@ -156,19 +160,23 @@ const CountryTable = () => {
                         <Table className="mt-2 rounded-box">
                             <TableHead>
                                 <span className="text-sm font-medium text-base-content/80">ID</span>
-                                <span className="text-sm font-medium text-base-content/80">Country Name</span>
-                                <span className="text-sm font-medium text-base-content/80">Nice Name</span>
-                                <span className="text-sm font-medium text-base-content/80">ISO</span>
-                                <span className="text-sm font-medium text-base-content/80">ISO3</span>
+                                <span className="text-sm font-medium text-base-content/80">Sales Channel</span>
+                                <span className="text-sm font-medium text-base-content/80">Airline</span>
+                                <span className="text-sm font-medium text-base-content/80">Pricing</span>
+                                <span className="text-sm font-medium text-base-content/80">Region</span>
+                                <span className="text-sm font-medium text-base-content/80">Apply on gross fare</span>
+                                <span className="text-sm font-medium text-base-content/80">Status</span>
+                                <span className="text-sm font-medium text-base-content/80">Rbds</span>
+                                <span className="text-sm font-medium text-base-content/80">Remarks</span>
                                 <span className="text-sm font-medium text-base-content/80">Action</span>
                             </TableHead>
 
                             <TableBody>
-                                {countries?.map((country: any, index: any) => (
-                                    <CountryRow
-                                        country={country}
+                                {airline_margins?.map((airline_margin: any, index: any) => (
+                                    <AirlineMarginRow
+                                        airline_margin={airline_margin}
                                         key={index}
-                                        showDeleteCountryConfirmation={showDeleteCountryConfirmation}
+                                        showDeleteAirlineMarginConfirmation={showDeleteAirlineMarginConfirmation}
                                     />
                                 ))}
                             </TableBody>
@@ -179,7 +187,7 @@ const CountryTable = () => {
                     </div>
                 </CardBody>
             </Card>
-            <Modal ref={CountryDeleteConfirmationRef} backdrop>
+            <Modal ref={AirlineMarginDeleteConfirmationRef} backdrop>
                 <form method="dialog">
                     <Button
                         size="sm"
@@ -192,7 +200,7 @@ const CountryTable = () => {
                 </form>
                 <ModalHeader className="font-bold">Confirm Delete</ModalHeader>
                 <ModalBody>
-                    You are about to delete <b>{CountryToBeDelete?.name}</b>. Would you like to proceed further ?
+                    You are about to delete. Would you like to proceed further ?
                 </ModalBody>
                 <ModalActions>
                     <form method="dialog">
@@ -201,7 +209,7 @@ const CountryTable = () => {
                         </Button>
                     </form>
                     <form method="dialog">
-                        <Button loading={deleteCountryLoading} color="primary" size="sm" onClick={() => handleDeleteCountry()}>
+                        <Button loading={deleteAirlineMarginLoading} color="primary" size="sm" onClick={() => handleDeleteAirlineMargin()}>
                             Yes
                         </Button>
                     </form>
@@ -211,4 +219,4 @@ const CountryTable = () => {
     );
 };
 
-export { CountryTable };
+export { MarginTable };

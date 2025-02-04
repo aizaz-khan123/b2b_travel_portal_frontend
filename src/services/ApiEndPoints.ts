@@ -43,9 +43,14 @@ export const API_END_POINTS = {
   showSupplier: BASE_URL_V1 + '/settings/supplier/show',
   updateSupplier: BASE_URL_V1 + '/settings/supplier/update',
   deleteSupplier: BASE_URL_V1 + '/settings/supplier/delete',
-
-
   supplierDropDownList: BASE_URL_V1 + '/settings/supplier/drop-down',
   showConnector: BASE_URL_V1 + '/settings/connector/show',
   updateConnector: BASE_URL_V1 + '/settings/connector/update',
+  airlineDropDown: BASE_URL_V1 + '/settings/airline/drop-down',
+  connectorDropDown: BASE_URL_V1 + '/settings/connector/drop-down',
+  getAirlineMargins: BASE_URL_V1 + '/settings/airline-margin/index',
+  createAirlinMargin: BASE_URL_V1 + '/settings/airline-margin/store',
+  showAirlinMargin: BASE_URL_V1 + '/settings/airline-margin/show',
+  updateAirlinMargin: BASE_URL_V1 + '/settings/airline-margin/update',
+  deleteAirlinMargin: BASE_URL_V1 + '/settings/airline-margin/delete',
 };

@@ -32,11 +32,9 @@ const routes = {
             airlines: '/settings/airlines',
             airline_create: '/settings/airlines/create',
             airline_edit: (id: string) => `/settings/airlines/${id}`,
-            airline_margins: '/settings/airline-margins',
             bank_accounts: '/settings/bank-accounts',
             bank_account_create: '/settings/bank-accounts/create',
-            bank_account_edit: (id: string) => `/settings/bank-accounts/${id}`,
-            
+            bank_account_edit: (id: string) => `/settings/bank-accounts/${id}`,  
             connectors: '/settings/connectors',
             airports: '/settings/airports',
             airport_create: '/settings/airports/create',
@@ -50,6 +48,11 @@ const routes = {
             suppliers:'/settings/suppliers',
             supplier_create:'/settings/suppliers/create',
             supplier_edit: (id: string) => `/settings/suppliers/${id}`,
+
+            airline_margins: '/settings/airline-margins',
+            airline_margin_create: '/settings/airline-margins/create',
+            airline_margin_edit: (id: string)=> `/settings/airline-margins/${id}`,
+
         },
         accounts: {
             agency_deposites: '/accounts/agency-deposites',
