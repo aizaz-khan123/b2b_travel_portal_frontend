@@ -15,6 +15,12 @@ import plus from "@iconify/icons-lucide/plus";
 import info from "@iconify/icons-lucide/info";
 
 import { Fragment, useRef, useState } from "react";
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import { LocalizationProvider } from '@mui/x-date-pickers-pro';
+import { AdapterDayjs } from '@mui/x-date-pickers-pro/AdapterDayjs';
+import { DateRangePicker } from '@mui/x-date-pickers-pro/DateRangePicker';
+
+
 
 const countries = [
     {
@@ -150,6 +156,11 @@ const FlightSearch = () => {
                                     placeholder="Going to"
                                 />
                             </div>
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <DemoContainer components={['DateRangePicker']}>
+                                    <DateRangePicker localeText={{ start: 'Check-in', end: 'Check-out' }} />
+                                </DemoContainer>
+                            </LocalizationProvider>
                             <div>
                                 <FormLabel title="Departure Date" htmlFor="departureDate" />
                                 <FormInput
