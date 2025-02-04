@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Card, CardBody, FormLabel } from "@/components/daisyui";
+import { Button, Card, CardBody, FormLabel, Modal, ModalBody, ModalHeader } from "@/components/daisyui";
 import { FormInput, FormRadio, FormSelect } from "@/components/forms";
 import { Icon } from "@/components/Icon";
 import calendarIcon from "@iconify/icons-lucide/calendar";
@@ -14,19 +14,27 @@ import refreshCcw from "@iconify/icons-lucide/refresh-ccw";
 import plus from "@iconify/icons-lucide/plus";
 import info from "@iconify/icons-lucide/info";
 
+import { Fragment, useRef, useState } from "react";
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import { LocalizationProvider } from '@mui/x-date-pickers-pro';
+import { AdapterDayjs } from '@mui/x-date-pickers-pro/AdapterDayjs';
+import { DateRangePicker } from '@mui/x-date-pickers-pro/DateRangePicker';
+
+
+
 const countries = [
     {
         id: 1,
         title: "Pak",
     }, {
-        id: 1,
-        title: "Pak",
+        id: 2,
+        title: "Aus",
     }, {
-        id: 1,
-        title: "Pak",
+        id: 3,
+        title: "Ind",
     }, {
-        id: 1,
-        title: "Pak",
+        id: 4,
+        title: "South",
     },
 ];
 
@@ -51,45 +59,68 @@ const FlightCarousal = () => {
         </Carousel>
     );
 };
+
+
+
 const FlightSearch = () => {
-    const { control, handleSubmit } = useForm();
+    const { control, handleSubmit, setValue, watch } = useForm();
+
+    const [flights, setFlights] = useState([
+        { id: 1, from: null, to: null, departureDate: "" },
+        { id: 2, from: null, to: null, departureDate: "" },
+    ]);
+
+    const swapLocations = () => {
+        const from = watch("from");
+        const to = watch("to");
+        setValue("from", to);
+        setValue("to", from);
+    };
+
+    const addFlight = () => {
+        if (flights.length < 5) {
+            setFlights([...flights, { id: Date.now(), from: null, to: null, departureDate: "" }]);
+        }
+    };
+
+    const removeFlight = (id: any) => {
+        setFlights(flights.filter((flight) => flight.id !== id));
+    };
+
     const onSubmit = (data: any) => {
         console.log("Form submitted:", data);
     };
-
+    const travelType = watch("travelType", "oneWay");
     return (
         <Card className="bg-base-100/80 backdrop-blur-lg rounded-lg shadow-md mb-5">
             <CardBody className="p-6">
-                <div>
-                    <h2 className="text-xl font-semibold mb-4">Search Flights</h2>
-                    <form onSubmit={handleSubmit(onSubmit)}>
-                        {/* Travel Type */}
-                        <div className="flex items-center gap-4 mb-4">
-                            <span className="font-medium">Travel Type:</span>
-                            <div className="flex items-center gap-1">
-                                <FormRadio name={"travelType"} control={control} id="oneWay" value="oneWay" size="sm" />
-                                <FormLabel title="One Way" htmlFor="oneWay" />
+                <h2 className="text-xl font-semibold mb-4">Search Flights</h2>
+                <form onSubmit={handleSubmit(onSubmit)}>
+                    <div className="flex items-center gap-4 mb-4">
+                        <span className="font-medium">Travel Type:</span>
+                        {["oneWay", "roundTrip", "multiCity"].map((type) => (
+                            <div key={type} className="flex items-center gap-1">
+                                <FormRadio
+                                    name="travelType"
+                                    control={control}
+                                    id={type}
+                                    value={type}
+                                    size="sm"
+                                />
+                                <FormLabel title={type.replace(/([A-Z])/g, " $1")} htmlFor={type} className="capitalize" />
                             </div>
-                            <div className="flex items-center gap-1">
-                                <FormRadio name={"travelType"} control={control} id="roundTrip" value="roundTrip" size="sm" />
-                                <FormLabel title="Round Trip" htmlFor="roundTrip" />
-                            </div>
-                            <div className="flex items-center gap-1">
-                                <FormRadio name={"travelType"} control={control} id="multiCity" value="multiCity" size="sm" />
-                                <FormLabel title="Multi City" htmlFor="multiCity" />
-                            </div>
-                        </div>
+                        ))}
+                    </div>
 
-                        <div className="grid grid-cols-1  md:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
-                            <div>
-                                <FormLabel title={"From"} htmlFor="from" />
+                    {travelType !== "multiCity" ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
+                            <div className="relative">
+                                <FormLabel title="From" htmlFor="from" />
                                 <FormSelect
-                                    // startIcon={<Icon icon={pencilIcon} className="text-base-content/70" fontSize={20} />}
                                     control={control}
                                     name="from"
-                                    // instanceId="from"
-                                    size="md"
                                     id="from"
+                                    size="md"
                                     className="w-full border-0 text-base"
                                     options={countries.map((location) => ({
                                         label: location.title,
@@ -97,13 +128,24 @@ const FlightSearch = () => {
                                     }))}
                                     placeholder="Leaving from"
                                 />
+                                <button
+                                    onClick={swapLocations}
+                                    type="button"
+                                    className="absolute right-[-30px] bottom-1 p-2 bg-white border border-gray-300 rounded-full shadow hover:bg-gray-300"
+                                >
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <path d="M8 3 4 7l4 4" />
+                                        <path d="M4 7h16" />
+                                        <path d="m16 21 4-4-4-4" />
+                                        <path d="M20 17H4" />
+                                    </svg>
+                                </button>
                             </div>
                             <div>
-                                <FormLabel title={"To"} htmlFor="to" />
+                                <FormLabel title="To" htmlFor="to" />
                                 <FormSelect
                                     control={control}
                                     name="to"
-                                    instanceId="to"
                                     id="to"
                                     size="md"
                                     className="w-full border-0 text-base"
@@ -114,30 +156,32 @@ const FlightSearch = () => {
                                     placeholder="Going to"
                                 />
                             </div>
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <DemoContainer components={['DateRangePicker']}>
+                                    <DateRangePicker localeText={{ start: 'Check-in', end: 'Check-out' }} />
+                                </DemoContainer>
+                            </LocalizationProvider>
                             <div>
-                                <FormLabel title={"Departure Date"} htmlFor="departureDate" />
+                                <FormLabel title="Departure Date" htmlFor="departureDate" />
                                 <FormInput
                                     type="date"
                                     size="md"
-                                    bordered={false}
-                                    borderOffset={false}
                                     control={control}
                                     name="departureDate"
                                     id="departureDate"
-                                    className="w-full focus:border-transparent focus:outline-0"
+                                    className="w-full"
                                 />
                             </div>
                             <div>
-                                <FormLabel title={"Return Date"} htmlFor="returnDate" />
+                                <FormLabel title="Return Date" htmlFor="returnDate" />
                                 <FormInput
                                     type="date"
                                     size="md"
-                                    bordered={false}
-                                    borderOffset={false}
                                     control={control}
                                     name="returnDate"
                                     id="returnDate"
-                                    className="w-full focus:border-transparent focus:outline-0"
+                                    className="w-full"
+                                    disabled={travelType !== "roundTrip"}
                                 />
                             </div>
                             <div>
@@ -190,17 +234,156 @@ const FlightSearch = () => {
                             </div>
                             <div>
                                 <Button color="primary" size="md" aria-label="Search Flights" className="px-5">
-                                    <Icon icon={searchIcon} className="text-white" fontSize={18} />
                                     Search Flights
                                 </Button>
                             </div>
                         </div>
-                    </form>
-                </div>
+                    ) : (
+                        <div>
+                            <div className="grid grid-cols-12 gap-4 items-center">
+                                {flights.map((flight, index) => (
+                                    <Fragment key={flight.id}>
+                                        <div className="col-span-1">
+                                            <p className="mt-8 text-blue-500">Flight {index + 1}</p>
+                                        </div>
+                                        <div className="col-span-3">
+                                            <div className="relative">
+                                                <FormLabel title="From" htmlFor={`from-${flight.id}`} />
+                                                <FormSelect
+                                                    control={control}
+                                                    name={`from-${flight.id}`}
+                                                    id={`from-${flight.id}`}
+                                                    size="md"
+                                                    className="w-full border-0 text-base"
+                                                    options={countries.map((location) => ({
+                                                        label: location.title,
+                                                        value: location.id,
+                                                    }))}
+                                                    placeholder="Leaving from"
+                                                />
+                                                <button
+                                                    onClick={swapLocations}
+                                                    type="button"
+                                                    className="absolute right-[-30px] bottom-1 p-2 bg-white border border-gray-300 rounded-full shadow hover:bg-gray-300"
+                                                >
+                                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                        <path d="M8 3 4 7l4 4" />
+                                                        <path d="M4 7h16" />
+                                                        <path d="m16 21 4-4-4-4" />
+                                                        <path d="M20 17H4" />
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div className="col-span-3">
+                                            <FormLabel title="To" htmlFor={`to-${flight.id}`} />
+                                            <FormSelect
+                                                control={control}
+                                                name={`to-${flight.id}`}
+                                                id={`to-${flight.id}`}
+                                                size="md"
+                                                className="w-full border-0 text-base"
+                                                options={countries.map((location) => ({
+                                                    label: location.title,
+                                                    value: location.id,
+                                                }))}
+                                                placeholder="Going to"
+                                            />
+                                        </div>
+                                        <div className="col-span-3">
+                                            <FormLabel title="Departure Date" htmlFor={`departureDate-${flight.id}`} />
+                                            <FormInput
+                                                type="date"
+                                                size="md"
+                                                control={control}
+                                                name={`departureDate-${flight.id}`}
+                                                id={`departureDate-${flight.id}`}
+                                                className="w-full"
+                                            />
+                                        </div>
+                                        <div className="col-span-2">
+                                            {index >= 2 && (
+                                                <button
+                                                    type="button"
+                                                    onClick={() => removeFlight(flight.id)}
+                                                    className="text-red-500 hover:text-red-700 cursor-pointer mt-8"
+                                                >
+                                                    ✖ Remove
+                                                </button>
+                                            )}
+                                        </div>
+                                    </Fragment>
+                                ))}
+                            </div>
+                            <div className="mt-4">
+                                <h2 onClick={addFlight} className="cursor-pointer text-blue-500 mt-2 underline">
+                                    + Add Another Flight
+                                </h2>
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
+                                <div>
+                                    <FormLabel title={"Travelers"} htmlFor="travelers" />
+                                    <FormSelect
+                                        control={control}
+                                        name="travelers"
+                                        instanceId="travelers"
+                                        id="travelers"
+                                        size="md"
+                                        className="w-full border-0 text-base"
+                                        options={countries.map((location) => ({
+                                            label: location.title,
+                                            value: location.id,
+                                        }))}
+                                        placeholder="Travelers"
+                                    />
+                                </div>
+                                <div>
+                                    <FormLabel title={"Financial Profiles"} htmlFor="financialProfiles" />
+                                    <FormSelect
+                                        control={control}
+                                        name="financialProfiles"
+                                        instanceId="financialProfiles"
+                                        id="financialProfiles"
+                                        size="md"
+                                        className="w-full border-0 text-base"
+                                        options={countries.map((location) => ({
+                                            label: location.title,
+                                            value: location.id,
+                                        }))}
+                                        placeholder="Financial Profiles"
+                                    />
+                                </div>
+                                <div>
+                                    <FormLabel title={"Cabin Class"} htmlFor="cabinClass" />
+                                    <FormSelect
+                                        control={control}
+                                        name="cabinClass"
+                                        instanceId="cabinClass"
+                                        id="cabinClass"
+                                        size="md"
+                                        className="w-full border-0 text-base"
+                                        options={countries.map((location) => ({
+                                            label: location.title,
+                                            value: location.id,
+                                        }))}
+                                        placeholder="Cabin Class"
+                                    />
+                                </div>
+                                <div>
+                                    <Button color="primary" size="md" aria-label="Search Flights" className="px-5">
+                                        Search Flights
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </form>
             </CardBody>
         </Card>
     );
 };
+
+
 const RecentSearch = () => {
     return (
         <Card className="bg-base-100/80 backdrop-blur-lg rounded-lg shadow-md mb-5">
@@ -526,13 +709,37 @@ const FlightFound = () => {
     );
 };
 
+
 const Page = () => {
+    const [productToBeDelete, setProductToBeDelete] = useState(false);
+
+    // const productDeleteConfirmationRef = useRef<HTMLDialogElement | null>(null);
+    // const showDeleteProductConfirmation = () => {
+    //     productDeleteConfirmationRef.current?.showModal();
+    //     setProductToBeDelete();
+    // };
     return (
         <div>
             <FlightCarousal />
             <FlightSearch />
             <RecentSearch />
             <FlightFound />
+            <Modal backdrop >
+                <form method="dialog">
+                    <Button
+                        size="sm"
+                        color="ghost"
+                        shape="circle"
+                        className="absolute right-2 top-2"
+                        aria-label="Close modal">
+                        {/* <Icon icon={xIcon} className="h-4" /> */}
+                    </Button>
+                </form>
+                <ModalHeader className="font-bold">Flight Search</ModalHeader>
+                <ModalBody>
+                    <FlightSearch />
+                </ModalBody>
+            </Modal>
         </div>
     );
 };
