@@ -8,7 +8,7 @@ import AppProvider from "@/app/AppProvider";
 
 export const metadata: Metadata = {
     title: {
-        template: "%s - Nexus ",
+        template: "%s - FlyGloble ",
         default: "",
     },
     description: "It's an admin & client dashboard. DaisyUI React Admin",

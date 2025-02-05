@@ -5,7 +5,6 @@ import trashIcon from "@iconify/icons-lucide/trash";
 import xIcon from "@iconify/icons-lucide/x";
 import plusIcon from "@iconify/icons-lucide/plus";
 import Link from "next/link";
-// import { PhoneInput } from 'react-international-phone';
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import { Icon } from "@/components/Icon";
@@ -28,44 +27,57 @@ import {
 import Pagination from "@/components/Pagination/Pagination";
 import { FormInput, FormSelect } from "@/components/forms";
 import { routes } from "@/lib/routes";
-import { useDeleteSupplierMutation, useGetSuppliersQuery } from "@/services/api";
+import { useCreateBranchMutation, useDeleteBranchMutation, useGetBranchesQuery } from "@/services/api";
 
-import { useRef, useCallback, useState } from "react";
+import { useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useToast } from "@/hooks/use-toast";
-import { ISupplier } from "@/types/settings/suppliers"
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { z } from "zod";
 import { cities } from "@/dropdowndata/cities";
+import { IBranch } from "@/types/settings/branch";
 
-const SupplierRow = ({
-    supplier,
-    showDeleteSupplierConfirmation
+const BranchRow = ({
+    branch,
+    showDeleteBranchConfirmation
 }: {
-    supplier: ISupplier;
-    showDeleteSupplierConfirmation: (uuid: string) => void;
+    branch: IBranch;
+    showDeleteBranchConfirmation: (uuid: string) => void;
 }) => {
+    const { id, uuid, name, address, city, status, user_id, branch_manager } = branch;
 
-    const { id, uuid, name, slug, description, status } = supplier;
-
+    const handleStatusChange = (uuid: string) => {
+        console.log(uuid);
+    }
     return (
         <>
             <TableRow className="hover:bg-base-200/40">
                 <div className="font-medium">{id}</div>
                 <div className="flex items-center space-x-3 truncate">{name}</div>
-                <div className="flex items-center space-x-3 truncate">{slug}</div>
-                <div className="flex items-center space-x-3 truncate">{slug}</div>
-                <div>{status ? (<span className="text-success cursor-pointer">Active</span>) : (<span className="text-warning cursor-pointer">In-Active</span>)}</div>
-                <div className="text-sm">
-                    {description?.length > 20 ? `${description.slice(0, 20)}...` : description}
+                <div className="flex items-center space-x-3 truncate">{branch_manager?.name}</div>
+                <div className="flex items-center space-x-3 truncate">{branch_manager?.email}</div>
+                <div className="flex items-center space-x-3 truncate">{branch_manager?.phone_number}</div>
+                <div className="flex items-center space-x-3 truncate">
+                    {address?.length > 20 ? `${address.slice(0, 20)}...` : address}
                 </div>
-                <div className="text-sm">
-                    {description?.length > 20 ? `${description.slice(0, 20)}...` : description}
+                <div className="inline-flex w-fit ml-8">
+                    <Tooltip message="Branch Associate 4 Employess" position="top" color="primary">
+                        <Button color="primary" size="xs">
+                            4
+                        </Button>
+                    </Tooltip>
+                </div>
+                <div className="inline-flex w-fit ml-8"> 
+                    <Tooltip message="Branch Associate 4 Agencies" position="top" color="primary">
+                        <Button color="primary" size="xs">
+                            4
+                        </Button>
+                    </Tooltip>
                 </div>
                 <div className="inline-flex w-fit">
                     <Tooltip message="Change Status" position="top" color="primary">
-                        <Toggle className="m-2" color="primary" />
+                        <Toggle className="m-2" color="primary" defaultChecked={branch_manager?.status} onChange={() => handleStatusChange(uuid)} />
                     </Tooltip>
                 </div>
                 <div className="inline-flex w-fit">
@@ -104,7 +116,7 @@ const SupplierRow = ({
                             aria-label="Delete bank account"
                             onClick={(event) => {
                                 event.stopPropagation();
-                                showDeleteSupplierConfirmation(uuid);
+                                showDeleteBranchConfirmation(uuid);
                             }}
                         >
                             <Icon icon={trashIcon} fontSize={22} />
@@ -120,23 +132,26 @@ const BranchTable = () => {
     const toaster = useToast();
     const [searchText, setSearchText] = useState<string>("");
     const [pageUrl, setPageUrl] = useState<string>("");
-    const [phone, setPhone] = useState('');
-    const ref4 = useRef<HTMLDialogElement>(null);
-    const { data: detail_data } = useGetSuppliersQuery({ searchText, pageUrl });
-    const suppliers = detail_data?.data;
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isEditMode, setIsEditMode] = useState(false);
+    const [selectedBranch, setSelectedBranch] = useState<IBranch | null>(null);
+    const { data: detail_data } = useGetBranchesQuery({ searchText, pageUrl });
+    const branches = detail_data?.data;
     const links = detail_data?.links;
-    const [deleteSupplier, {
-        isLoading: deleteSupplierLoading,
-    }] = useDeleteSupplierMutation();
+    const [createBranch, {isLoading: createLoading}] = useCreateBranchMutation();
+    const [deleteBranch, {isLoading: deleteBranchLoading}] = useDeleteBranchMutation();
 
-    const supplierSchema = z.object({
-        name: z.string({ required_error: "Airport Name Required!" }),
-        description: z.string().optional(),
-        status: z.boolean(),
+    const branchSchema = z.object({
+        branch_name: z.string({ required_error: "Branch Name Required!" }).min(5, "Branch Name cannot be empty!"),
+        manager_name: z.string({ required_error: "Branch Manager Name Required!" }).min(5, "Branch Manager Name Should be greater than 5"),
+        phone_number: z.string().regex(/^\+?\d{1,4}?[\d\s\-\(\)]{7,15}$/, "Invalid phone number!"),
+        city: z.string({ required_error: "City is required!" }).min(1, "City cannot be empty!"),
+        address: z.string({ required_error: "Address is required!" }).min(1, "Address cannot be empty!"),
+        email: z.string({ required_error: "Email Required!" }).email({ message: "Invalid email address!" }).min(1, "Email is required!"),
     });
 
-    const [SupplierToBeDelete, setSupplierToBeDelete] = useState<ISupplier>();
-    const SupplierDeleteConfirmationRef = useRef<HTMLDialogElement | null>(null);
+    const [BranchToBeDelete, setBranchToBeDelete] = useState<IBranch>();
+    const BranchDeleteConfirmationRef = useRef<HTMLDialogElement | null>(null);
 
     const { control: filterControl } = useForm({
         defaultValues: {
@@ -145,14 +160,14 @@ const BranchTable = () => {
         },
     });
 
-    const showDeleteSupplierConfirmation = (uuid: any) => {
-        SupplierDeleteConfirmationRef.current?.showModal();
-        setSupplierToBeDelete(suppliers?.find((b) => uuid === b.uuid));
+    const showDeleteBranchConfirmation = (uuid: any) => {
+        BranchDeleteConfirmationRef.current?.showModal();
+        setBranchToBeDelete(branches?.find((b) => uuid === b.uuid));
     };
 
-    const handleDeleteSupplier = async () => {
-        if (SupplierToBeDelete) {
-            deleteSupplier(SupplierToBeDelete.uuid).then((response: any) => {
+    const handleDeleteBranch = async () => {
+        if (BranchToBeDelete) {
+            deleteBranch(BranchToBeDelete.uuid).then((response: any) => {
                 if (response?.data.code == 200) {
                     toaster.success(response?.data.message);
                 } else {
@@ -168,8 +183,8 @@ const BranchTable = () => {
         }
     };
 
-    const { control, handleSubmit, setError } = useForm<any>({
-        resolver: zodResolver(supplierSchema),
+    const { control, handleSubmit, setError, reset } = useForm<z.infer<typeof branchSchema>>({
+        resolver: zodResolver(branchSchema),
     });
 
     const setErrors = (errors: Record<string, any>) => {
@@ -177,17 +192,32 @@ const BranchTable = () => {
     };
 
     const onSubmit = handleSubmit(async (data: any) => {
+        await createBranch(data).then((response:any)=>{
+            const {status, data} = response?.data;
+            if(status){
+                toaster.success(`${data.name} has been created`);
+                reset({
+                    branch_name: "",
+                    manager_name: "",
+                    phone_number: "",
+                    city: "",
+                    address: "",
+                    email: "",
+                });
+                setIsModalOpen(false);
+            }else{
+                setErrors(response?.data?.errors);
+            }
+        });
     });
 
+    const handleShow = () => {
+        setIsModalOpen(true)
+    };
 
-    // const handleCancel = () => {
-    //     router.back();
-    // };
-
-    const handleShow4 = useCallback(() => {
-        ref4.current?.showModal();
-    }, [ref4]);
-
+    const handleClose = () => {
+        setIsModalOpen(false)
+    }
     return (
         <>
             <Card className="mt-5 bg-base-100">
@@ -207,7 +237,7 @@ const BranchTable = () => {
                             />
                         </div>
                         <div className="inline-flex items-center gap-3">
-                            <Button onClick={handleShow4} color="primary" size="md" className="hidden md:flex">
+                            <Button onClick={handleShow} color="primary" size="md" className="hidden md:flex">
                                 <Icon icon={plusIcon} fontSize={16} />
                                 <span>New Branch</span>
                             </Button>
@@ -230,11 +260,11 @@ const BranchTable = () => {
                             </TableHead>
 
                             <TableBody>
-                                {suppliers?.map((supplier: any, index: any) => (
-                                    <SupplierRow
-                                        supplier={supplier}
+                                {branches?.map((branch: any, index: any) => (
+                                    <BranchRow
+                                        branch={branch}
                                         key={index}
-                                        showDeleteSupplierConfirmation={showDeleteSupplierConfirmation}
+                                        showDeleteBranchConfirmation={showDeleteBranchConfirmation}
                                     />
                                 ))}
                             </TableBody>
@@ -245,7 +275,7 @@ const BranchTable = () => {
                     </div>
                 </CardBody>
             </Card>
-            <Modal ref={SupplierDeleteConfirmationRef} backdrop>
+            <Modal ref={BranchDeleteConfirmationRef} backdrop>
                 <form method="dialog">
                     <Button
                         size="sm"
@@ -258,7 +288,7 @@ const BranchTable = () => {
                 </form>
                 <ModalHeader className="font-bold">Confirm Delete</ModalHeader>
                 <ModalBody>
-                    You are about to delete <b>{SupplierToBeDelete?.name}</b>. Would you like to proceed further ?
+                    You are about to delete <b>{BranchToBeDelete?.name}</b>. Would you like to proceed further ?
                 </ModalBody>
                 <ModalActions>
                     <form method="dialog">
@@ -267,7 +297,7 @@ const BranchTable = () => {
                         </Button>
                     </form>
                     <form method="dialog">
-                        <Button loading={deleteSupplierLoading} color="primary" size="sm" onClick={() => handleDeleteSupplier()}>
+                        <Button loading={deleteBranchLoading} color="primary" size="sm" onClick={() => handleDeleteBranch()}>
                             Yes
                         </Button>
                     </form>
@@ -275,7 +305,7 @@ const BranchTable = () => {
             </Modal>
 
 
-            <Modal ref={ref4} className="w-11/12 max-w-5xl h-11/12">
+            <Modal open={isModalOpen} className="w-11/12 max-w-5xl h-11/12">
                 <form method="dialog">
                     <Button
                         size="md"
@@ -283,7 +313,9 @@ const BranchTable = () => {
                         shape="circle"
                         className="absolute right-2 top-2"
                         aria-label="Close modal">
-                        <Icon icon={xIcon} className="h-4" />
+                        <Icon icon={xIcon} className="h-4"
+                            onClick={handleClose}
+                        />
                     </Button>
                 </form>
                 <ModalHeader className="font-bold">Add Branch</ModalHeader>
@@ -303,13 +335,13 @@ const BranchTable = () => {
                                     />
                                 </div>
                                 <div>
-                                    <FormLabel title={"Branch Manager Name"} htmlFor="branch_manager_name"></FormLabel>
+                                    <FormLabel title={"Branch Manager Name"} htmlFor="manager_name"></FormLabel>
                                     <FormInput
                                         className="w-full border-0 focus:outline-0"
                                         control={control}
                                         size="md"
-                                        id="branch_manager_name"
-                                        name="branch_manager_name"
+                                        id="manager_name"
+                                        name="manager_name"
                                         placeholder="Enter Branch Manager Name"
                                     />
                                 </div>
@@ -375,7 +407,7 @@ const BranchTable = () => {
 
                 <ModalActions>
                     <form method="dialog">
-                        <Button color="primary" size="md" onClick={() => handleDeleteSupplier()}>
+                        <Button color="primary" size="md" loading={createLoading} onClick={() => onSubmit()}>
                             Add
                         </Button>
                     </form>

@@ -1,7 +1,7 @@
-# Nexus - Client & Admin React Dashboard
+# FlyGloble - Client & Admin React Dashboard
 ## Package: Pro
 
-Thank you for purchasing Nexus - Next.js Admin. I hope it's going to be helpful for you. 
+Thank you for purchasing FlyGloble - Next.js Admin. I hope it's going to be helpful for you. 
 Your feedback is really appreciated: [Feedback Form](https://forms.gle/UeX3jgsjFNFcZsq9A)
 
 ## Please refer online documentation for more details: [website](https://nexus.daisyui.com/docs/introduction)

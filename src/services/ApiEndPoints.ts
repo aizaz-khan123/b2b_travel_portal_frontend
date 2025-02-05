@@ -53,4 +53,9 @@ export const API_END_POINTS = {
   showAirlinMargin: BASE_URL_V1 + '/settings/airline-margin/show',
   updateAirlinMargin: BASE_URL_V1 + '/settings/airline-margin/update',
   deleteAirlinMargin: BASE_URL_V1 + '/settings/airline-margin/delete',
+
+  createBranch: BASE_URL_V1 + '/organization/branch/store',
+  getBranches: BASE_URL_V1 + '/organization/branch/index',
+  deleteBranch: BASE_URL_V1 + '/organization/branch/delete',
+  verifySetPasswordLink: BASE_URL_V1 + '/verify-set-password-link',
 };

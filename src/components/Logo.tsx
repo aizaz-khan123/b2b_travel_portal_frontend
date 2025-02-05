@@ -2,7 +2,7 @@
 
 // NOTE: If you using svg logo
 import logoDark from "@/assets/images/logo/logo-dark.svg";
-import logoLight from "@/assets/images/logo/logo-light.svg";
+import logoLight from "@/assets/images/logo/logo-light1.svg";
 
 // NOTE: If you need png/jpeg logo then uncomment, this 2 lines
 // import logoDark from "@/assets/images/logo/logo-dark.png";
@@ -13,7 +13,7 @@ type ILogoProp = {
     size?: number;
 };
 
-const Logo = ({ size = 24 }: ILogoProp) => {
+const Logo = ({ size = 50 }: ILogoProp) => {
     return (
         <div className="inline">
             <Image src={logoDark} height={size} alt="logo-dark" className="hidden dark:inline" />
