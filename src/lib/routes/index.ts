@@ -3,7 +3,7 @@ const routes = {
     auth: {
         login: "/",
         register: "/auth/register",
-        forgotPassword: "/auth/forgot-password",
+        forgotPassword: "/forgot-password",
         resetPassword: "/auth/reset-password",
     },
     dashboards: {

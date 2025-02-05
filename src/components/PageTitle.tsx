@@ -23,7 +23,7 @@ const PageTitle = ({ title, breadCrumbItems, centerItems }: PageTitleProps) => {
             <>
                 {breadCrumbItems && (
                     <Breadcrumbs className="hidden p-0 sm:inline">
-                        <BreadcrumbsItem key={0}>Nexus</BreadcrumbsItem>
+                        <BreadcrumbsItem key={0}>FlyGloble</BreadcrumbsItem>
                         {breadCrumbItems.map((breadCrumbItem, index) => {
                             return (
                                 <BreadcrumbsItem key={index + 1} href={breadCrumbItem.path}>

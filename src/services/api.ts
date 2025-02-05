@@ -346,6 +346,39 @@ export const api = emptySplitApi.injectEndpoints({
       }),
       invalidatesTags: ['AirlineMargins'],
     }),
+    getBranches: builder.query<any, { pageUrl?: string; searchText?: string }>({
+      query: ({ pageUrl, searchText }) => ({
+        url: pageUrl || API_END_POINTS.getBranches,
+        method: "GET",
+        params: {
+          q: searchText,
+        }
+      }),
+      providesTags: ["Branches"],
+      transformResponse: (response: any) => response.data,
+    }),
+    createBranch: builder.mutation({
+      query: (body) => ({
+        url: API_END_POINTS.createBranch,
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: ['Branches'],
+    }),
+    deleteBranch: builder.mutation({
+      query: (id) => ({
+        url: `${API_END_POINTS.deleteBranch}/${id}`,
+        method: "GET",
+      }),
+      invalidatesTags: ['Branches'],
+    }),
+    verifySetPasswordLink: builder.mutation({
+      query: (body) => ({
+        url: API_END_POINTS.verifySetPasswordLink,
+        method: 'POST',
+        body,
+      }),
+    }),
   }),
   overrideExisting: false,
 });
@@ -395,4 +428,9 @@ export const {
   useCreateAirlineMarginMutation,
   useDeleteAirlineMarginMutation,
   useUpdateAirlineMarginMutation,
+
+  useGetBranchesQuery,
+  useCreateBranchMutation,
+  useDeleteBranchMutation,
+  useVerifySetPasswordLinkMutation,
 } = api;
