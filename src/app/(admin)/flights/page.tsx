@@ -348,9 +348,51 @@ const FlightSearch = () => {
                                 {flights.map((flight, index) => (
                                     <Fragment key={flight.id}>
                                         <div className="col-span-1">
-                                            <p className="mt-8 text-blue-500">Flight {index + 1}</p>
+                                            <p className="text-blue-500">Flight {index + 1}</p>
+                                        </div>
+                                        <div className="relative col-span-3">
+                                            <MuiDropdown
+                                                control={control}
+                                                name={`from-${flight.id}`}
+                                                label="From"
+                                                selectIcon={<img src="media/icons/from.svg" className="h-8" />}
+                                                options={airports.map((city) => ({
+                                                    value: city.code,
+                                                    label: `${city.city} (${city.code})`,
+                                                    icon: <img src="media/icons/from.svg" className="h-7" />
+                                                }))}
+                                                onChange={handleAirportChange}
+                                            />
+                                            <button
+                                                onClick={swapLocations}
+                                                type="button"
+                                                className="absolute right-[-30px] bottom-1 p-2 bg-white border border-gray-300 rounded-full shadow hover:bg-gray-300"
+                                            >
+                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                    <path d="M8 3 4 7l4 4" />
+                                                    <path d="M4 7h16" />
+                                                    <path d="m16 21 4-4-4-4" />
+                                                    <path d="M20 17H4" />
+                                                </svg>
+                                            </button>
                                         </div>
                                         <div className="col-span-3">
+                                            <MuiDropdown
+                                                control={control}
+                                                selectIcon={<img src="media/icons/going-to.svg" className="h-8" />}
+                                                name={`to-${flight.id}`}
+                                                label="To"
+                                                options={cities.map((city) => ({
+                                                    value: city.code,
+                                                    label: `${city.city} (${city.code})`,
+                                                    icon: <img src="media/icons/going-to.svg" className="h-7" />
+                                                }))}
+
+                                                onChange={handleCityChange}
+                                            />
+
+                                        </div>
+                                        {/* <div className="col-span-3">
                                             <div className="relative">
                                                 <FormLabel title="From" htmlFor={`from-${flight.id}`} />
                                                 <FormSelect
@@ -378,8 +420,8 @@ const FlightSearch = () => {
                                                     </svg>
                                                 </button>
                                             </div>
-                                        </div>
-                                        <div className="col-span-3">
+                                        </div> */}
+                                        {/* <div className="col-span-3">
                                             <FormLabel title="To" htmlFor={`to-${flight.id}`} />
                                             <FormSelect
                                                 control={control}
@@ -393,7 +435,7 @@ const FlightSearch = () => {
                                                 }))}
                                                 placeholder="Going to"
                                             />
-                                        </div>
+                                        </div> */}
                                         <div className="col-span-3">
                                             <FormLabel title="Departure Date" htmlFor={`departureDate-${flight.id}`} />
                                             <FormInput
@@ -419,11 +461,13 @@ const FlightSearch = () => {
                                     </Fragment>
                                 ))}
                             </div>
-                            <div className="mt-4">
-                                <h2 onClick={addFlight} className="cursor-pointer text-blue-500 mt-2 underline">
-                                    + Add Another Flight
-                                </h2>
-                            </div>
+                            {flights.length < 5 &&
+                                <div className="mt-4">
+                                    <h2 onClick={addFlight} className="cursor-pointer text-blue-500 mt-2 underline">
+                                        + Add Another Flight
+                                    </h2>
+                                </div>
+                            }
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
                                 <div>
                                     <FormLabel title={"Travelers"} htmlFor="travelers" />
@@ -781,7 +825,7 @@ const FlightFound = () => {
                                     { label: "XTRA", baggage: "Total 20.0 KGs (1 pc)", price: "PKR 205,021.8" },
                                 ].map((option, idx) => (
                                     <>
-                                       <div className="grid grid-cols-12 items-center gap-6 border-t border-b py-2">
+                                        <div className="grid grid-cols-12 items-center gap-6 border-t border-b py-2">
                                             <div className="col-span-4 border-r-2 pe-5">
                                                 <div className="flex justify-between items-center">
                                                     <p className="font-medium">{option.label}</p>
