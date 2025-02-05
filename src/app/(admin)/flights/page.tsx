@@ -57,23 +57,32 @@ const countries = [
 
 const FlightCarousal = () => {
     return (
-        <Carousel autoPlay className="rounded-lg shadow-md mb-5">
-            <div>
-                <Image src={authImage}
-                    className="max-h-[400px] object-contain"
-                    alt="Auth Image" />
-            </div>
-            <div>
-                <Image src={authImage}
-                    className="max-h-[400px] object-contain"
-                    alt="Auth Image" />
-            </div>
-            <div>
-                <Image src={authImage}
-                    className="max-h-[400px] object-contain"
-                    alt="Auth Image" />
-            </div>
-        </Carousel>
+        // <Carousel autoPlay className="rounded-lg shadow-md mb-5">
+        //     <div>
+        //         <Image src='media/images/Airport illustration.svg'
+        //             width={100}
+        //             height={300}
+        //             className="max-h-[400px] object-contain"
+        //             alt="Auth Image" />
+        //     </div>
+        //     <div>
+        //         <Image src={authImage}
+        //             className="max-h-[400px] object-contain"
+        //             alt="Auth Image" />
+        //     </div>
+        //     <div>
+        //         <Image src={authImage}
+        //             className="max-h-[400px] object-contain"
+        //             alt="Auth Image" />
+        //     </div>
+        // </Carousel>
+        <div className="mb-5">
+            <Image src='media/images/Airport illustration.svg'
+                width={100}
+                height={300}
+                className="w-full h-[300px] object-contain"
+                alt="Auth Image" />
+        </div>
     );
 };
 
@@ -83,7 +92,7 @@ const FlightSearch = () => {
     const { control, handleSubmit, setValue, watch } = useForm();
     const cities = [
         { city: "Karachi, Pakistan", code: "KHI", name: "Jinnah International Airport", icon: <FlightTakeoffIcon color="success" /> },
-        { city: "Multan, Pakistan", code: "MUX", name: "Multan International Airport",icon: <FlightTakeoffIcon color="success" /> },
+        { city: "Multan, Pakistan", code: "MUX", name: "Multan International Airport", icon: <FlightTakeoffIcon color="success" /> },
     ];
     const [flights, setFlights] = useState([
         { id: 1, from: null, to: null, departureDate: "" },
@@ -139,20 +148,21 @@ const FlightSearch = () => {
                         ))}
                     </div>
                     {travelType !== "multiCity" ? (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
-                            <div className="relative">
+                        <div className="grid grid-cols-12 gap-4 items-end">
+                            <div className="relative col-span-3">
                                 <MuiDropdown
                                     control={control}
                                     name="from"
                                     label="From"
+                                    selectIcon={<img src="media/icons/from.svg" className="h-8" />}
                                     options={airports.map((city) => ({
-                                        value: city.code,  
+                                        value: city.code,
                                         label: `${city.city} (${city.code})`,
-                                        icon: <FlightTakeoffIcon color="success" />
+                                        icon: <img src="media/icons/from.svg" className="h-7" />
                                     }))}
                                     onChange={handleAirportChange}
                                 />
-                                 <button
+                                <button
                                     onClick={swapLocations}
                                     type="button"
                                     className="absolute right-[-30px] bottom-1 p-2 bg-white border border-gray-300 rounded-full shadow hover:bg-gray-300"
@@ -165,22 +175,23 @@ const FlightSearch = () => {
                                     </svg>
                                 </button>
                             </div>
-                            <div>
+                            <div className="col-span-3">
                                 <MuiDropdown
                                     control={control}
+                                    selectIcon={<img src="media/icons/going-to.svg" className="h-8" />}
                                     name="to"
                                     label="To"
                                     options={cities.map((city) => ({
-                                        value: city.code,  
+                                        value: city.code,
                                         label: `${city.city} (${city.code})`,
-                                        icon: <FlightTakeoffIcon color="success" />
+                                        icon: <img src="media/icons/going-to.svg" className="h-7" />
                                     }))}
-                                    
+
                                     onChange={handleCityChange}
                                 />
 
                             </div>
-                            <div className="relative">
+                            {/* <div className="relative">
                                 <FormLabel title="From" htmlFor="from" />
                                 <FormSelect
                                     control={control}
@@ -221,13 +232,15 @@ const FlightSearch = () => {
                                     }))}
                                     placeholder="Going to"
                                 />
+                            </div> */}
+                            <div className="col-span-6">
+                                <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                    <DemoContainer components={['DateRangePicker']}>
+                                        <DateRangePicker localeText={{ start: 'Departure Date', end: 'Return Date' }} />
+                                    </DemoContainer>
+                                </LocalizationProvider>
                             </div>
-                            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                <DemoContainer components={['DateRangePicker']}>
-                                    <DateRangePicker localeText={{ start: 'Check-in', end: 'Check-out' }} />
-                                </DemoContainer>
-                            </LocalizationProvider>
-                            <div>
+                            {/* <div>
                                 <FormLabel title="Departure Date" htmlFor="departureDate" />
                                 <FormInput
                                     type="date"
@@ -249,8 +262,8 @@ const FlightSearch = () => {
                                     className="w-full"
                                     disabled={travelType !== "roundTrip"}
                                 />
-                            </div>
-                            <div>
+                            </div> */}
+                            {/* <div>
                                 <FormLabel title={"Travelers"} htmlFor="travelers" />
                                 <FormSelect
                                     control={control}
@@ -265,8 +278,23 @@ const FlightSearch = () => {
                                     }))}
                                     placeholder="Travelers"
                                 />
+                            </div> */}
+                            <div className="col-span-4">
+                                <MuiDropdown
+                                    control={control}
+                                    selectIcon={<FlightTakeoffIcon color="success" />}
+                                    name="traveler"
+                                    label="Traveler"
+                                    options={cities.map((city) => ({
+                                        value: city.code,
+                                        label: `${city.city} (${city.code})`,
+                                        icon: <FlightTakeoffIcon color="success" />
+                                    }))}
+                                    onChange={handleCityChange}
+                                />
                             </div>
-                            <div>
+
+                            {/* <div>
                                 <FormLabel title={"Financial Profiles"} htmlFor="financialProfiles" />
                                 <FormSelect
                                     control={control}
@@ -281,9 +309,9 @@ const FlightSearch = () => {
                                     }))}
                                     placeholder="Financial Profiles"
                                 />
-                            </div>
-                            <div>
-                                <FormLabel title={"Cabin Class"} htmlFor="cabinClass" />
+                            </div> */}
+                            <div className="col-span-4">
+                                {/* <FormLabel title={"Cabin Class"} htmlFor="cabinClass" />
                                 <FormSelect
                                     control={control}
                                     name="cabinClass"
@@ -296,9 +324,19 @@ const FlightSearch = () => {
                                         value: location.id,
                                     }))}
                                     placeholder="Cabin Class"
+                                /> */}
+                                <MuiDropdown
+                                    control={control}
+                                    name="cabinClass"
+                                    label="Cabin Class"
+                                    options={cities.map((city) => ({
+                                        value: city.code,
+                                        label: `${city.city} (${city.code})`,
+                                    }))}
+                                    onChange={handleCityChange}
                                 />
                             </div>
-                            <div>
+                            <div className="col-span-2">
                                 <Button color="primary" size="md" aria-label="Search Flights" className="px-5">
                                     Search Flights
                                 </Button>
@@ -633,7 +671,7 @@ const FlightFound = () => {
                         <CardBody>
                             <div className="flex justify-between items-center">
                                 <div className="flex items-center gap-2 mb-2">
-                                    <img src="" alt="img" />
+                                    <img src="/media/icons/pia.svg" alt="img" />
                                     <div>
                                         <h3 className="font-semibold text-lg">Pakistan International Airlines</h3>
                                         <span className="text-gray-500">PK-233 • Mon, Jan 27, 2025</span>
@@ -646,7 +684,7 @@ const FlightFound = () => {
                                     </div>
                                     <div className="text-center">
                                         <h3 className="text-gray-500 text-md mb-0">1 hr 15 mins</h3>
-                                        <span className="text-gray-500">----------✈----------</span>
+                                        <span className="text-gray-500 flex">---------- <img src="media/icons/plane.svg" alt="" /> ----------</span>
                                         <h3 className="text-gray-500 text-md mb-0">Non-Stop</h3>
                                     </div>
                                     <div>
@@ -658,10 +696,10 @@ const FlightFound = () => {
                                     <div className="flex items-center gap-2">
                                         <h1 className="bg-gray-300 w-fit px-3 py-1 rounded-md">PIAAPI</h1>
                                         <span>|</span>
-                                        <Icon icon={calendarIcon} className="text-primary" fontSize={22} />
+                                        <img src="media/icons/detail-icon.svg" className="h-8" alt="" />
                                     </div>
                                     <Button color="secondary" variant="outline" className="border-0" size="md">
-                                        <Icon icon={calendarIcon} className="text-secondary" fontSize={17} />
+                                        <img src="media/icons/view-detail-icon.svg" className="h-5" alt="" />
                                         View Detail
                                     </Button>
                                 </div>
@@ -677,12 +715,12 @@ const FlightFound = () => {
                                             <div className="col-span-4 border-r-2 pe-5">
                                                 <div className="flex justify-between items-center">
                                                     <p className="font-medium">{option.label}</p>
-                                                    <Icon icon={calendarIcon} className="text-primary" fontSize={22} />
+                                                    <img src="media/icons/food-icon.svg" className="h-5" alt="" />
                                                 </div>
                                             </div>
                                             <div className="col-span-4">
                                                 <div className="flex gap-2 justify-start">
-                                                    <Icon icon={calendarIcon} className="text-primary" fontSize={22} />
+                                                    <img src="media/icons/baggage-icon.svg" className="h-5" alt="" />
                                                     <p className="font-medium">{option.baggage}</p>
                                                 </div>
                                             </div>
@@ -703,7 +741,7 @@ const FlightFound = () => {
                         <CardBody>
                             <div className="flex justify-between items-center">
                                 <div className="flex items-center gap-2 mb-2">
-                                    <img src="" alt="img" />
+                                    <img src="/media/icons/air-blue.svg" alt="img" />
                                     <div>
                                         <h3 className="font-semibold text-lg">Airblue</h3>
                                         <span className="text-gray-500">PK-233 • Mon, Jan 27, 2025</span>
@@ -716,7 +754,7 @@ const FlightFound = () => {
                                     </div>
                                     <div className="text-center">
                                         <h3 className="text-gray-500 text-md mb-0">1 hr 15 mins</h3>
-                                        <span className="text-gray-500">----------✈----------</span>
+                                        <span className="text-gray-500 flex">---------- <img src="media/icons/plane.svg" alt="" /> ----------</span>
                                         <h3 className="text-gray-500 text-md mb-0">Non-Stop</h3>
                                     </div>
                                     <div>
@@ -728,10 +766,10 @@ const FlightFound = () => {
                                     <div className="flex items-center gap-2">
                                         <h1 className="bg-gray-300 w-fit px-3 py-1 rounded-md">PIAAPI</h1>
                                         <span>|</span>
-                                        <Icon icon={calendarIcon} className="text-primary" fontSize={22} />
+                                        <img src="media/icons/detail-icon.svg" className="h-8" alt="" />
                                     </div>
                                     <Button color="secondary" variant="outline" className="border-0" size="md">
-                                        <Icon icon={calendarIcon} className="text-secondary" fontSize={17} />
+                                        <img src="media/icons/view-detail-icon.svg" className="h-5" alt="" />
                                         View Detail
                                     </Button>
                                 </div>
@@ -743,16 +781,16 @@ const FlightFound = () => {
                                     { label: "XTRA", baggage: "Total 20.0 KGs (1 pc)", price: "PKR 205,021.8" },
                                 ].map((option, idx) => (
                                     <>
-                                        <div className="grid grid-cols-12 items-center gap-6 border-t border-b py-2">
+                                       <div className="grid grid-cols-12 items-center gap-6 border-t border-b py-2">
                                             <div className="col-span-4 border-r-2 pe-5">
                                                 <div className="flex justify-between items-center">
                                                     <p className="font-medium">{option.label}</p>
-                                                    <Icon icon={calendarIcon} className="text-primary" fontSize={22} />
+                                                    <img src="media/icons/food-icon.svg" className="h-5" alt="" />
                                                 </div>
                                             </div>
                                             <div className="col-span-4">
                                                 <div className="flex gap-2 justify-start">
-                                                    <Icon icon={calendarIcon} className="text-primary" fontSize={22} />
+                                                    <img src="media/icons/baggage-icon.svg" className="h-5" alt="" />
                                                     <p className="font-medium">{option.baggage}</p>
                                                 </div>
                                             </div>
