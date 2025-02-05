@@ -22,7 +22,14 @@ const config: Config = {
         "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
     ],
     theme: {
+
         extend: {
+            colors: {
+                gray: {
+                    DEFAULT: '#1E2328CC', // Custom gray color
+                    ...require('tailwindcss/colors').gray, // Import default gray colors
+                },
+            },
             fontSize: {
                 xs: "11px",
                 sm: "13px",

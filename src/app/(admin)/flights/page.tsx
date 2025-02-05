@@ -1,35 +1,27 @@
 "use client";
 
 import { Button, Card, CardBody, FormLabel, Modal, ModalBody, ModalHeader } from "@/components/daisyui";
-import { FormInput, FormRadio, FormSelect } from "@/components/forms";
+import { FormRadio, FormSelect } from "@/components/forms";
 import { Icon } from "@/components/Icon";
 import calendarIcon from "@iconify/icons-lucide/calendar";
-import searchIcon from "@iconify/icons-lucide/search";
+import info from "@iconify/icons-lucide/info";
+import plus from "@iconify/icons-lucide/plus";
+import refreshCcw from "@iconify/icons-lucide/refresh-ccw";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
-import { Carousel } from 'react-responsive-carousel';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
-import authImage from "@/assets/images/auth/auth-hero.png";
-import refreshCcw from "@iconify/icons-lucide/refresh-ccw";
-import plus from "@iconify/icons-lucide/plus";
-import info from "@iconify/icons-lucide/info";
 
-import { Fragment, useRef, useState } from "react";
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import MuiDropdown from "@/components/mui/MuiDropdown";
+import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
 import { LocalizationProvider } from '@mui/x-date-pickers-pro';
 import { AdapterDayjs } from '@mui/x-date-pickers-pro/AdapterDayjs';
 import { DateRangePicker } from '@mui/x-date-pickers-pro/DateRangePicker';
-import {
-    TextField,
-    MenuItem,
-    InputAdornment,
-    IconButton,
-    ListItemIcon,
-    ListItemText,
-    Box,
-} from "@mui/material";
-import MuiDropdown from "@/components/mui/MuiDropdown";
-import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import { Fragment, useState } from "react";
+import MuiDatePicker from "@/components/mui/MuiDatePicker";
+import MuiDateRangePicker from "@/components/mui/MuiDateRangePicker";
+import TravelersDropdown from "./TravelersDropdown";
 
 const airports = [
     { city: "Islamabad, Pakistan", code: "ISB", name: "Islamabad International Airport" },
@@ -86,10 +78,47 @@ const FlightCarousal = () => {
     );
 };
 
+type Flight = {
+    id: number;
+    from: string | null;
+    to: string | null;
+    departureDate: string;
+};
+type FormValues = {
+    travelers: {
+        adults: number;
+        children: number;
+        infants: number;
+    };
+    travelType: string;
+    from: string | null;
+    to: string | null;
+    dateRange: string;
+    cabinClass: string;
+    traveler: string;
+    // Include dynamic flight fields
+    [key: string]: any; // Allows additional fields
+};
 
 
 const FlightSearch = () => {
-    const { control, handleSubmit, setValue, watch } = useForm();
+    // const { control, handleSubmit, setValue, watch } = useForm();
+    const { control, handleSubmit, setValue, watch } = useForm<FormValues>({
+        defaultValues: {
+            travelers: {
+                adults: 0,
+                children: 0,
+                infants: 0,
+            },
+            travelType: "oneWay",
+            from: null,
+            to: null,
+            dateRange: '',
+            cabinClass: '',
+            traveler: '',
+        },
+    });
+
     const cities = [
         { city: "Karachi, Pakistan", code: "KHI", name: "Jinnah International Airport", icon: <FlightTakeoffIcon color="success" /> },
         { city: "Multan, Pakistan", code: "MUX", name: "Multan International Airport", icon: <FlightTakeoffIcon color="success" /> },
@@ -100,17 +129,39 @@ const FlightSearch = () => {
     ]);
 
     const swapLocations = () => {
-        const from = watch("from");
-        const to = watch("to");
-        setValue("from", to);
-        setValue("to", from);
+        // const from = watch("from");
+        // const to = watch("to");
+        // setValue("from", to);
+        // setValue("to", from);
     };
 
     const addFlight = () => {
         if (flights.length < 5) {
             setFlights([...flights, { id: Date.now(), from: null, to: null, departureDate: "" }]);
         }
+    }; type Flight = {
+        id: number;
+        from: string | null;
+        to: string | null;
+        departureDate: string;
     };
+    type FormValues = {
+        travelers: {
+            adults: number;
+            children: number;
+            infants: number;
+        };
+        travelType: string;
+        from: string | null;
+        to: string | null;
+        dateRange: string;
+        cabinClass: string;
+        traveler: string;
+        // Include dynamic flight fields
+        [key: string]: any; // Allows additional fields
+    };
+
+    const flightKey = (flight: Flight) => `flight-${flight.id}`;
 
     const removeFlight = (id: any) => {
         setFlights(flights.filter((flight) => flight.id !== id));
@@ -130,7 +181,7 @@ const FlightSearch = () => {
     return (
         <Card className="bg-base-100/80 backdrop-blur-lg rounded-lg shadow-md mb-5">
             <CardBody className="p-6">
-                <h2 className="text-xl font-semibold mb-4">Search Flights</h2>
+                <h2 className="text-xl font-semibold">Search Flights</h2>
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="flex items-center gap-4 mb-4">
                         <span className="font-medium">Travel Type:</span>
@@ -191,140 +242,20 @@ const FlightSearch = () => {
                                 />
 
                             </div>
-                            {/* <div className="relative">
-                                <FormLabel title="From" htmlFor="from" />
-                                <FormSelect
-                                    control={control}
-                                    name="from"
-                                    id="from"
-                                    size="md"
-                                    className="w-full border-0 text-base"
-                                    options={countries.map((location) => ({
-                                        label: location.title,
-                                        value: location.id,
-                                    }))}
-                                    placeholder="Leaving from"
-                                />
-                                <button
-                                    onClick={swapLocations}
-                                    type="button"
-                                    className="absolute right-[-30px] bottom-1 p-2 bg-white border border-gray-300 rounded-full shadow hover:bg-gray-300"
-                                >
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                        <path d="M8 3 4 7l4 4" />
-                                        <path d="M4 7h16" />
-                                        <path d="m16 21 4-4-4-4" />
-                                        <path d="M20 17H4" />
-                                    </svg>
-                                </button>
-                            </div>
-                            <div>
-                                <FormLabel title="To" htmlFor="to" />
-                                <FormSelect
-                                    control={control}
-                                    name="to"
-                                    id="to"
-                                    size="md"
-                                    className="w-full border-0 text-base"
-                                    options={countries.map((location) => ({
-                                        label: location.title,
-                                        value: location.id,
-                                    }))}
-                                    placeholder="Going to"
-                                />
-                            </div> */}
                             <div className="col-span-6">
-                                <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                    <DemoContainer components={['DateRangePicker']}>
-                                        <DateRangePicker localeText={{ start: 'Departure Date', end: 'Return Date' }} />
-                                    </DemoContainer>
-                                </LocalizationProvider>
-                            </div>
-                            {/* <div>
-                                <FormLabel title="Departure Date" htmlFor="departureDate" />
-                                <FormInput
-                                    type="date"
-                                    size="md"
+                                <MuiDateRangePicker
                                     control={control}
-                                    name="departureDate"
-                                    id="departureDate"
+                                    name="dateRange"
+                                    startLabel="Departure Date"
+                                    endLabel="Return Date"
                                     className="w-full"
                                 />
-                            </div>
-                            <div>
-                                <FormLabel title="Return Date" htmlFor="returnDate" />
-                                <FormInput
-                                    type="date"
-                                    size="md"
-                                    control={control}
-                                    name="returnDate"
-                                    id="returnDate"
-                                    className="w-full"
-                                    disabled={travelType !== "roundTrip"}
-                                />
-                            </div> */}
-                            {/* <div>
-                                <FormLabel title={"Travelers"} htmlFor="travelers" />
-                                <FormSelect
-                                    control={control}
-                                    name="travelers"
-                                    instanceId="travelers"
-                                    id="travelers"
-                                    size="md"
-                                    className="w-full border-0 text-base"
-                                    options={countries.map((location) => ({
-                                        label: location.title,
-                                        value: location.id,
-                                    }))}
-                                    placeholder="Travelers"
-                                />
-                            </div> */}
-                            <div className="col-span-4">
-                                <MuiDropdown
-                                    control={control}
-                                    selectIcon={<FlightTakeoffIcon color="success" />}
-                                    name="traveler"
-                                    label="Traveler"
-                                    options={cities.map((city) => ({
-                                        value: city.code,
-                                        label: `${city.city} (${city.code})`,
-                                        icon: <FlightTakeoffIcon color="success" />
-                                    }))}
-                                    onChange={handleCityChange}
-                                />
-                            </div>
 
-                            {/* <div>
-                                <FormLabel title={"Financial Profiles"} htmlFor="financialProfiles" />
-                                <FormSelect
-                                    control={control}
-                                    name="financialProfiles"
-                                    instanceId="financialProfiles"
-                                    id="financialProfiles"
-                                    size="md"
-                                    className="w-full border-0 text-base"
-                                    options={countries.map((location) => ({
-                                        label: location.title,
-                                        value: location.id,
-                                    }))}
-                                    placeholder="Financial Profiles"
-                                />
-                            </div> */}
-                            <div className="col-span-4">
-                                {/* <FormLabel title={"Cabin Class"} htmlFor="cabinClass" />
-                                <FormSelect
-                                    control={control}
-                                    name="cabinClass"
-                                    instanceId="cabinClass"
-                                    id="cabinClass"
-                                    size="md"
-                                    className="w-full border-0 text-base"
-                                    options={countries.map((location) => ({
-                                        label: location.title,
-                                        value: location.id,
-                                    }))}
-                                    placeholder="Cabin Class"
-                                /> */}
+                            </div>
+                            <div className="col-span-3">
+                                <TravelersDropdown control={control} name="travelers" />
+                            </div>
+                            <div className="col-span-3">
                                 <MuiDropdown
                                     control={control}
                                     name="cabinClass"
@@ -350,7 +281,7 @@ const FlightSearch = () => {
                                         <div className="col-span-1">
                                             <p className="text-blue-500">Flight {index + 1}</p>
                                         </div>
-                                        <div className="relative col-span-3">
+                                        <div className="relative col-span-3 pt-[5px]">
                                             <MuiDropdown
                                                 control={control}
                                                 name={`from-${flight.id}`}
@@ -366,7 +297,7 @@ const FlightSearch = () => {
                                             <button
                                                 onClick={swapLocations}
                                                 type="button"
-                                                className="absolute right-[-30px] bottom-1 p-2 bg-white border border-gray-300 rounded-full shadow hover:bg-gray-300"
+                                                className="absolute right-[-30px] bottom-2 p-2 bg-white border border-gray-300 rounded-full shadow hover:bg-gray-300"
                                             >
                                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                                     <path d="M8 3 4 7l4 4" />
@@ -392,58 +323,11 @@ const FlightSearch = () => {
                                             />
 
                                         </div>
-                                        {/* <div className="col-span-3">
-                                            <div className="relative">
-                                                <FormLabel title="From" htmlFor={`from-${flight.id}`} />
-                                                <FormSelect
-                                                    control={control}
-                                                    name={`from-${flight.id}`}
-                                                    id={`from-${flight.id}`}
-                                                    size="md"
-                                                    className="w-full border-0 text-base"
-                                                    options={countries.map((location) => ({
-                                                        label: location.title,
-                                                        value: location.id,
-                                                    }))}
-                                                    placeholder="Leaving from"
-                                                />
-                                                <button
-                                                    onClick={swapLocations}
-                                                    type="button"
-                                                    className="absolute right-[-30px] bottom-1 p-2 bg-white border border-gray-300 rounded-full shadow hover:bg-gray-300"
-                                                >
-                                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                        <path d="M8 3 4 7l4 4" />
-                                                        <path d="M4 7h16" />
-                                                        <path d="m16 21 4-4-4-4" />
-                                                        <path d="M20 17H4" />
-                                                    </svg>
-                                                </button>
-                                            </div>
-                                        </div> */}
-                                        {/* <div className="col-span-3">
-                                            <FormLabel title="To" htmlFor={`to-${flight.id}`} />
-                                            <FormSelect
-                                                control={control}
-                                                name={`to-${flight.id}`}
-                                                id={`to-${flight.id}`}
-                                                size="md"
-                                                className="w-full border-0 text-base"
-                                                options={countries.map((location) => ({
-                                                    label: location.title,
-                                                    value: location.id,
-                                                }))}
-                                                placeholder="Going to"
-                                            />
-                                        </div> */}
                                         <div className="col-span-3">
-                                            <FormLabel title="Departure Date" htmlFor={`departureDate-${flight.id}`} />
-                                            <FormInput
-                                                type="date"
-                                                size="md"
+                                            <MuiDatePicker
                                                 control={control}
                                                 name={`departureDate-${flight.id}`}
-                                                id={`departureDate-${flight.id}`}
+                                                label="Departure Date"
                                                 className="w-full"
                                             />
                                         </div>
@@ -452,7 +336,7 @@ const FlightSearch = () => {
                                                 <button
                                                     type="button"
                                                     onClick={() => removeFlight(flight.id)}
-                                                    className="text-red-500 hover:text-red-700 cursor-pointer mt-8"
+                                                    className="text-red-500 hover:text-red-700 cursor-pointer pt-1"
                                                 >
                                                     ✖ Remove
                                                 </button>
@@ -468,53 +352,20 @@ const FlightSearch = () => {
                                     </h2>
                                 </div>
                             }
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end mt-5">
                                 <div>
-                                    <FormLabel title={"Travelers"} htmlFor="travelers" />
-                                    <FormSelect
-                                        control={control}
-                                        name="travelers"
-                                        instanceId="travelers"
-                                        id="travelers"
-                                        size="md"
-                                        className="w-full border-0 text-base"
-                                        options={countries.map((location) => ({
-                                            label: location.title,
-                                            value: location.id,
-                                        }))}
-                                        placeholder="Travelers"
-                                    />
+                                    <TravelersDropdown control={control} name="travelers" />
                                 </div>
                                 <div>
-                                    <FormLabel title={"Financial Profiles"} htmlFor="financialProfiles" />
-                                    <FormSelect
-                                        control={control}
-                                        name="financialProfiles"
-                                        instanceId="financialProfiles"
-                                        id="financialProfiles"
-                                        size="md"
-                                        className="w-full border-0 text-base"
-                                        options={countries.map((location) => ({
-                                            label: location.title,
-                                            value: location.id,
-                                        }))}
-                                        placeholder="Financial Profiles"
-                                    />
-                                </div>
-                                <div>
-                                    <FormLabel title={"Cabin Class"} htmlFor="cabinClass" />
-                                    <FormSelect
+                                    <MuiDropdown
                                         control={control}
                                         name="cabinClass"
-                                        instanceId="cabinClass"
-                                        id="cabinClass"
-                                        size="md"
-                                        className="w-full border-0 text-base"
-                                        options={countries.map((location) => ({
-                                            label: location.title,
-                                            value: location.id,
+                                        label="Cabin Class"
+                                        options={cities.map((city) => ({
+                                            value: city.code,
+                                            label: `${city.city} (${city.code})`,
                                         }))}
-                                        placeholder="Cabin Class"
+                                        onChange={handleCityChange}
                                     />
                                 </div>
                                 <div>
@@ -567,11 +418,14 @@ const RecentSearch = () => {
                         ].map((item, idx) => (
                             <div
                                 key={idx}
-                                className="border-2 border-gray rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow"
+                                className="border-2 border-gray-300 rounded-lg p-4 shadow-md hover:shadow-lg transition-shadow"
                             >
                                 <div className="flex justify-between items-center">
-                                    <div className="text-lg font-semibold text-primary">
-                                        {item.from} <span className="text-gray-500">↔</span> {item.to}
+                                    <div className="text-lg font-semibold text-primary flex items-center gap-2">
+                                        {item.from}
+                                        <img src="/media/icons/reverse-arrows.svg" alt="" />
+                                        {/* <span className="text-gray-500">↔</span> */}
+                                        {item.to}
                                     </div>
                                     <a
                                         href="#"
@@ -599,7 +453,8 @@ const RecentSearch = () => {
                                     {item.date}
                                 </div>
                                 <div className="text-sm text-gray-500 mt-1 flex items-center gap-2">
-                                    <Icon icon={calendarIcon} className="text-base-content/70" fontSize={15} />
+                                    <img src="media/icons/view-detail-icon.svg" alt="" />
+                                    {/* <Icon icon={calendarIcon} className="text-base-content/70" fontSize={15} /> */}
                                     {item.details}
                                 </div>
                             </div>
@@ -697,12 +552,12 @@ const FlightFound = () => {
                                     <span className="text-gray-500 text-sm">Round-Trip • 2 Travelers Mon • Economy</span>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <Button color="primary" variant="outline" size="md">
+                                    <Button color="primary" variant="outline" size="md" className="font-bold text-base">
                                         <Icon icon={plus} className="text-primary" fontSize={22} />
                                         Add Commission
                                     </Button>
 
-                                    <Button color="primary" size="md">
+                                    <Button color="primary" size="md" className="font-bold text-base">
                                         <Icon icon={refreshCcw} className="text-white" fontSize={17} />
                                         Change Search
                                     </Button>
@@ -717,37 +572,38 @@ const FlightFound = () => {
                                 <div className="flex items-center gap-2 mb-2">
                                     <img src="/media/icons/pia.svg" alt="img" />
                                     <div>
-                                        <h3 className="font-semibold text-lg">Pakistan International Airlines</h3>
-                                        <span className="text-gray-500">PK-233 • Mon, Jan 27, 2025</span>
+                                        <h3 className="font-semibold text-base h-4">Pakistan International Airlines</h3>
+                                        <span className="text-gray-500 text-xs">PK-233 • Mon, Jan 27, 2025</span>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <div>
-                                        <h3 className="font-semibold text-lg mb-0">LHR</h3>
-                                        <span className="text-gray-500">02:15</span>
+                                    <div className="text-center">
+                                        <h3 className="font-semibold text-base mb-0 h-4">LHR</h3>
+                                        <span className="text-gray-500 text-xs">02:15 AM</span>
                                     </div>
                                     <div className="text-center">
-                                        <h3 className="text-gray-500 text-md mb-0">1 hr 15 mins</h3>
+                                        <h3 className="text-gray text-xs mb-0">1 hr 15 mins</h3>
                                         <span className="text-gray-500 flex">---------- <img src="media/icons/plane.svg" alt="" /> ----------</span>
-                                        <h3 className="text-gray-500 text-md mb-0">Non-Stop</h3>
+                                        <h3 className="text-gray text-xs mb-0">Non-Stop</h3>
                                     </div>
-                                    <div>
-                                        <h3 className="font-semibold text-lg mb-0">ISL</h3>
-                                        <span className="text-gray-500">02:15</span>
+                                    <div className="text-center">
+                                        <h3 className="font-semibold text-base mb-0 h-4">ISL</h3>
+                                        <span className="text-gray-500 text-xs">02:15 AM</span>
                                     </div>
                                 </div>
                                 <div>
-                                    <div className="flex items-center gap-2">
-                                        <h1 className="bg-gray-300 w-fit px-3 py-1 rounded-md">PIAAPI</h1>
+                                    <div className="flex items-center justify-end gap-2">
+                                        <h1 className="bg-gray-300 font-semibold w-fit px-3 py-1 rounded-md text-xs">PIAAPI</h1>
                                         <span>|</span>
-                                        <img src="media/icons/detail-icon.svg" className="h-8" alt="" />
+                                        <img src="media/icons/detail-icon.svg" className="" alt="" />
                                     </div>
-                                    <Button color="secondary" variant="outline" className="border-0" size="md">
-                                        <img src="media/icons/view-detail-icon.svg" className="h-5" alt="" />
+                                    <Button variant="outline" className="border-0 font-semibold text-sm hover:bg-transparent hover:text-gray px-0" size="md">
+                                        <img src="media/icons/view-detail-icon.svg" alt="" />
                                         View Detail
                                     </Button>
                                 </div>
                             </div>
+
                             <div>
                                 {[
                                     { label: "VALUE", baggage: "No Baggage", price: "PKR 205,021.8" },
@@ -758,21 +614,21 @@ const FlightFound = () => {
                                         <div className="grid grid-cols-12 items-center gap-6 border-t border-b py-2">
                                             <div className="col-span-4 border-r-2 pe-5">
                                                 <div className="flex justify-between items-center">
-                                                    <p className="font-medium">{option.label}</p>
+                                                    <p className="font-normal text-sm text-gray">{option.label}</p>
                                                     <img src="media/icons/food-icon.svg" className="h-5" alt="" />
                                                 </div>
                                             </div>
                                             <div className="col-span-4">
                                                 <div className="flex gap-2 justify-start">
                                                     <img src="media/icons/baggage-icon.svg" className="h-5" alt="" />
-                                                    <p className="font-medium">{option.baggage}</p>
+                                                    <p className="font-normal text-sm text-gray">{option.baggage}</p>
                                                 </div>
                                             </div>
                                             <div className="col-span-4">
                                                 <div className="flex items-center justify-end gap-2">
-                                                    <span className="font-semibold">{option.price}</span>
-                                                    <Icon icon={info} className="text-primary" fontSize={22} />
-                                                    <Button color="primary" className="py-1">Book Fare</Button>
+                                                    <span className="font-semibold text-base">{option.price}</span>
+                                                    <Icon icon={info} className="text-gray" fontSize={22} />
+                                                    <Button color="primary" variant="outline" className="py-1 bg-[#F5F7FF]">Book Fare</Button>
                                                 </div>
                                             </div>
                                         </div>
@@ -787,33 +643,33 @@ const FlightFound = () => {
                                 <div className="flex items-center gap-2 mb-2">
                                     <img src="/media/icons/air-blue.svg" alt="img" />
                                     <div>
-                                        <h3 className="font-semibold text-lg">Airblue</h3>
-                                        <span className="text-gray-500">PK-233 • Mon, Jan 27, 2025</span>
+                                        <h3 className="font-semibold text-base h-4">Airblue</h3>
+                                        <span className="text-gray-500 text-xs">PK-233 • Mon, Jan 27, 2025</span>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <div>
-                                        <h3 className="font-semibold text-lg mb-0">LHR</h3>
-                                        <span className="text-gray-500">02:15</span>
+                                    <div className="text-center">
+                                        <h3 className="font-semibold text-base mb-0 h-4">LHR</h3>
+                                        <span className="text-gray-500 text-xs">02:15 AM</span>
                                     </div>
                                     <div className="text-center">
-                                        <h3 className="text-gray-500 text-md mb-0">1 hr 15 mins</h3>
+                                        <h3 className="text-gray text-xs mb-0">1 hr 15 mins</h3>
                                         <span className="text-gray-500 flex">---------- <img src="media/icons/plane.svg" alt="" /> ----------</span>
-                                        <h3 className="text-gray-500 text-md mb-0">Non-Stop</h3>
+                                        <h3 className="text-gray text-xs mb-0">Non-Stop</h3>
                                     </div>
-                                    <div>
-                                        <h3 className="font-semibold text-lg mb-0">ISL</h3>
-                                        <span className="text-gray-500">02:15</span>
+                                    <div className="text-center">
+                                        <h3 className="font-semibold text-base mb-0 h-4">ISL</h3>
+                                        <span className="text-gray-500 text-xs">02:15 AM</span>
                                     </div>
                                 </div>
                                 <div>
-                                    <div className="flex items-center gap-2">
-                                        <h1 className="bg-gray-300 w-fit px-3 py-1 rounded-md">PIAAPI</h1>
+                                    <div className="flex items-center justify-end gap-2">
+                                        <h1 className="bg-gray-300 font-semibold w-fit px-3 py-1 rounded-md text-xs">PIAAPI</h1>
                                         <span>|</span>
-                                        <img src="media/icons/detail-icon.svg" className="h-8" alt="" />
+                                        <img src="media/icons/detail-icon.svg" className="" alt="" />
                                     </div>
-                                    <Button color="secondary" variant="outline" className="border-0" size="md">
-                                        <img src="media/icons/view-detail-icon.svg" className="h-5" alt="" />
+                                    <Button variant="outline" className="border-0 font-semibold text-sm hover:bg-transparent hover:text-gray px-0" size="md">
+                                        <img src="media/icons/view-detail-icon.svg" alt="" />
                                         View Detail
                                     </Button>
                                 </div>
@@ -828,21 +684,21 @@ const FlightFound = () => {
                                         <div className="grid grid-cols-12 items-center gap-6 border-t border-b py-2">
                                             <div className="col-span-4 border-r-2 pe-5">
                                                 <div className="flex justify-between items-center">
-                                                    <p className="font-medium">{option.label}</p>
+                                                    <p className="font-normal text-sm text-gray">{option.label}</p>
                                                     <img src="media/icons/food-icon.svg" className="h-5" alt="" />
                                                 </div>
                                             </div>
                                             <div className="col-span-4">
                                                 <div className="flex gap-2 justify-start">
                                                     <img src="media/icons/baggage-icon.svg" className="h-5" alt="" />
-                                                    <p className="font-medium">{option.baggage}</p>
+                                                    <p className="font-normal text-sm text-gray">{option.baggage}</p>
                                                 </div>
                                             </div>
                                             <div className="col-span-4">
                                                 <div className="flex items-center justify-end gap-2">
-                                                    <span className="font-semibold">{option.price}</span>
-                                                    <Icon icon={info} className="text-primary" fontSize={22} />
-                                                    <Button color="primary" className="py-1">Book Fare</Button>
+                                                    <span className="font-semibold text-base">{option.price}</span>
+                                                    <Icon icon={info} className="text-gray" fontSize={22} />
+                                                    <Button color="primary" variant="outline" className="py-1 bg-[#F5F7FF]">Book Fare</Button>
                                                 </div>
                                             </div>
                                         </div>

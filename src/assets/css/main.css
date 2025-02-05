@@ -14,3 +14,7 @@
 @import "plugins/_apexcharts.css";
 @import "plugins/_select.css";
 @import "plugins/_sooner.css";
+
+.css-10o2lyd-MuiStack-root{
+    /* padding-top: 0 !important; */
+}
