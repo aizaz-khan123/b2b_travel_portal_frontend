@@ -68,11 +68,11 @@ const FlightCarousal = () => {
         //             alt="Auth Image" />
         //     </div>
         // </Carousel>
-        <div className="mb-5">
+        <div>
             <Image src='media/images/Airport illustration.svg'
                 width={100}
                 height={300}
-                className="w-full h-[300px] object-contain"
+                className="w-full object-contain"
                 alt="Auth Image" />
         </div>
     );
@@ -477,7 +477,7 @@ const FlightFound = () => {
             {/* Flight Filters & Results */}
             <div className="grid grid-cols-12 gap-6">
                 {/* Filters Section */}
-                <div className="col-span-3">
+                <div className="col-span-12 md:col-span-3">
                     <div className=" bg-white p-4 rounded-md shadow-md mb-4">
                         <h4 className="text-gray-700 font-medium text-center gap-2">
                             ⏳ 00:09:53
@@ -538,10 +538,10 @@ const FlightFound = () => {
                 </div>
 
                 {/* Flight Results */}
-                <div className="col-span-9">
+                <div className="col-span-12 md:col-span-9">
                     <Card className="bg-base-100/80 backdrop-blur-lg rounded-lg shadow-md mb-5">
                         <CardBody>
-                            <div className="flex justify-between items-center">
+                            <div className="md:flex justify-between items-center">
                                 <div>
                                     <div className="flex items-center gap-2">
                                         <h3 className="font-semibold text-lg mb-0">LHR</h3>
@@ -551,7 +551,7 @@ const FlightFound = () => {
                                     </div>
                                     <span className="text-gray-500 text-sm">Round-Trip • 2 Travelers Mon • Economy</span>
                                 </div>
-                                <div className="flex items-center gap-2">
+                                <div className="flex flex-col md:flex-row items-center gap-2">
                                     <Button color="primary" variant="outline" size="md" className="font-bold text-base">
                                         <Icon icon={plus} className="text-primary" fontSize={22} />
                                         Add Commission
@@ -568,11 +568,11 @@ const FlightFound = () => {
                     </Card>
                     <Card className="bg-base-100/80 backdrop-blur-lg rounded-lg shadow-md mb-5">
                         <CardBody>
-                            <div className="flex justify-between items-center">
+                            <div className="md:flex justify-between items-center">
                                 <div className="flex items-center gap-2 mb-2">
                                     <img src="/media/icons/pia.svg" alt="img" />
                                     <div>
-                                        <h3 className="font-semibold text-base h-4">Pakistan International Airlines</h3>
+                                        <h3 className="font-semibold text-base md:h-4">Pakistan International Airlines</h3>
                                         <span className="text-gray-500 text-xs">PK-233 • Mon, Jan 27, 2025</span>
                                     </div>
                                 </div>
@@ -592,11 +592,11 @@ const FlightFound = () => {
                                     </div>
                                 </div>
                                 <div>
-                                    <div className="flex items-center justify-end gap-2">
+                                    {/* <div className="flex items-center justify-end gap-2">
                                         <h1 className="bg-gray-300 font-semibold w-fit px-3 py-1 rounded-md text-xs">PIAAPI</h1>
                                         <span>|</span>
                                         <img src="media/icons/detail-icon.svg" className="" alt="" />
-                                    </div>
+                                    </div> */}
                                     <Button variant="outline" className="border-0 font-semibold text-sm hover:bg-transparent hover:text-gray px-0" size="md">
                                         <img src="media/icons/view-detail-icon.svg" alt="" />
                                         View Detail
@@ -611,7 +611,7 @@ const FlightFound = () => {
                                     { label: "XTRA", baggage: "Total 20.0 KGs (1 pc)", price: "PKR 205,021.8" },
                                 ].map((option, idx) => (
                                     <>
-                                        <div className="grid grid-cols-12 items-center gap-6 border-t border-b py-2">
+                                        <div className="grid grid-cols-12 items-center gap-6 border-t border-b py-2 overflow-auto">
                                             <div className="col-span-4 border-r-2 pe-5">
                                                 <div className="flex justify-between items-center">
                                                     <p className="font-normal text-sm text-gray">{option.label}</p>
@@ -663,11 +663,11 @@ const FlightFound = () => {
                                     </div>
                                 </div>
                                 <div>
-                                    <div className="flex items-center justify-end gap-2">
+                                    {/* <div className="flex items-center justify-end gap-2">
                                         <h1 className="bg-gray-300 font-semibold w-fit px-3 py-1 rounded-md text-xs">PIAAPI</h1>
                                         <span>|</span>
                                         <img src="media/icons/detail-icon.svg" className="" alt="" />
-                                    </div>
+                                    </div> */}
                                     <Button variant="outline" className="border-0 font-semibold text-sm hover:bg-transparent hover:text-gray px-0" size="md">
                                         <img src="media/icons/view-detail-icon.svg" alt="" />
                                         View Detail
