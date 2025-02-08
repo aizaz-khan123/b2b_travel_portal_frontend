@@ -25,7 +25,7 @@ import {
 } from "@/components/daisyui";
 import Pagination from "@/components/Pagination/Pagination";
 import { FormInput, FormSelect } from "@/components/forms";
-import { useCreateBranchMutation, useDeleteBranchMutation, useGetBranchesQuery, useStatusUpdateMutation, useUpdateBranchMutation } from "@/services/api";
+import { useCreateAgencyMutation, useDeleteAgencyMutation, useGetAgenciesQuery, useAgencystatusUpdateMutation, useUpdateAgencyMutation, useBranchDropDownQuery } from "@/services/api";
 
 import { useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -34,20 +34,20 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import { z } from "zod";
 import { cities } from "@/dropdowndata/cities";
-import { IBranch } from "@/types/settings/branch";
 
-const BranchRow = ({
-    branch,
-    showDeleteBranchConfirmation,
-    showUpdateBranchConfirmation,
+const AgencyRow = ({
+    agency,
+    showDeleteAgencyConfirmation,
+    showUpdateAgencyConfirmation,
 }: {
-    branch: IBranch;
-    showDeleteBranchConfirmation: (uuid: string) => void;
-    showUpdateBranchConfirmation: any
+    agency: any;
+    showDeleteAgencyConfirmation: (uuid: string) => void;
+    showUpdateAgencyConfirmation: any
 }) => {
     const toaster = useToast();
-    const { id, uuid, name, address, city, status, user_id, branch_manager } = branch;
-    const [updateStatus] = useStatusUpdateMutation();
+
+    const { id, uuid, name, email, phone_number, status, agency_wallet } = agency;
+    const [updateStatus] = useAgencystatusUpdateMutation();
     const handleStatusChange = (uuid: string) => {
         const body = {
             _method: 'patch',
@@ -61,42 +61,27 @@ const BranchRow = ({
             <TableRow className="hover:bg-base-200/40">
                 <div className="font-medium">{id}</div>
                 <div className="flex items-center space-x-3 truncate">{name}</div>
-                <div className="flex items-center space-x-3 truncate">{branch_manager?.name}</div>
-                <div className="flex items-center space-x-3 truncate">{branch_manager?.email}</div>
-                <div className="flex items-center space-x-3 truncate">{branch_manager?.phone_number}</div>
-                <div className="flex items-center space-x-3 truncate">
-                    {branch_manager?.address?.length > 20 ? `${branch_manager?.address.slice(0, 20)}...` : branch_manager?.address}
-                </div>
-                <div className="inline-flex w-fit ml-8">
-                    <Tooltip message="Branch Associate 4 Employess" position="top" color="primary">
-                        <Button color="primary" size="xs">
-                            4
-                        </Button>
-                    </Tooltip>
-                </div>
-                <div className="inline-flex w-fit ml-8">
-                    <Tooltip message="Branch Associate 4 Agencies" position="top" color="primary">
-                        <Button color="primary" size="xs">
-                            4
-                        </Button>
-                    </Tooltip>
-                </div>
+                <div className="flex items-center space-x-3 truncate">{email}</div>
+                <div className="flex items-center space-x-3 truncate">{phone_number}</div>
+                <div className="flex items-center space-x-3 truncate">{agency_wallet?.per_credit_limit}</div>
+                <div className="flex items-center space-x-3 truncate">{agency_wallet?.temp_credit_limit || 0}</div>
+                <div className="flex items-center space-x-3 truncate">{agency_wallet?.payable_amount || 0}</div>
                 <div className="inline-flex w-fit">
                     <Tooltip message="Change Status" position="top" color="primary">
-                        <Toggle className="m-2" color="primary" defaultChecked={branch_manager?.status == '1' ? true : false} onChange={() => handleStatusChange(branch_manager?.uuid)} />
+                        <Toggle className="m-2" color="primary" defaultChecked={status == '1' ? true : false} onChange={() => handleStatusChange(uuid)} />
                     </Tooltip>
                 </div>
                 <div className="inline-flex w-fit">
-                    <Tooltip message="Update Branch" position="top" color="primary">
+                    <Tooltip message="Update Agency" position="top" color="primary">
                         <Button color="primary" size="xs" onClick={(event) => {
                             event.stopPropagation();
-                            showUpdateBranchConfirmation(branch);
+                            showUpdateAgencyConfirmation(agency);
                         }}>
                             Update
                         </Button>
                     </Tooltip>
                     <div className="ml-1">
-                        <Tooltip message="Update Branch Permission" position="top" color="primary">
+                        <Tooltip message="Update Agency Permission" position="top" color="primary">
                             <Button color="primary" size="xs">
                                 Update Permission
                             </Button>
@@ -104,7 +89,7 @@ const BranchRow = ({
                     </div>
                 </div>
                 <div className="inline-flex w-fit">
-                    <Tooltip message="Delete Branch" position="top" color="error">
+                    <Tooltip message="Delete Agency" position="top" color="error">
                         <Button
                             color="ghost"
                             className="text-error/70 hover:bg-error/20"
@@ -113,7 +98,7 @@ const BranchRow = ({
                             aria-label="Delete bank account"
                             onClick={(event) => {
                                 event.stopPropagation();
-                                showDeleteBranchConfirmation(uuid);
+                                showDeleteAgencyConfirmation(uuid);
                             }}
                         >
                             <Icon icon={trashIcon} fontSize={22} />
@@ -125,31 +110,33 @@ const BranchRow = ({
     );
 };
 
-const BranchTable = () => {
+const AgencyTable = () => {
     const toaster = useToast();
     const [searchText, setSearchText] = useState<string>("");
     const [pageUrl, setPageUrl] = useState<string>("");
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
-    const [branchId, setBranchId] = useState<string>("");
-    const { data: detail_data } = useGetBranchesQuery({ searchText, pageUrl });
-    const branches = detail_data?.data;
+    const [agencyId, setAgencyId] = useState<string>("");
+    const { data: detail_data } = useGetAgenciesQuery({ searchText, pageUrl });
+    const agencies = detail_data?.data;
     const links = detail_data?.links;
-    const [createBranch, { isLoading: createLoading }] = useCreateBranchMutation();
-    const [deleteBranch, { isLoading: deleteBranchLoading }] = useDeleteBranchMutation();
-    const [updateBranch, { isLoading: branchLoading }] = useUpdateBranchMutation();
+    const [createAgency, { isLoading: createLoading }] = useCreateAgencyMutation();
+    const [deleteAgency, { isLoading: deleteAgencyLoading }] = useDeleteAgencyMutation();
+    const [updateAgency, { isLoading: agencyLoading }] = useUpdateAgencyMutation();
+    const { data: branchesDropDown } = useBranchDropDownQuery();
 
-    const branchSchema = z.object({
-        branch_name: z.string({ required_error: "Branch Name Required!" }).min(5, "Branch Name cannot be empty!"),
-        manager_name: z.string({ required_error: "Branch Manager Name Required!" }).min(5, "Branch Manager Name Should be greater than 5"),
+    const agencySchema = z.object({
+        name: z.string({ required_error: "Agency Name Required!" }).min(5, "Agency Name cannot be empty!"),
+        branch_id: z.number({ required_error: "Branch ID is required!" }).min(1, "Branch ID cannot be empty!"),
         phone_number: z.string().regex(/^\+?\d{1,4}?[\d\s\-\(\)]{7,15}$/, "Invalid phone number!"),
         city: z.string({ required_error: "City is required!" }).min(1, "City cannot be empty!"),
         address: z.string({ required_error: "Address is required!" }).min(1, "Address cannot be empty!"),
         email: z.string({ required_error: "Email Required!" }).email({ message: "Invalid email address!" }).min(1, "Email is required!"),
+        per_credit_limit: z.string({ required_error: "Per Credit Limit is required!" }).min(1, "Per Credit Limit must be at least 1!")
     });
 
-    const [BranchToBeDelete, setBranchToBeDelete] = useState<IBranch>();
-    const BranchDeleteConfirmationRef = useRef<HTMLDialogElement | null>(null);
+    const [AgencyToBeDelete, setAgencyToBeDelete] = useState<any>();
+    const agencyDeleteConfirmationRef = useRef<HTMLDialogElement | null>(null);
 
     const { control: filterControl } = useForm({
         defaultValues: {
@@ -158,28 +145,29 @@ const BranchTable = () => {
         },
     });
 
-    const showDeleteBranchConfirmation = (uuid: any) => {
-        BranchDeleteConfirmationRef.current?.showModal();
-        setBranchToBeDelete(branches?.find((b) => uuid === b.uuid));
+    const showDeleteAgencyConfirmation = (uuid: any) => {
+        agencyDeleteConfirmationRef.current?.showModal();
+        setAgencyToBeDelete(agencies?.find((b) => uuid === b.uuid));
     };
 
-    const showUpdateBranchConfirmation = (branch: any) => {
+    const showUpdateAgencyConfirmation = (agency: any) => {
         reset({
-            branch_name: branch.name,
-            manager_name: branch.branch_manager.name,
-            phone_number: branch.branch_manager.phone_number,
-            city: branch.branch_manager.city,
-            address: branch.branch_manager.address,
-            email: branch.branch_manager.email,
+            name: agency.name,
+            branch_id: agency.branch_id,
+            phone_number: agency.phone_number,
+            city: agency.city,
+            address: agency.address,
+            per_credit_limit: agency.agency_wallet.per_credit_limit,
+            email: agency.email
         });
-        setBranchId(branch.uuid);
+        setAgencyId(agency.uuid);
         setIsEditMode(true)
         setIsModalOpen(true)
     }
 
-    const handleDeleteBranch = async () => {
-        if (BranchToBeDelete) {
-            deleteBranch(BranchToBeDelete.uuid).then((response: any) => {
+    const handleDeleteAgency = async () => {
+        if (AgencyToBeDelete) {
+            deleteAgency(AgencyToBeDelete.uuid).then((response: any) => {
                 if (response?.data.code == 200) {
                     toaster.success(response?.data.message);
                 } else {
@@ -195,8 +183,8 @@ const BranchTable = () => {
         }
     };
 
-    const { control, handleSubmit, setError, reset } = useForm<z.infer<typeof branchSchema>>({
-        resolver: zodResolver(branchSchema),
+    const { control, handleSubmit, setError, reset } = useForm<z.infer<typeof agencySchema>>({
+        resolver: zodResolver(agencySchema),
     });
 
     const setErrors = (errors: Record<string, any>) => {
@@ -210,43 +198,41 @@ const BranchTable = () => {
                 _method: 'put',
                 ...data
             }
-            await updateBranch({ branchId, updated_data }).then((response: any) => {
+            await updateAgency({ agencyId, updated_data }).then((response: any) => {
                 if ("error" in response) {
                     setErrors(response?.error?.data?.errors);
                     return;
                 }
-                toaster.success(`Branch has been Updated`);
+                toaster.success(`Agency has been Updated`);
                 reset({
-                    branch_name: "",
-                    manager_name: "",
+                    name: "",
                     phone_number: "",
                     city: "",
                     address: "",
                     email: "",
+                    per_credit_limit: "",
                 });
-                setBranchId("");
+                setAgencyId("");
                 setIsModalOpen(false);
             })
         } else {
-            await createBranch(data).then((response: any) => {
+            await createAgency(data).then((response: any) => {
                 if ("error" in response) {
                     setErrors(response?.error?.data?.errors);
                     return;
                 }
-                const { data } = response?.data;
                 toaster.success(`${data.name} has been created`);
                 reset({
-                    branch_name: "",
-                    manager_name: "",
+                    name: "",
                     phone_number: "",
                     city: "",
                     address: "",
                     email: "",
+                    per_credit_limit: "",
                 });
                 setIsModalOpen(false);
             });
         }
-
     });
 
     const handleShow = () => {
@@ -277,33 +263,32 @@ const BranchTable = () => {
                         <div className="inline-flex items-center gap-3">
                             <Button onClick={handleShow} color="primary" size="md" className="hidden md:flex">
                                 <Icon icon={plusIcon} fontSize={16} />
-                                <span>New Branch</span>
+                                <span>New Agency</span>
                             </Button>
                         </div>
                     </div>
                     <div className="overflow-auto">
                         <Table className="mt-2 rounded-box">
                             <TableHead>
-                                <span className="text-sm font-medium text-base-content/100">ID</span>
-                                <span className="text-sm font-medium text-base-content/100">Branch Name</span>
-                                <span className="text-sm font-medium text-base-content/100">Manager Name</span>
-                                <span className="text-sm font-medium text-base-content/100">Email</span>
-                                <span className="text-sm font-medium text-base-content/100">Phone Number</span>
-                                <span className="text-sm font-medium text-base-content/100">Branch Location</span>
-                                <span className="text-sm font-medium text-base-content/100">Branch Employees</span>
-                                <span className="text-sm font-medium text-base-content/100">Branch Agencies</span>
-                                <span className="text-sm font-medium text-base-content/100">Status</span>
-                                <span className="text-sm font-medium text-base-content/100">Action</span>
-                                <span className="text-sm font-medium text-base-content/100">Delete</span>
+                                <span className="text-sm font-medium text-base-content/80">ID</span>
+                                <span className="text-sm font-medium text-base-content/80">Agency Name</span>
+                                <span className="text-sm font-medium text-base-content/80">Email</span>
+                                <span className="text-sm font-medium text-base-content/80">Phone Number</span>
+                                <span className="text-sm font-medium text-base-content/80">Permanent Limit</span>
+                                <span className="text-sm font-medium text-base-content/80">Temporary Limit</span>
+                                <span className="text-sm font-medium text-base-content/80">Payable Amount</span>
+                                <span className="text-sm font-medium text-base-content/80">Status</span>
+                                <span className="text-sm font-medium text-base-content/80">Action</span>
+                                <span className="text-sm font-medium text-base-content/80">Delete</span>
                             </TableHead>
 
                             <TableBody>
-                                {branches?.map((branch: any, index: any) => (
-                                    <BranchRow
-                                        branch={branch}
+                                {agencies?.map((agency: any, index: any) => (
+                                    <AgencyRow
+                                        agency={agency}
                                         key={index}
-                                        showDeleteBranchConfirmation={showDeleteBranchConfirmation}
-                                        showUpdateBranchConfirmation={showUpdateBranchConfirmation}
+                                        showDeleteAgencyConfirmation={showDeleteAgencyConfirmation}
+                                        showUpdateAgencyConfirmation={showUpdateAgencyConfirmation}
                                     />
                                 ))}
                             </TableBody>
@@ -314,7 +299,7 @@ const BranchTable = () => {
                     </div>
                 </CardBody>
             </Card>
-            <Modal ref={BranchDeleteConfirmationRef} backdrop>
+            <Modal ref={agencyDeleteConfirmationRef} backdrop>
                 <form method="dialog">
                     <Button
                         size="sm"
@@ -327,7 +312,7 @@ const BranchTable = () => {
                 </form>
                 <ModalHeader className="font-bold">Confirm Delete</ModalHeader>
                 <ModalBody>
-                    You are about to delete <b>{BranchToBeDelete?.name}</b>. Would you like to proceed further ?
+                    You are about to delete <b>{AgencyToBeDelete?.name}</b>. Would you like to proceed further ?
                 </ModalBody>
                 <ModalActions>
                     <form method="dialog">
@@ -336,7 +321,7 @@ const BranchTable = () => {
                         </Button>
                     </form>
                     <form method="dialog">
-                        <Button loading={deleteBranchLoading} color="primary" size="sm" onClick={() => handleDeleteBranch()}>
+                        <Button loading={deleteAgencyLoading} color="primary" size="sm" onClick={() => handleDeleteAgency()}>
                             Yes
                         </Button>
                     </form>
@@ -351,38 +336,45 @@ const BranchTable = () => {
                         color="ghost"
                         shape="circle"
                         className="absolute right-2 top-2"
-                        aria-label="Close modal" onClick={handleClose} >
-                        <Icon icon={xIcon} className="h-4" />
+                        aria-label="Close modal" onClick={handleClose}>
+                        <Icon icon={xIcon} className="h-4"/>
                     </Button>
                 </form>
-                <ModalHeader className="font-bold">{isEditMode ? "Edit Branch" : "Add Branch"}</ModalHeader>
+                <ModalHeader className="font-bold">{isEditMode ? "Edit Agency" : "Add Agency"}</ModalHeader>
                 <ModalBody>
                     <Card className="bg-base-100">
                         <CardBody className="gap-0">
                             <div className="mt-1 grid grid-cols-1 gap-5 gap-y-3 md:grid-cols-2">
                                 <div>
-                                    <FormLabel title={"Branch Name"} htmlFor="branch_name"></FormLabel>
+                                    <FormLabel title={"Agency Name"} htmlFor="name"></FormLabel>
                                     <FormInput
                                         className="w-full border-0 focus:outline-0"
                                         control={control}
                                         size="md"
-                                        id="branch_name"
-                                        name="branch_name"
-                                        placeholder="Enter Branch Name"
+                                        id="name"
+                                        name="name"
+                                        placeholder="Agency Name"
                                     />
                                 </div>
                                 <div>
-                                    <FormLabel title={"Branch Manager Name"} htmlFor="manager_name"></FormLabel>
-                                    <FormInput
-                                        className="w-full border-0 focus:outline-0"
-                                        control={control}
-                                        size="md"
-                                        id="manager_name"
-                                        name="manager_name"
-                                        placeholder="Enter Branch Manager Name"
-                                    />
+                                    <FormLabel title={"Branches"} htmlFor="branch_id"></FormLabel>
+                                    {branchesDropDown ? (
+                                        <FormSelect
+                                            control={control}
+                                            name="branch_id"
+                                            size="md"
+                                            id="branch_id"
+                                            className="w-full border-0 text-base"
+                                            options={branchesDropDown.map((branch: any) => ({
+                                                label: branch.name,
+                                                value: branch.id,
+                                            }))}
+                                            placeholder="Select Branches"
+                                        />
+                                    ) : (
+                                        <p>Loading...</p>
+                                    )}
                                 </div>
-
                                 <div>
                                     <FormLabel title={"Email"} htmlFor="email"></FormLabel>
                                     <FormInput
@@ -392,7 +384,7 @@ const BranchTable = () => {
                                         size="md"
                                         id="email"
                                         name="email"
-                                        placeholder="branch@example.com"
+                                        placeholder="agency@example.com"
                                     />
                                 </div>
                                 <div>
@@ -437,6 +429,18 @@ const BranchTable = () => {
                                         placeholder="Select City"
                                     />
                                 </div>
+
+                                <div>
+                                    <FormLabel title="Permanent Limit" htmlFor="per_credit_limit" />
+                                    <FormInput
+                                        className="w-full border-0 focus:outline-0"
+                                        control={control}
+                                        size="md"
+                                        id="per_credit_limit"
+                                        name="per_credit_limit"
+                                        placeholder="Enter Permanent Limit"
+                                    />
+                                </div>
                             </div>
                         </CardBody>
                     </Card>
@@ -444,7 +448,7 @@ const BranchTable = () => {
 
                 <ModalActions>
                     <form method="dialog">
-                        <Button color="primary" size="md" loading={createLoading || branchLoading} onClick={() => onSubmit()}>
+                        <Button color="primary" size="md" loading={createLoading || agencyLoading} onClick={() => onSubmit()}>
                             {isEditMode ? "Update" : "Add"}
                         </Button>
                     </form>
@@ -454,4 +458,4 @@ const BranchTable = () => {
     );
 };
 
-export { BranchTable };
+export { AgencyTable };

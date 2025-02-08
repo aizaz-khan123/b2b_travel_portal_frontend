@@ -54,9 +54,11 @@ const LoginAuth = ({ redirectTo }: { redirectTo?: string }) => {
     const onSubmit = handleSubmit(async (data) => {
         await loginUser(data).then(async (response) => {
             const userDetail = response.data.data;
-            if (response.data.code == 200) {
-                dispatch(loggedIn({ userDetail }));
-                await updateAuthCookie({ user: userDetail?.user });
+            if (response.data.code == 200) {    
+                await Promise.allSettled([
+                    dispatch(loggedIn({ userDetail })),
+                    updateAuthCookie({ user: userDetail?.user })
+                ]);
                 toaster.success("Login successfully...");
                 router.push(redirectTo ?? routes.home);
             }

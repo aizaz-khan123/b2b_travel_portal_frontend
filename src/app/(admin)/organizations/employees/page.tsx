@@ -1,24 +1,24 @@
 import type { Metadata } from "next";
 import { PageTitle } from "@/components/PageTitle";
 
-import { SupplierTable } from "./SupplierTable";
+import {EmployeeTable} from './EmployeeTable';
 
 export const metadata: Metadata = {
-    title: "Suppliers",
+    title: "Employees",
 };
 
-const Suppliers = async () => {
+const Employees = async () => {
     return (
         <div>
             <PageTitle
-                title={"Suppliers"}
-                breadCrumbItems={[{ label: "Settings" }, { label: "Suppliers", active: true }]}
+                title={"Employees"}
+                breadCrumbItems={[{ label: "Organizations" }, { label: "Employees", active: true }]}
             />
             <div className="mt-5">
-                <SupplierTable />
+                <EmployeeTable />
             </div>
         </div>
     );
 };
 
-export default Suppliers;
+export default Employees;

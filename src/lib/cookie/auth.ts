@@ -9,9 +9,9 @@ export const updateAuthCookie = async (user: IAuthState) => {
     cookies().set({ name: cookieKey, value: JSON.stringify(user) });
 };
 
-export const getAuthCookie = async (): Promise<IAuthState | undefined> => {
+export const getAuthCookie = async (): Promise<any | undefined> => {
     const authCookie = cookies().get(cookieKey);
     if (authCookie) {
-        return JSON.parse(authCookie.value) as IAuthState;
+        return JSON.parse(authCookie.value);
     }
 };

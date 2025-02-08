@@ -9,7 +9,7 @@ import "simplebar-react/dist/simplebar.min.css";
 
 import { Icon } from "@/components/Icon";
 import { Logo } from "@/components/Logo";
-import { Button, Menu, MenuDetails, MenuItem, MenuTitle } from "@/components/daisyui";
+import { Menu, MenuDetails, MenuItem, MenuTitle } from "@/components/daisyui";
 import { cn, menuHelper } from "@/helpers";
 import { routes } from "@/lib/routes";
 import { IMenuItem } from "@/types/layout/admin";
@@ -58,13 +58,25 @@ const LeftMenuItem = ({ menuItem, activated }: { menuItem: IMenuItem; activated:
     );
 };
 
-const Leftbar = ({ menuItems }: { menuItems: IMenuItem[] }) => {
+const Leftbar = ({ menuItems, userRole }: { menuItems: IMenuItem[], userRole: string }) => {
     const pathname = usePathname();
     const scrollRef = useRef<SimpleBarCore | null>(null);
 
+    const filteredMenu = useMemo(() => {
+        const filterItems = (items: IMenuItem[]): IMenuItem[] =>
+            items
+                .filter(item => !item.roles || item.roles.includes(userRole))
+                .map(item => ({
+                    ...item,
+                    children: item.children ? filterItems(item.children) : undefined,
+                }));
+
+        return filterItems(menuItems);
+    }, [menuItems, userRole]);
+
     const activatedParents = useMemo(
-        () => new Set(menuHelper.getActivatedItemParentKeys(menuItems, pathname)),
-        [pathname],
+        () => new Set(menuHelper.getActivatedItemParentKeys(filteredMenu, pathname)),
+        [pathname, filteredMenu],
     );
 
     useEffect(() => {
@@ -88,7 +100,7 @@ const Leftbar = ({ menuItems }: { menuItems: IMenuItem[] }) => {
             </Link>
             <SimpleBar ref={scrollRef} className="h-[calc(100vh)] lg:h-[calc(100vh)]">
                 <Menu className="mb-6">
-                    {menuItems.map((item, index) => (
+                    {filteredMenu.map((item, index) => (
                         <LeftMenuItem menuItem={item} key={index} activated={activatedParents} />
                     ))}
                 </Menu>

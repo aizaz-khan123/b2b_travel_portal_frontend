@@ -14,6 +14,7 @@ export type IBranch = {
         name: string;
         email: String;
         phone_number: string;
-        status: boolean;
+        status: string;
+        address: string;
     }
 }
