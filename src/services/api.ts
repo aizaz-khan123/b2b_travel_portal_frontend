@@ -346,6 +346,13 @@ export const api = emptySplitApi.injectEndpoints({
       }),
       invalidatesTags: ['AirlineMargins'],
     }),
+    verifySetPasswordLink: builder.mutation({
+      query: (body) => ({
+        url: API_END_POINTS.verifySetPasswordLink,
+        method: 'POST',
+        body,
+      }),
+    }),
     getBranches: builder.query<any, { pageUrl?: string; searchText?: string }>({
       query: ({ pageUrl, searchText }) => ({
         url: pageUrl || API_END_POINTS.getBranches,
@@ -372,9 +379,107 @@ export const api = emptySplitApi.injectEndpoints({
       }),
       invalidatesTags: ['Branches'],
     }),
-    verifySetPasswordLink: builder.mutation({
+    updateBranch:builder.mutation({
+      query: ({ branchId, updated_data }) => ({
+        url: `${API_END_POINTS.updateBranch}/${branchId}`,
+        method: "POST",
+        body: updated_data,
+      }),
+      invalidatesTags: ['Branches'],
+    }),
+    branchDropDown: builder.query<any, void>({
+      query: () => ({
+        url: API_END_POINTS.branchDropDown,
+        method: "GET",
+      }),
+      transformResponse: (response: any) => response.data,
+    }),
+    statusUpdate: builder.mutation({
+      query: ({uuid, body}) => ({
+        url: API_END_POINTS.statusUpdate + `/${uuid}`,
+        method: 'POST',
+        body,
+      }),
+    }),
+    getAgencies: builder.query<any, { pageUrl?: string; searchText?: string }>({
+      query: ({ pageUrl, searchText }) => ({
+        url: pageUrl || API_END_POINTS.getAgencies,
+        method: "GET",
+        params: {
+          q: searchText,
+        }
+      }),
+      providesTags: ["Agencies"],
+      transformResponse: (response: any) => response.data,
+    }),
+    createAgency: builder.mutation({
       query: (body) => ({
-        url: API_END_POINTS.verifySetPasswordLink,
+        url: API_END_POINTS.createAgency,
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: ['Agencies'],
+    }),
+    deleteAgency: builder.mutation({
+      query: (id) => ({
+        url: `${API_END_POINTS.deleteAgency}/${id}`,
+        method: "GET",
+      }),
+      invalidatesTags: ['Agencies'],
+    }),
+    updateAgency:builder.mutation({
+      query: ({ agencyId, updated_data }) => ({
+        url: `${API_END_POINTS.updateAgency}/${agencyId}`,
+        method: "POST",
+        body: updated_data,
+      }),
+      invalidatesTags: ['Agencies'],
+    }),
+    agencystatusUpdate: builder.mutation({
+      query: ({uuid, body}) => ({
+        url: API_END_POINTS.agencystatusUpdate + `/${uuid}`,
+        method: 'POST',
+        body,
+      }),
+    }),
+
+    getEmployees: builder.query<any, { pageUrl?: string; searchText?: string }>({
+      query: ({ pageUrl, searchText }) => ({
+        url: pageUrl || API_END_POINTS.getEmployees,
+        method: "GET",
+        params: {
+          q: searchText,
+        }
+      }),
+      providesTags: ["Agencies"],
+      transformResponse: (response: any) => response.data,
+    }),
+    createEmployee: builder.mutation({
+      query: (body) => ({
+        url: API_END_POINTS.createEmployee,
+        method: 'POST',
+        body,
+      }),
+      invalidatesTags: ['Agencies'],
+    }),
+    deleteEmployee: builder.mutation({
+      query: (id) => ({
+        url: `${API_END_POINTS.deleteEmployee}/${id}`,
+        method: "GET",
+      }),
+      invalidatesTags: ['Agencies'],
+    }),
+    updateEmployee:builder.mutation({
+      query: ({ employeeId, updated_data }) => ({
+        url: `${API_END_POINTS.updateEmployee}/${employeeId}`,
+        method: "POST",
+        body: updated_data,
+      }),
+      invalidatesTags: ['Agencies'],
+    }),
+    employeeStatusUpdate: builder.mutation({
+      query: ({uuid, body}) => ({
+        url: API_END_POINTS.employeeStatusUpdate + `/${uuid}`,
         method: 'POST',
         body,
       }),
@@ -432,5 +537,20 @@ export const {
   useGetBranchesQuery,
   useCreateBranchMutation,
   useDeleteBranchMutation,
+  useUpdateBranchMutation,
   useVerifySetPasswordLinkMutation,
+  useStatusUpdateMutation,
+  useBranchDropDownQuery,
+  //////////////////////
+  useGetAgenciesQuery,
+  useCreateAgencyMutation,
+  useDeleteAgencyMutation,
+  useUpdateAgencyMutation,
+  useAgencystatusUpdateMutation,
+  // ///////////////////////
+  useCreateEmployeeMutation,
+  useDeleteEmployeeMutation,
+  useEmployeeStatusUpdateMutation,
+  useGetEmployeesQuery,
+  useUpdateEmployeeMutation
 } = api;

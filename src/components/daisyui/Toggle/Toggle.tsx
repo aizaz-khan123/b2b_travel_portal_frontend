@@ -11,7 +11,7 @@ export type ToggleProps = Omit<InputHTMLAttributes<HTMLInputElement>, "size"> &
     };
 
 const Toggle = forwardRef<HTMLInputElement, ToggleProps>(
-    ({ color, size, dataTheme, className, ...props }, ref): ReactElement => {
+    ({ color, size, dataTheme, className, onChange, ...props }, ref): ReactElement => {
         const classes = cn("toggle", className, {
             "toggle-lg": size === "lg",
             "toggle-md": size === "md",
@@ -26,7 +26,11 @@ const Toggle = forwardRef<HTMLInputElement, ToggleProps>(
             "toggle-error": color === "error",
         });
 
-        return <input {...props} ref={ref} type="checkbox" data-theme={dataTheme} className={classes} />;
+        return <input {...props} ref={ref} type="checkbox" data-theme={dataTheme} className={classes}  onChange={(e) => {
+            if (onChange) {
+                onChange(e);
+            }
+        }}/>;
     },
 );
 

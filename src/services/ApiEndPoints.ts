@@ -57,5 +57,20 @@ export const API_END_POINTS = {
   createBranch: BASE_URL_V1 + '/organization/branch/store',
   getBranches: BASE_URL_V1 + '/organization/branch/index',
   deleteBranch: BASE_URL_V1 + '/organization/branch/delete',
+  updateBranch: BASE_URL_V1 + '/organization/branch/update',
+  statusUpdate: BASE_URL_V1 + '/organization/branch/status-change',
+  branchDropDown: BASE_URL_V1 + '/organization/branch/drop-down',
   verifySetPasswordLink: BASE_URL_V1 + '/verify-set-password-link',
+
+  createAgency: BASE_URL_V1 + '/organization/agency/store',
+  getAgencies: BASE_URL_V1 + '/organization/agency/index',
+  deleteAgency: BASE_URL_V1 + '/organization/agency/delete',
+  updateAgency: BASE_URL_V1 + '/organization/agency/update',
+  agencystatusUpdate: BASE_URL_V1 + '/organization/agency/status-change',
+
+  createEmployee: BASE_URL_V1 + '/organization/employee/store',
+  getEmployees: BASE_URL_V1 + '/organization/employee/index',
+  deleteEmployee: BASE_URL_V1 + '/organization/employee/delete',
+  updateEmployee: BASE_URL_V1 + '/organization/employee/update',
+  employeeStatusUpdate: BASE_URL_V1 + '/organization/employee/status-change',
 };

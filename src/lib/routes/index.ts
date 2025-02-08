@@ -24,7 +24,7 @@ const routes = {
             headoffice_employees: '/organizations/employees',
         },
         reports:{
-            ledger_history: '/reports/ledger-history',
+            ledger_history: '/reports/transaction-history',
             sales_report: '/reports/sales-report',
             unused_tickets: '/reports/unused-tickets'
         },
@@ -57,7 +57,8 @@ const routes = {
         accounts: {
             agency_deposites: '/accounts/agency-deposites',
             branch_deposites: '/accounts/branch-deposites',
-        }
+        },
+        notification: "/notifications"
     },
 };
 

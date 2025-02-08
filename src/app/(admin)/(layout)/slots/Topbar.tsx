@@ -47,8 +47,10 @@ const Topbar = () => {
             .unwrap()
             .then(async(payload) => {
                 toaster.success(payload.message);
-                await updateAuthCookie({ user: undefined });
-                dispatch(userLogout());
+                await Promise.allSettled([
+                    updateAuthCookie({ user: undefined }),
+                    dispatch(userLogout()),
+                ]);
                 navigate.push(routes.auth.login)
             })
             .catch(async(error) => {
@@ -74,9 +76,9 @@ const Topbar = () => {
             </NavbarStart>
             <NavbarCenter></NavbarCenter>
             <NavbarEnd className="gap-1.5">
-                <ThemeToggleButton shape="circle" color="ghost" size="sm" />
+                {/* <ThemeToggleButton shape="circle" color="ghost" size="sm" /> */}
 
-                <NotificationButton />
+                {/* <NotificationButton /> */}
                 <Dropdown vertical="bottom" end>
                     <DropdownToggle
                         className="btn btn-ghost rounded-btn px-1.5 hover:bg-base-content/20"
@@ -87,10 +89,7 @@ const Topbar = () => {
                                 size={30}
                                 alt="Avatar"
                                 innerClassName={maskClassesFn({ variant: "squircle" })}></Avatar>
-                            <div className="flex flex-col items-start">
-                                <p className="text-sm/none">Deep</p>
-                                <p className="mt-1 text-xs/none text-primary">Edit</p>
-                            </div>
+
                         </div>
                     </DropdownToggle>
                     <DropdownMenu className="mt-4 w-52">
