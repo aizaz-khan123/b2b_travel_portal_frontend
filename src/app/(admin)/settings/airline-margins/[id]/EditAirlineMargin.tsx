@@ -91,6 +91,11 @@ const EditAirlineMargin = ({ airlineMarginId }: EditAirlineMargin) => {
         }
         
         await updateAirlineMargin({ airlineMarginId, updated_data }).then((response: any) => {
+
+            if('error' in response){
+                setErrors(response?.error.data?.errors);
+                return;
+            }
             if (response.data?.code == 200) {
                 toaster.success(response?.data?.message);
                 refetch();

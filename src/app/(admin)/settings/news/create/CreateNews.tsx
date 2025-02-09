@@ -30,6 +30,12 @@ const CreateNews = () => {
 
     const onSubmit = handleSubmit(async (data: NewsSchemaType) => {
         await createNews(data).then((response:any)=>{
+            
+            if('error' in response){
+                setErrors(response?.error.data?.errors);
+                return;
+            }
+
             const {status, data} = response?.data;
             if(status){
                     toaster.success(`${data.title} has been created`);

@@ -55,10 +55,16 @@ const CreateAirline = () => {
 
     const onSubmit = handleSubmit(async (data: AirlineSchemaType) => {
         await createAirline(data).then((response:any)=>{
-            const {status, data} = response?.data;
+
+            if('error' in response){
+                setErrors(response?.error.data?.errors);
+                return;
+            }
+
+            const {status, data} = response?.data
             if(status){
-                    toaster.success(`${data.name} has been created`);
-                    router.push(routes.apps.settings.airlines);
+                toaster.success(`${data.name} has been created`);
+                router.push(routes.apps.settings.airlines);
             }else{
                 setErrors(response?.data?.errors);
             }

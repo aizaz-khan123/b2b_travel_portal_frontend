@@ -29,6 +29,12 @@ const CreateCountry = () => {
 
     const onSubmit = handleSubmit(async (data: CountrySchemaType) => {
         await createCountry(data).then((response:any)=>{
+            
+            if('error' in response){
+                setErrors(response?.error.data?.errors);
+                return;
+            }
+
             const {status, data} = response?.data;
             if(status){
                     toaster.success(`${data.name} has been created`);
