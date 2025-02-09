@@ -484,6 +484,13 @@ export const api = emptySplitApi.injectEndpoints({
         body,
       }),
     }),
+    locationsLookup: builder.query({
+      query: (params) => ({
+        url: API_END_POINTS.locations,
+        method: 'GET',
+        params,
+      }),
+    }),
   }),
   overrideExisting: false,
 });
@@ -552,5 +559,6 @@ export const {
   useDeleteEmployeeMutation,
   useEmployeeStatusUpdateMutation,
   useGetEmployeesQuery,
-  useUpdateEmployeeMutation
+  useUpdateEmployeeMutation,
+  useLocationsLookupQuery
 } = api;
