@@ -11,16 +11,15 @@ import Image from "next/image";
 import { useForm } from "react-hook-form";
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 
-import MuiDropdown from "@/components/mui/MuiDropdown";
-import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
-import { LocalizationProvider } from '@mui/x-date-pickers-pro';
-import { AdapterDayjs } from '@mui/x-date-pickers-pro/AdapterDayjs';
-import { DateRangePicker } from '@mui/x-date-pickers-pro/DateRangePicker';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-import { Fragment, useState } from "react";
+import MuiAutocomplete from "@/components/mui/MuiAutoComplete";
 import MuiDatePicker from "@/components/mui/MuiDatePicker";
 import MuiDateRangePicker from "@/components/mui/MuiDateRangePicker";
+import MuiDropdown from "@/components/mui/MuiDropdown";
+import { useLocationsLookupQuery } from "@/services/api";
+import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
+import { debounce } from 'lodash';
+import Link from "next/link";
+import { Fragment, useCallback, useState } from "react";
 import TravelersDropdown from "./TravelersDropdown";
 
 const airports = [
@@ -128,6 +127,25 @@ const FlightSearch = () => {
         { id: 2, from: null, to: null, departureDate: "" },
     ]);
 
+    const [searchStr, setSearchStr] = useState('');
+    const [immediateSearchStr, setImmediateSearchStr] = useState('');
+
+    const { data, isFetching, refetch, isSuccess } = useLocationsLookupQuery({
+        query: searchStr,
+    })
+
+    const handleSearchChange = (e: any) => {
+        const { value } = e.target;
+        setImmediateSearchStr(value); // Update immediate search state
+        delayedSearch(value); // Update debounced search state
+    };
+
+    const delayedSearch = useCallback(
+        debounce((searchValue) => {
+            setSearchStr(searchValue);
+        }, 500),
+        []
+    );
     const swapLocations = () => {
         // const from = watch("from");
         // const to = watch("to");
@@ -139,38 +157,27 @@ const FlightSearch = () => {
         if (flights.length < 5) {
             setFlights([...flights, { id: Date.now(), from: null, to: null, departureDate: "" }]);
         }
-    }; type Flight = {
-        id: number;
-        from: string | null;
-        to: string | null;
-        departureDate: string;
     };
-    type FormValues = {
-        travelers: {
-            adults: number;
-            children: number;
-            infants: number;
-        };
-        travelType: string;
-        from: string | null;
-        to: string | null;
-        dateRange: string;
-        cabinClass: string;
-        traveler: string;
-        // Include dynamic flight fields
-        [key: string]: any; // Allows additional fields
-    };
+
 
     const flightKey = (flight: Flight) => `flight-${flight.id}`;
 
     const removeFlight = (id: any) => {
         setFlights(flights.filter((flight) => flight.id !== id));
     };
-    const handleAirportChange = (value: string) => {
-        console.log("Selected Airport:", value);
+
+
+    const handleAirportChange = (value: string | null) => {
+        if (value) {
+            // Handle the selected airport code
+            console.log("Selected Airport:", value);
+        } else {
+            // Handle case when selection is cleared
+            console.log("Airport selection cleared");
+        }
     };
 
-    const handleCityChange = (value: string) => {
+    const handleCityChange = (value: string | null) => {
         console.log("Selected City:", value);
     };
 
@@ -201,7 +208,7 @@ const FlightSearch = () => {
                     {travelType !== "multiCity" ? (
                         <div className="grid grid-cols-12 gap-4 items-end">
                             <div className="relative col-span-3">
-                                <MuiDropdown
+                                <MuiAutocomplete
                                     control={control}
                                     name="from"
                                     label="From"
@@ -211,6 +218,9 @@ const FlightSearch = () => {
                                         label: `${city.city} (${city.code})`,
                                         icon: <img src="media/icons/from.svg" className="h-7" />
                                     }))}
+                                    inputValue={immediateSearchStr}
+                                    setInputValue={setImmediateSearchStr} 
+                                    onInputChange={handleSearchChange}
                                     onChange={handleAirportChange}
                                 />
                                 <button
@@ -227,7 +237,7 @@ const FlightSearch = () => {
                                 </button>
                             </div>
                             <div className="col-span-3">
-                                <MuiDropdown
+                                <MuiAutocomplete
                                     control={control}
                                     selectIcon={<img src="media/icons/going-to.svg" className="h-8" />}
                                     name="to"
@@ -237,7 +247,6 @@ const FlightSearch = () => {
                                         label: `${city.city} (${city.code})`,
                                         icon: <img src="media/icons/going-to.svg" className="h-7" />
                                     }))}
-
                                     onChange={handleCityChange}
                                 />
 
@@ -256,7 +265,7 @@ const FlightSearch = () => {
                                 <TravelersDropdown control={control} name="travelers" />
                             </div>
                             <div className="col-span-3">
-                                <MuiDropdown
+                                <MuiAutocomplete
                                     control={control}
                                     name="cabinClass"
                                     label="Cabin Class"
@@ -282,7 +291,7 @@ const FlightSearch = () => {
                                             <p className="text-blue-500">Flight {index + 1}</p>
                                         </div>
                                         <div className="relative col-span-3 pt-[5px]">
-                                            <MuiDropdown
+                                            <MuiAutocomplete
                                                 control={control}
                                                 name={`from-${flight.id}`}
                                                 label="From"
@@ -292,7 +301,7 @@ const FlightSearch = () => {
                                                     label: `${city.city} (${city.code})`,
                                                     icon: <img src="media/icons/from.svg" className="h-7" />
                                                 }))}
-                                                onChange={handleAirportChange}
+                                                onChange={(value) => handleAirportChange(value ?? "")} // Ensure it's always a string
                                             />
                                             <button
                                                 onClick={swapLocations}
@@ -357,7 +366,7 @@ const FlightSearch = () => {
                                     <TravelersDropdown control={control} name="travelers" />
                                 </div>
                                 <div>
-                                    <MuiDropdown
+                                    <MuiAutocomplete
                                         control={control}
                                         name="cabinClass"
                                         label="Cabin Class"
@@ -597,10 +606,12 @@ const FlightFound = () => {
                                         <span>|</span>
                                         <img src="media/icons/detail-icon.svg" className="" alt="" />
                                     </div> */}
-                                    <Button variant="outline" className="border-0 font-semibold text-sm hover:bg-transparent hover:text-gray px-0" size="md">
-                                        <img src="media/icons/view-detail-icon.svg" alt="" />
-                                        View Detail
-                                    </Button>
+                                    <Link href={`/flights/1`}>
+                                        <Button variant="outline" className="border-0 font-semibold text-sm hover:bg-transparent hover:text-gray px-0" size="md">
+                                            <img src="media/icons/view-detail-icon.svg" alt="" />
+                                            View Detail
+                                        </Button>
+                                    </Link>
                                 </div>
                             </div>
 
@@ -722,6 +733,7 @@ const Page = () => {
     //     productDeleteConfirmationRef.current?.showModal();
     //     setProductToBeDelete();
     // };
+
     return (
         <div>
             <FlightCarousal />

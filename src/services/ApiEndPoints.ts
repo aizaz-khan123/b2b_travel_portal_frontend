@@ -1,5 +1,7 @@
-export const BASE_URL_V1 = process.env.NEXT_PUBLIC_API_BASE_URL;
-export const NEXT_PUBLIC_BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL
+// export const BASE_URL_V1 = process.env.NEXT_PUBLIC_API_BASE_URL;
+export const BASE_URL_V1 = "https://50e7-2400-adc5-482-c800-b40f-b5dd-83be-9956.ngrok-free.app/api/v1";
+export const NEXT_PUBLIC_BACKEND_URL = "https://50e7-2400-adc5-482-c800-b40f-b5dd-83be-9956.ngrok-free.app";
+// export const NEXT_PUBLIC_BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL
 
 export const API_END_POINTS = {
   getUser: NEXT_PUBLIC_BACKEND_URL + '/api/user',
@@ -73,4 +75,8 @@ export const API_END_POINTS = {
   deleteEmployee: BASE_URL_V1 + '/organization/employee/delete',
   updateEmployee: BASE_URL_V1 + '/organization/employee/update',
   employeeStatusUpdate: BASE_URL_V1 + '/organization/employee/status-change',
+
+  //////////////////////////////
+  locations: BASE_URL_V1 + '/locations',
+
 };

@@ -35,44 +35,6 @@ const MuiDropdown = <TFieldValues extends FieldValues, TName extends FieldPath<T
 }: MuiDropdownProps<TFieldValues, TName>) => {
     return (
         <>
-            {/* <Box>
-                <TextField
-                    select
-                    fullWidth
-                    label={label}
-                    value={selectedValue}
-                    onChange={handleChange}
-                    variant="outlined"
-                    SelectProps={{
-                        displayEmpty: true,
-                        renderValue: (value) =>
-                            value ? options.find((opt) => opt.code === value)?.city : label,
-                    }}
-                    InputProps={{
-                        startAdornment: (
-                            <InputAdornment position="start">
-                                <FlightTakeoffIcon color="success" />
-                            </InputAdornment>
-                        ),
-                        endAdornment: selectedValue && (
-                            <InputAdornment position="end">
-                                <IconButton onClick={handleClear} size="small">
-                                    <CloseIcon />
-                                </IconButton>
-                            </InputAdornment>
-                        ),
-                    }}
-                >
-                    {options.map((option) => (
-                        <MenuItem key={option.code} value={option.code}>
-                            <ListItemIcon>
-                                <FlightTakeoffIcon color="success" />
-                            </ListItemIcon>
-                            <ListItemText primary={`${option.city} ${option.code}`} secondary={option.name} />
-                        </MenuItem>
-                    ))}
-                </TextField>
-            </Box> */}
             <Controller
                 control={control}
                 name={name}

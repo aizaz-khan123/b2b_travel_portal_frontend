@@ -53,6 +53,7 @@ const LoginAuth = ({ redirectTo }: { redirectTo?: string }) => {
 
     const onSubmit = handleSubmit(async (data) => {
         await loginUser(data).then(async (response) => {
+            console.log(response, "response");
             const userDetail = response.data.data;
             if (response.data.code == 200) {    
                 await Promise.allSettled([
