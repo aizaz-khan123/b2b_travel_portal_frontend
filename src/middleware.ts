@@ -3,7 +3,7 @@ import { NextMiddleware, NextResponse } from "next/server";
 
 import { getAuthCookie } from "@/lib/cookie/auth";
 import { routes } from "@/lib/routes";
-import {ProtectedRoutes} from "@/lib/routes/protectedRoutes";
+// import {ProtectedRoutes} from "@/lib/routes/protectedRoutes";
 
 export const middleware: NextMiddleware = async (request: NextRequest) => {
   const { pathname } = request.nextUrl;

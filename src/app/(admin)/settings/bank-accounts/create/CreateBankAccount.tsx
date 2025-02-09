@@ -20,29 +20,10 @@ const CreateBankAccount = () => {
     const toaster = useToast();
     const router = useRouter();
 
-    const [createBankAccount, {
-        data,
-        isError,
-        isSuccess,
-        error,
-        isLoading }] = useCreateBankAccountMutation();
-    
-    useEffect(()=>{
-        if(isSuccess){
-            toaster.success("Bank Account has been created");
-            router.push(routes.apps.settings.bank_accounts);
-        }else if(isError){
-            setErrors(error?.data?.errors);
-        }
-    }, [isSuccess, isError]);
+    const [createBankAccount, { isLoading }] = useCreateBankAccountMutation();
     
     const { control, handleSubmit, setError, setValue } = useForm<BankAccountSchemaType>({
         resolver: zodResolver(bankAccountSchema),
-        defaultValues: {
-            account_holder_name: "",
-            bank_name: "",
-            bank_address: "",
-        },
     });
 
     const handleChangeImage = (fileItems: FilePondFile[]) => {
@@ -62,32 +43,16 @@ const CreateBankAccount = () => {
         Object.entries(errors).forEach(([key, value]: any[]) => setError(key, { message: value }));
     };
 
-    // const onSubmit = handleSubmit(async (data: BankAccountSchemaType) => {
-    //     const formData = new FormData();
-    
-    //     // Append all fields including the file
-    //     Object.entries(data).forEach(([key, value]) => {
-    //         if (value || value instanceof File) {  // Ensure that the value is not empty and can handle File type correctly
-    //             formData.append(key, value);
-    //         }
-    //     });
-    
-    //     // Make sure that the file gets appended properly
-    //     if (data.bank_logo && data.bank_logo instanceof File) {
-    //         formData.append('bank_logo', data.bank_logo);
-    //     }
-    
-    //     await createBankAccount(formData);  // Make sure createBankAccount expects FormData
-    // });
 
     const onSubmit = handleSubmit(async (data: BankAccountSchemaType) => {
-        // const formData = new FormData();
-        // Object.entries(data).forEach(([key, value]) => {
-        //     if (value !== undefined && value !== null) {
-        //       formData.append(key, value.toString());
-        //     }
-        // });
-        await createBankAccount(data);
+        await createBankAccount(data).then((respone:any)=>{
+            if('error' in respone){
+                setErrors(respone?.error?.data?.errors);
+                return;
+            }
+            toaster.success("Bank Account has been created");
+            router.push(routes.apps.settings.bank_accounts);
+        });
         return;
     });
 

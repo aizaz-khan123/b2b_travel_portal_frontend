@@ -47,7 +47,13 @@ const CreateAirlineMargin = () => {
 
     const onSubmit = handleSubmit(async (data: airlineMarginSchemaType) => {
         await createAirlineMargin(data).then((response: any) => {
-            const { status, data } = response?.data;
+
+            if('error' in response){
+                setErrors(response?.error.data?.errors);
+                return;
+            }
+
+            const { status } = response?.data;
             if (status) {
                 toaster.success(`Airline Margin has been created`);
                 router.push(routes.apps.settings.airline_margins);

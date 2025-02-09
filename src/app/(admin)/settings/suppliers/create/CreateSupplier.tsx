@@ -29,6 +29,12 @@ const CreateSupplier = () => {
 
     const onSubmit = handleSubmit(async (data: SupplierSchemaType) => {
         await createSupplier(data).then((response:any)=>{
+
+            if('error' in response){
+                setErrors(response?.error.data?.errors);
+                return;
+            }
+            
             const {status, data} = response?.data;
             if(status){
                     toaster.success(`${data.name} has been created`);
