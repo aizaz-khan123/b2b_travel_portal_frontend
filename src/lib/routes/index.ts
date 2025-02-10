@@ -22,6 +22,8 @@ const routes = {
             agency_employees: '/organizations/agency/employees',
             agency_subagent: '/organizations/agency/sub-agents',
             headoffice_employees: '/organizations/employees',
+            passenger_management: '/organization/passenger-management',
+            
         },
         reports:{
             ledger_history: '/reports/transaction-history',

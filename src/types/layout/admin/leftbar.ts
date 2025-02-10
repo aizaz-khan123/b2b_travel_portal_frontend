@@ -1,11 +1,11 @@
 import { IconifyIcon } from "@iconify/react";
-
-export type IMenuItem = {
+export interface IMenuItem {
     key: string;
-    icon?: IconifyIcon;
     label: string;
-    isTitle?: boolean;
+    icon?: IconifyIcon;
     url?: string;
+    isTitle?: boolean;
+    roles?: any;
+    permissions?: any;
     children?: IMenuItem[];
-    roles?: string[];
-};
+}

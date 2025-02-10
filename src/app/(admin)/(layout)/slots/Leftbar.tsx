@@ -41,7 +41,7 @@ const LeftMenuItem = ({ menuItem, activated }: { menuItem: IMenuItem; activated:
     }
 
     return (
-        <MenuItem className="mb-0.5">
+        <MenuItem className="mb-1">
             <MenuDetails
                 open={selected}
                 label={
@@ -58,21 +58,25 @@ const LeftMenuItem = ({ menuItem, activated }: { menuItem: IMenuItem; activated:
     );
 };
 
-const Leftbar = ({ menuItems, userRole }: { menuItems: IMenuItem[], userRole: string }) => {
+const Leftbar = ({ menuItems, userRole, userPermissions }: { menuItems: IMenuItem[], userRole: string, userPermissions: any }) => {
+
     const pathname = usePathname();
     const scrollRef = useRef<SimpleBarCore | null>(null);
-
+    
     const filteredMenu = useMemo(() => {
         const filterItems = (items: IMenuItem[]): IMenuItem[] =>
             items
-                .filter(item => !item.roles || item.roles.includes(userRole))
+                .filter(item => 
+                    (!item.roles || item.roles.includes(userRole)) &&
+                    (!item.permissions || item.permissions.some((permission:any) => userPermissions.includes(permission)))
+                )
                 .map(item => ({
                     ...item,
                     children: item.children ? filterItems(item.children) : undefined,
                 }));
-
+    
         return filterItems(menuItems);
-    }, [menuItems, userRole]);
+    }, [menuItems, userRole, userPermissions]);
 
     const activatedParents = useMemo(
         () => new Set(menuHelper.getActivatedItemParentKeys(filteredMenu, pathname)),
@@ -98,7 +102,7 @@ const Leftbar = ({ menuItems, userRole }: { menuItems: IMenuItem[], userRole: st
             <Link href={routes.home} className="flex h-16 items-center justify-center">
                 <Logo />
             </Link>
-            <SimpleBar ref={scrollRef} className="h-[calc(100vh)] lg:h-[calc(100vh)]">
+            <SimpleBar ref={scrollRef} className="h-[calc(100vh)] lg:h-[calc(100vh)] mt-2">
                 <Menu className="mb-6">
                     {filteredMenu.map((item, index) => (
                         <LeftMenuItem menuItem={item} key={index} activated={activatedParents} />

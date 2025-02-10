@@ -12,21 +12,23 @@ import { useSelector } from 'react-redux';
 
 const AdminLayout = ({ children }: { children: any }) => {
 
-    const user_role = useSelector(((user:any) => user?.persistedReducer?.authSlice?.userDetail?.role));
-    const pathname = usePathname();
+    const user = useSelector(((user:any) => user?.persistedReducer?.authSlice?.userDetail));
+    const USER_ROLES = user?.role;
+    const USER_PERMISSIONS = user?.permissions;
+    const PATHNAME = usePathname();
 
     const { hideLeftbar, hideMobileLeftbar } = useLayoutContext();
 
     useEffect(() => {
         hideMobileLeftbar();
-    }, [pathname]);
+    }, [PATHNAME]);
 
     return (
         <>
             {
                 <div className="size-full">
                     <div className="flex overflow-hidden">
-                        <Leftbar menuItems={adminMenuItems} userRole={user_role}/>
+                        <Leftbar menuItems={adminMenuItems} userRole={USER_ROLES} userPermissions={USER_PERMISSIONS}/>
                         <div className="main-wrapper overflow-auto">
                             <div className="flex h-full flex-col">
                                 <Topbar />
