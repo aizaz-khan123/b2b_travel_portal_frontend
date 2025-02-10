@@ -14,7 +14,7 @@ const AppProvider = ({ children }: { children: ReactNode }) => (
             <Theme>
                 <GlobalContextProvider>
                     {children}
-                    <Toaster className="toaster-container" richColors />
+                    <Toaster className="toaster-container" richColors position="top-right"/>
                 </GlobalContextProvider>
             </Theme>
         </PersistGate>

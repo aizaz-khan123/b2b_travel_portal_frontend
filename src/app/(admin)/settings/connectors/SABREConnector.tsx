@@ -62,7 +62,7 @@ const SABREConnector = () => {
 
         await updateConnector(updated_data).then((response: any) => {
             if (response.data?.code == 200) {
-                toaster.success('HITIT Api Credentials Updated!');
+                toaster.success('SABRE Api Credentials Updated!');
             }
         });
     });

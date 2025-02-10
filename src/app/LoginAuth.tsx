@@ -4,7 +4,7 @@ import keyRoundIcon from "@iconify/icons-lucide/key-round";
 import logInIcon from "@iconify/icons-lucide/log-in";
 import mailIcon from "@iconify/icons-lucide/mail";
 import Link from "next/link";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import { Icon } from "@/components/Icon";
 import { Button, FormLabel } from "@/components/daisyui";
@@ -22,12 +22,15 @@ import { loggedIn } from "@/redux/authSlice";
 import { useDispatch } from "react-redux";
 import { updateAuthCookie } from "@/lib/cookie/auth";
 import { Logo } from "@/components/Logo";
+import { off } from "process";
 
 const LoginAuth = ({ redirectTo }: { redirectTo?: string }) => {
 
     const router = useRouter();
     const toaster = useToast();
     const dispatch = useDispatch();
+    const [isdisable, setIsDisable] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const loginSchema = z.object({
         email: z.string().email("Please enter a valid email address"),
@@ -37,7 +40,7 @@ const LoginAuth = ({ redirectTo }: { redirectTo?: string }) => {
 
     type LoginSchemaType = z.infer<typeof loginSchema>;
 
-    const { control, handleSubmit } = useForm<LoginSchemaType>({
+    const { control, handleSubmit, setError } = useForm<LoginSchemaType>({
         resolver: zodResolver(loginSchema),
         defaultValues: {
             email: 'headoffice@gmail.com',
@@ -45,35 +48,38 @@ const LoginAuth = ({ redirectTo }: { redirectTo?: string }) => {
         },
     });
 
-    const [loginUser, {
-        data,
-        isError,
-        error,
-        isLoading }] = useLoginMutation();
+    const setErrors = (errors: Record<string, any>) => {
+        Object.entries(errors).forEach(([key, value]: any[]) => setError(key, { message: value }));
+    };
+
+    const [loginUser] = useLoginMutation();
 
     const onSubmit = handleSubmit(async (data) => {
-        await loginUser(data).then(async (response) => {
-            console.log(response, "response");
+        setIsDisable(true);
+        setIsLoading(true);
+        await loginUser(data).then(async (response:any) => {
+            console.log(response)
+            if("error" in response){
+                setErrors(response.error.data.errors);
+                setIsDisable(false);
+                setIsLoading(false);
+                return;
+            }
+
             const userDetail = response.data.data;
             if (response.data.code == 200) {    
                 await Promise.allSettled([
                     dispatch(loggedIn({ userDetail })),
                     updateAuthCookie({ user: userDetail?.user })
-                ]);
-                toaster.success("Login successfully...");
-                router.push(redirectTo ?? routes.home);
+                ]).then(()=>{
+                    setIsDisable(false);
+                    setIsLoading(false);
+                    toaster.success("Login successfully...");
+                    router.push(redirectTo ?? routes.home);
+                });
             }
         });
     });
-
-    useEffect(() => {
-        if (isError && error) {
-            const errorMessage =
-                error?.data?.message || "Something went wrong. Please try againa.";
-            toaster.error(errorMessage);
-        }
-    }, [isError, error, toaster]);
-
     return (
         <>
 
@@ -127,10 +133,11 @@ const LoginAuth = ({ redirectTo }: { redirectTo?: string }) => {
                         <Button
                             color="primary"
                             loading={isLoading}
+                            disabled={isdisable}
                             onClick={onSubmit}
                             className="gap-3 text-base"
                             fullWidth
-                            startIcon={<Icon icon={logInIcon} fontSize={16} />}>
+                            startIcon={<Icon icon={logInIcon} fontSize={16}/>}>
                             Login
                         </Button>
                     </div>
