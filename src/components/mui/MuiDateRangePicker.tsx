@@ -15,6 +15,7 @@ interface MuiDateRangePickerProps<
   endLabel?: string;
   onChange?: (value: [string | null, string | null]) => void;
   className?: string;
+  disableEndDate?: boolean;
 }
 
 const MuiDateRangePicker = <TFieldValues extends FieldValues, TName extends FieldPath<TFieldValues>>({
@@ -24,6 +25,7 @@ const MuiDateRangePicker = <TFieldValues extends FieldValues, TName extends Fiel
   endLabel = "End Date",
   onChange,
   className,
+  disableEndDate = false
 }: MuiDateRangePickerProps<TFieldValues, TName>) => {
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -46,6 +48,9 @@ const MuiDateRangePicker = <TFieldValues extends FieldValues, TName extends Fiel
               onChange?.(formattedRange);
             }}
             localeText={{ start: startLabel, end: endLabel }}
+            shouldDisableDate={(date, position) =>
+              disableEndDate && position === "end"
+            }
             slotProps={{
               textField: {
                 className,
