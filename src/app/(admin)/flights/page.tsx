@@ -130,16 +130,15 @@ const FlightSearch = () => {
     const [searchStr, setSearchStr] = useState('');
     const [immediateSearchStr, setImmediateSearchStr] = useState('');
 
-    const { data, isFetching, refetch, isSuccess } = useLocationsLookupQuery({
+    const { data: locationNames, isFetching, refetch, isSuccess } = useLocationsLookupQuery({
         query: searchStr,
     })
 
-    const handleSearchChange = (e: any) => {
-        const { value } = e.target;
-        setImmediateSearchStr(value); // Update immediate search state
-        delayedSearch(value); // Update debounced search state
-    };
 
+    const handleSearchChange = (_: any, newValue: string) => {
+        setImmediateSearchStr(newValue); // Keep typed value visible
+        delayedSearch(newValue); // Debounced API call
+    };
     const delayedSearch = useCallback(
         debounce((searchValue) => {
             setSearchStr(searchValue);
@@ -185,6 +184,9 @@ const FlightSearch = () => {
         console.log("Form submitted:", data);
     };
     const travelType = watch("travelType", "oneWay");
+
+    console.log('immediateSearchStr', immediateSearchStr);
+
     return (
         <Card className="bg-base-100/80 backdrop-blur-lg rounded-lg shadow-md mb-5">
             <CardBody className="p-6">
@@ -213,14 +215,14 @@ const FlightSearch = () => {
                                     name="from"
                                     label="From"
                                     selectIcon={<img src="media/icons/from.svg" className="h-8" />}
-                                    options={airports.map((city) => ({
-                                        value: city.code,
-                                        label: `${city.city} (${city.code})`,
+                                    options={(locationNames?.data || []).map((location: any) => ({
+                                        value: location.id,
+                                        label: `${location.municipality} (${location.iata_code})`,
                                         icon: <img src="media/icons/from.svg" className="h-7" />
                                     }))}
-                                    inputValue={immediateSearchStr}
-                                    setInputValue={setImmediateSearchStr} 
                                     onInputChange={handleSearchChange}
+                                    inputValue={immediateSearchStr}
+                                    setInputValue={setImmediateSearchStr}
                                     onChange={handleAirportChange}
                                 />
                                 <button
@@ -245,6 +247,7 @@ const FlightSearch = () => {
                                     options={cities.map((city) => ({
                                         value: city.code,
                                         label: `${city.city} (${city.code})`,
+                                        subLabel: city.name,
                                         icon: <img src="media/icons/going-to.svg" className="h-7" />
                                     }))}
                                     onChange={handleCityChange}

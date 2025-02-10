@@ -47,13 +47,14 @@ const TravelersDropdown = <TFieldValues extends FieldValues, TName extends Field
       control={control}
       name={name}
       render={({ field }) => (
-        <div>
+        <div className="relative">
           <Button
             aria-describedby={id}
             variant="outlined"
             startIcon={<PeopleIcon />}
             onClick={handleClick}
-            className="w-full flex justify-start h-[55px]"
+            className="w-full h-[55px]"
+            style={{ justifyContent: 'start' }}
           >
             {`${field?.value?.adults} Adults | ${field?.value?.children} Child | ${field?.value?.infants} Infant`}
           </Button>
@@ -64,6 +65,13 @@ const TravelersDropdown = <TFieldValues extends FieldValues, TName extends Field
             anchorEl={anchorEl}
             onClose={handleClose}
             anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
+            transformOrigin={{ vertical: "top", horizontal: "left" }}
+            sx={{
+              width: anchorEl ? anchorEl.clientWidth : "auto", // Set width dynamically
+              "& .MuiPaper-root": {
+                width: anchorEl ? anchorEl.clientWidth : "auto", // Ensure Popover's Paper has the same width
+              },
+            }}
           >
             <Box p={2}>
               {[
