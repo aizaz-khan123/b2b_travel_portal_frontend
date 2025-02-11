@@ -190,10 +190,10 @@ const FlightSearch = () => {
     return (
         <Card className="bg-base-100/80 backdrop-blur-lg rounded-lg shadow-md mb-5">
             <CardBody className="p-6">
-                <h2 className="text-xl font-semibold">Search Flights</h2>
+                {/* <h2 className="text-xl font-semibold">Search Flights</h2> */}
                 <form onSubmit={handleSubmit(onSubmit)}>
                     <div className="flex items-center gap-4 mb-4">
-                        <span className="font-medium">Travel Type:</span>
+                        {/* <span className="font-medium">Travel Type:</span> */}
                         {["oneWay", "roundTrip", "multiCity"].map((type) => (
                             <div key={type} className="flex items-center gap-1">
                                 <FormRadio
@@ -328,6 +328,7 @@ const FlightSearch = () => {
                                                 options={cities.map((city) => ({
                                                     value: city.code,
                                                     label: `${city.city} (${city.code})`,
+                                                
                                                     icon: <img src="media/icons/going-to.svg" className="h-7" />
                                                 }))}
 
