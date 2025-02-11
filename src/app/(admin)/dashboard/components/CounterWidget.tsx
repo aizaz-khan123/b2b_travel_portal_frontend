@@ -15,10 +15,10 @@ const SingleCounter = ({ counter }: { counter: IEcommerceDashboardCounter }) => 
 
     return (
         <Card className="bg-base-100 shadow" bordered={false}>
-            <CardBody className="gap-2">
+            <CardBody className="gap-2 cursor-pointer">
                 <div className="flex items-start justify-between gap-2 text-sm">
                     <div>
-                        <p className="font-medium text-base-content/70">{title}</p>
+                        <p className="font-medium">{title}</p>
                         <div className="mt-4 flex items-center gap-2">
                             <h5 className="inline text-2xl/none font-semibold">
                                 {inMoney && currencyHelper.sign}
@@ -63,6 +63,7 @@ const SingleCounter = ({ counter }: { counter: IEcommerceDashboardCounter }) => 
 
 const DashboardCounterWidget = () => {
     const { counters } = useEcommerceDashboard();
+    
     return (
         <>
             {counters.map((counter, index) => (

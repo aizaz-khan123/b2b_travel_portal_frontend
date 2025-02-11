@@ -11,6 +11,8 @@ const DashboardRevenueChart = () => {
     const { state } = useGlobalContext();
     const { overviewStat, overviewDuration } = useEcommerceDashboard();
 
+    console.log(overviewStat, "overviewStat");
+
     const options: ApexOptions = useMemo(() => {
         return {
             theme: {
@@ -51,11 +53,11 @@ const DashboardRevenueChart = () => {
             },
             series: [
                 {
-                    name: "Orders",
+                    name: "Bookings",
                     data: overviewStat.series.map((r) => r.orders),
                 },
                 {
-                    name: "Revenue",
+                    name: "Tickets",
                     data: overviewStat.series.map((r) => r.revenues),
                 },
             ],

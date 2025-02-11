@@ -13,7 +13,7 @@ export const adminMenuItems: IMenuItem[] = [
     {
         key: "dashboard",
         icon: airplayIcon,
-        label: "Dashboard",
+        label: "Overview",
         url: routes.dashboards.ecommerce,
         roles: ['sub-agent', 'agency', 'head-office', 'branch', 'b-employee', 'a-employee', 'h-employee'],
         permissions: ["show_database_stats"]
