@@ -560,5 +560,6 @@ export const {
   useEmployeeStatusUpdateMutation,
   useGetEmployeesQuery,
   useUpdateEmployeeMutation,
-  useLocationsLookupQuery
+  useLocationsLookupQuery,
+  useLazyLocationsLookupQuery
 } = api;

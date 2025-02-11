@@ -15,12 +15,12 @@ import MuiAutocomplete from "@/components/mui/MuiAutoComplete";
 import MuiDatePicker from "@/components/mui/MuiDatePicker";
 import MuiDateRangePicker from "@/components/mui/MuiDateRangePicker";
 import MuiDropdown from "@/components/mui/MuiDropdown";
-import { useLocationsLookupQuery } from "@/services/api";
-import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
+import { useLazyLocationsLookupQuery, useLocationsLookupQuery } from "@/services/api";
 import { debounce } from 'lodash';
 import Link from "next/link";
 import { Fragment, useCallback, useState } from "react";
 import TravelersDropdown from "./TravelersDropdown";
+import { cabin_class, cities } from "./Dropdownvalues";
 
 const airports = [
     { city: "Islamabad, Pakistan", code: "ISB", name: "Islamabad International Airport" },
@@ -78,23 +78,24 @@ const FlightCarousal = () => {
 };
 
 type Flight = {
-    id: number;
-    from: string | null;
-    to: string | null;
+    origin: string | null;
+    destination: string | null;
     departureDate: string;
 };
 type FormValues = {
-    travelers: {
-        adults: number;
-        children: number;
-        infants: number;
+    traveler_count: {
+        adult_count: number;
+        child_count: number;
+        infant_count: number;
     };
-    travelType: string;
-    from: string | null;
-    to: string | null;
-    dateRange: string;
-    cabinClass: string;
+    route_type: string;
+    origin: string | null;
+    destination: string | null;
+    departure_date: string;
+    return_date: string;
+    cabin_class: string;
     traveler: string;
+    legs: [];
     // Include dynamic flight fields
     [key: string]: any; // Allows additional fields
 };
@@ -104,66 +105,151 @@ const FlightSearch = () => {
     // const { control, handleSubmit, setValue, watch } = useForm();
     const { control, handleSubmit, setValue, watch } = useForm<FormValues>({
         defaultValues: {
-            travelers: {
-                adults: 0,
-                children: 0,
-                infants: 0,
+            traveler_count: {
+                adult_count: 0,
+                child_count: 0,
+                infant_count: 0,
             },
-            travelType: "oneWay",
-            from: null,
-            to: null,
-            dateRange: '',
-            cabinClass: '',
+            route_type: "oneWay",
+            origin: null,
+            destination: null,
+            departure_date: '',
+            return_date: '',
+            cabin_class: '',
             traveler: '',
+            legs: [],
         },
     });
+    const route_type = watch("route_type", "oneWay");
 
-    const cities = [
-        { city: "Karachi, Pakistan", code: "KHI", name: "Jinnah International Airport", icon: <FlightTakeoffIcon color="success" /> },
-        { city: "Multan, Pakistan", code: "MUX", name: "Multan International Airport", icon: <FlightTakeoffIcon color="success" /> },
-    ];
     const [flights, setFlights] = useState([
-        { id: 1, from: null, to: null, departureDate: "" },
-        { id: 2, from: null, to: null, departureDate: "" },
+        {
+            departure_date: "",
+            destination: "",
+            origin: ""
+        },
+        {
+            departure_date: "",
+            destination: "",
+            origin: ""
+        }
+
     ]);
 
-    const [searchStr, setSearchStr] = useState('');
-    const [immediateSearchStr, setImmediateSearchStr] = useState('');
-
-    const { data: locationNames, isFetching, refetch, isSuccess } = useLocationsLookupQuery({
-        query: searchStr,
-    })
+    const [fromSearchStr, setFromSearchStr] = useState('');
+    const [toSearchStr, setToSearchStr] = useState('');
 
 
-    const handleSearchChange = (_: any, newValue: string) => {
-        setImmediateSearchStr(newValue); // Keep typed value visible
-        delayedSearch(newValue); // Debounced API call
+    const [locationApiTrigger, { data: locationNames, isFetching, isSuccess }] = useLazyLocationsLookupQuery({})
+
+
+    const handleFromSearchChange = (_: any, newValue: string) => {
+        setFromSearchStr(newValue); // Keep typed value visible
+        fromDelayedSearch(newValue); // Debounced API call
     };
-    const delayedSearch = useCallback(
+    const fromDelayedSearch = useCallback(
         debounce((searchValue) => {
-            setSearchStr(searchValue);
+            if (searchValue) {
+                locationApiTrigger({ query: searchValue });
+            }
         }, 500),
-        []
+        [locationApiTrigger]
     );
-    const swapLocations = () => {
-        // const from = watch("from");
-        // const to = watch("to");
-        // setValue("from", to);
-        // setValue("to", from);
+
+    const handleToSearchChange = (_: any, newValue: string) => {
+        setToSearchStr(newValue); // Keep typed value visible
+        toDelayedSearch(newValue); // Debounced API call
     };
+    const toDelayedSearch = useCallback(
+        debounce((searchValue) => {
+            if (searchValue) {
+                locationApiTrigger({ query: searchValue })
+            }
+        }, 500),
+        [locationApiTrigger]
+    );
+    const [legsFromSearchStrs, setLegsFromSearchStrs] = useState<{ [key: number]: string }>({});
+    const [legsToSearchStrs, setLegsToSearchStrs] = useState<{ [key: number]: string }>({});
+
+    const legsFromDelayedSearch = useCallback(
+        debounce((searchValue: string) => {
+            if (searchValue) {
+                locationApiTrigger({ query: searchValue });
+            }
+        }, 500),
+        [locationApiTrigger]
+    );
+
+    const handleLegsFromSearchChange = (index: number, value: string) => {
+        setLegsFromSearchStrs((prev) => ({
+            ...prev,
+            [index]: value, // Update only the current flight's search string
+        }));
+        legsFromDelayedSearch(value); // Pass 'value' instead of 'newValue'
+    };
+
+    const legsToDelayedSearch = useCallback(
+        debounce((searchValue: string) => {
+            if (searchValue) {
+                locationApiTrigger({ query: searchValue });
+            }
+        }, 500),
+        [locationApiTrigger]
+    );
+
+    const handleLegsToSearchChange = (index: number, value: string) => {
+        setLegsToSearchStrs((prev) => ({
+            ...prev,
+            [index]: value, // Update only the current flight's search string
+        }));
+        legsToDelayedSearch(value); // Pass 'value' instead of 'newValue'
+    };
+
+
+
+
+    const swapLocations = () => {
+        const origin = watch("origin");
+        const destination = watch("destination");
+
+        // Swap the values in the form
+        setValue("origin", destination);
+        setValue("destination", origin);
+
+        // Swap the input search strings manually
+        setFromSearchStr(toSearchStr);
+        setToSearchStr(fromSearchStr);
+    };
+    const swapLegsLocations = (index: number) => {
+        const currentOrigin = watch(`legs[${index}].origin`);
+        const currentDestination = watch(`legs[${index}].destination`);
+    
+        // Swap the values in the form
+        setValue(`legs[${index}].origin`, currentDestination);
+        setValue(`legs[${index}].destination`, currentOrigin);
+    
+        // Swap the input search strings
+        setLegsFromSearchStrs((prev) => ({
+            ...prev,
+            [index]: legsToSearchStrs[index] || "",
+        }));
+        setLegsToSearchStrs((prev) => ({
+            ...prev,
+            [index]: legsFromSearchStrs[index] || "",
+        }));
+    };
+
 
     const addFlight = () => {
         if (flights.length < 5) {
-            setFlights([...flights, { id: Date.now(), from: null, to: null, departureDate: "" }]);
+            setFlights([...flights, { origin: '', destination: '', departure_date: "" }]);
         }
     };
 
-
-    const flightKey = (flight: Flight) => `flight-${flight.id}`;
-
-    const removeFlight = (id: any) => {
-        setFlights(flights.filter((flight) => flight.id !== id));
+    const removeFlight = (index: number) => {
+        setFlights((prevFlights) => prevFlights.filter((_, i) => i !== index));
     };
+
 
 
     const handleAirportChange = (value: string | null) => {
@@ -180,12 +266,41 @@ const FlightSearch = () => {
         console.log("Selected City:", value);
     };
 
-    const onSubmit = (data: any) => {
-        console.log("Form submitted:", data);
-    };
-    const travelType = watch("travelType", "oneWay");
+    const onSubmit = (data: FormValues) => {
+        let payload;
+        if (route_type === "oneWay") {
+            payload = {
+                cabin_class: data.cabin_class,
+                departure_date: data.departure_date,
+                destination: data.destination,
+                origin: data.origin,
+                return_date: null,
+                route_type: "ONEWAY",
+                traveler_count: data.traveler_count,
+            };
+        } else if (route_type === "roundTrip") {
+            payload = {
+                cabin_class: data.cabin_class,
+                departure_date: data.departure_date,
+                destination: data.destination,
+                origin: data.origin,
+                return_date: data.return_date,
+                route_type: "RoundTrip",
+                traveler_count: data.traveler_count,
+            };
+        } else if (route_type === "multiCity") {
+            payload = {
+                cabin_class: data.cabin_class,
+                route_type: "MULTICITY",
+                legs: data.legs,
+                traveler_count: data.traveler_count,
+            };
+        }
 
-    console.log('immediateSearchStr', immediateSearchStr);
+        console.log("Form submitted:", payload);
+    };
+
+
 
     return (
         <Card className="bg-base-100/80 backdrop-blur-lg rounded-lg shadow-md mb-5">
@@ -197,7 +312,7 @@ const FlightSearch = () => {
                         {["oneWay", "roundTrip", "multiCity"].map((type) => (
                             <div key={type} className="flex items-center gap-1">
                                 <FormRadio
-                                    name="travelType"
+                                    name="route_type"
                                     control={control}
                                     id={type}
                                     value={type}
@@ -207,22 +322,23 @@ const FlightSearch = () => {
                             </div>
                         ))}
                     </div>
-                    {travelType !== "multiCity" ? (
+                    {route_type !== "multiCity" ? (
                         <div className="grid grid-cols-12 gap-4 items-end">
                             <div className="relative col-span-3">
                                 <MuiAutocomplete
                                     control={control}
-                                    name="from"
+                                    name="origin"
                                     label="From"
                                     selectIcon={<img src="media/icons/from.svg" className="h-8" />}
                                     options={(locationNames?.data || []).map((location: any) => ({
                                         value: location.id,
                                         label: `${location.municipality} (${location.iata_code})`,
+                                        subLabel: location.name,
                                         icon: <img src="media/icons/from.svg" className="h-7" />
                                     }))}
-                                    onInputChange={handleSearchChange}
-                                    inputValue={immediateSearchStr}
-                                    setInputValue={setImmediateSearchStr}
+                                    onInputChange={handleFromSearchChange}
+                                    inputValue={fromSearchStr}
+                                    setInputValue={setFromSearchStr}
                                     onChange={handleAirportChange}
                                 />
                                 <button
@@ -242,39 +358,43 @@ const FlightSearch = () => {
                                 <MuiAutocomplete
                                     control={control}
                                     selectIcon={<img src="media/icons/going-to.svg" className="h-8" />}
-                                    name="to"
+                                    name="destination"
                                     label="To"
-                                    options={cities.map((city) => ({
-                                        value: city.code,
-                                        label: `${city.city} (${city.code})`,
-                                        subLabel: city.name,
+                                    options={(locationNames?.data || []).map((location: any) => ({
+                                        value: location.id,
+                                        label: `${location.municipality} (${location.iata_code})`,
+                                        subLabel: location.name,
                                         icon: <img src="media/icons/going-to.svg" className="h-7" />
                                     }))}
-                                    onChange={handleCityChange}
+                                    onInputChange={handleToSearchChange}
+                                    inputValue={toSearchStr}
+                                    setInputValue={setToSearchStr}
+                                    onChange={handleAirportChange}
                                 />
 
                             </div>
                             <div className="col-span-6">
                                 <MuiDateRangePicker
                                     control={control}
-                                    name="dateRange"
+                                    name="return_date"
                                     startLabel="Departure Date"
                                     endLabel="Return Date"
                                     className="w-full"
+                                    disableEndDate={route_type === "oneWay"}
                                 />
 
                             </div>
                             <div className="col-span-3">
-                                <TravelersDropdown control={control} name="travelers" />
+                                <TravelersDropdown control={control} name="traveler_count" />
                             </div>
                             <div className="col-span-3">
                                 <MuiAutocomplete
                                     control={control}
-                                    name="cabinClass"
+                                    name="cabin_class"
                                     label="Cabin Class"
-                                    options={cities.map((city) => ({
-                                        value: city.code,
-                                        label: `${city.city} (${city.code})`,
+                                    options={cabin_class.map((cabin) => ({
+                                        value: cabin,
+                                        label: `${cabin}`,
                                     }))}
                                     onChange={handleCityChange}
                                 />
@@ -289,25 +409,30 @@ const FlightSearch = () => {
                         <div>
                             <div className="grid grid-cols-12 gap-4 items-center">
                                 {flights.map((flight, index) => (
-                                    <Fragment key={flight.id}>
+                                    <Fragment key={index}>
                                         <div className="col-span-1">
                                             <p className="text-blue-500">Flight {index + 1}</p>
                                         </div>
                                         <div className="relative col-span-3 pt-[5px]">
                                             <MuiAutocomplete
                                                 control={control}
-                                                name={`from-${flight.id}`}
+                                                // name={`origin`}
+                                                name={`legs[${index}].origin`}
                                                 label="From"
                                                 selectIcon={<img src="media/icons/from.svg" className="h-8" />}
-                                                options={airports.map((city) => ({
-                                                    value: city.code,
-                                                    label: `${city.city} (${city.code})`,
+                                                options={(locationNames?.data || []).map((location: any) => ({
+                                                    value: location.id,
+                                                    label: `${location.municipality} (${location.iata_code})`,
+                                                    subLabel: location.name,
                                                     icon: <img src="media/icons/from.svg" className="h-7" />
                                                 }))}
-                                                onChange={(value) => handleAirportChange(value ?? "")} // Ensure it's always a string
+                                                onInputChange={(event, value) => handleLegsFromSearchChange(index, value)}
+                                                inputValue={legsFromSearchStrs[index] || ""}
+                                                setInputValue={(value) => handleLegsFromSearchChange(index, value)}
+                                                onChange={handleAirportChange}
                                             />
                                             <button
-                                                onClick={swapLocations}
+                                                onClick={() => swapLegsLocations(index)}
                                                 type="button"
                                                 className="absolute right-[-30px] bottom-2 p-2 bg-white border border-gray-300 rounded-full shadow hover:bg-gray-300"
                                             >
@@ -320,25 +445,31 @@ const FlightSearch = () => {
                                             </button>
                                         </div>
                                         <div className="col-span-3">
-                                            <MuiDropdown
+                                            <MuiAutocomplete
                                                 control={control}
                                                 selectIcon={<img src="media/icons/going-to.svg" className="h-8" />}
-                                                name={`to-${flight.id}`}
+                                                // name={`destination`}
+                                                name={`legs[${index}].destination`}
+
                                                 label="To"
-                                                options={cities.map((city) => ({
-                                                    value: city.code,
-                                                    label: `${city.city} (${city.code})`,
+                                                options={(locationNames?.data || []).map((location: any) => ({
+                                                    value: location.id,
+                                                    label: `${location.municipality} (${location.iata_code})`,
+                                                    subLabel: location.name,
                                                     icon: <img src="media/icons/going-to.svg" className="h-7" />
                                                 }))}
-
-                                                onChange={handleCityChange}
+                                                onInputChange={(event, value) => handleLegsToSearchChange(index, value)}
+                                                inputValue={legsToSearchStrs[index] || ""}
+                                                setInputValue={(value) => handleLegsToSearchChange(index, value)}
+                                                onChange={handleAirportChange}
                                             />
 
                                         </div>
                                         <div className="col-span-3">
                                             <MuiDatePicker
                                                 control={control}
-                                                name={`departureDate-${flight.id}`}
+                                                // name={`departure_date`}
+                                                name={`legs[${index}].departure_date`}
                                                 label="Departure Date"
                                                 className="w-full"
                                             />
@@ -347,7 +478,7 @@ const FlightSearch = () => {
                                             {index >= 2 && (
                                                 <button
                                                     type="button"
-                                                    onClick={() => removeFlight(flight.id)}
+                                                    onClick={() => removeFlight(index)}
                                                     className="text-red-500 hover:text-red-700 cursor-pointer pt-1"
                                                 >
                                                     ✖ Remove
@@ -366,12 +497,12 @@ const FlightSearch = () => {
                             }
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end mt-5">
                                 <div>
-                                    <TravelersDropdown control={control} name="travelers" />
+                                    <TravelersDropdown control={control} name="traveler_count" />
                                 </div>
                                 <div>
                                     <MuiAutocomplete
                                         control={control}
-                                        name="cabinClass"
+                                        name="cabin_class"
                                         label="Cabin Class"
                                         options={cities.map((city) => ({
                                             value: city.code,
