@@ -28,7 +28,7 @@ const PIAConnector = () => {
     const connectorSchema = z.object({
         api_key: z.string({ required_error: "UserName Required!" }),
         api_secret: z.string({ required_error: "Password Required!" }),
-        client_ip: z.string().ip({ version: "v4", message: "Invalid IPv4 address!" }),
+        client_ip: z.string({required_error: "CLIENT IP ADDRESS Required!"}).ip({ version: "v4", message: "Invalid IPv4 address!" }),
         supplier_id: z.number({ required_error: "Supplier ID Required!" }).min(1, "Supplier ID is required!"),
         is_enable: z.boolean(),
     });

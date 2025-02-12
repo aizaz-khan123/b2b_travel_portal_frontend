@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Card, CardBody, FormLabel, Modal, ModalBody, ModalHeader } from "@/components/daisyui";
+import { Button, Card, CardBody, CardTitle, Dropdown, DropdownMenu, DropdownToggle, FormLabel, Modal, ModalBody, ModalHeader } from "@/components/daisyui";
 import { FormRadio, FormSelect } from "@/components/forms";
 import { Icon } from "@/components/Icon";
 import calendarIcon from "@iconify/icons-lucide/calendar";
@@ -773,7 +773,18 @@ const FlightFound = () => {
                                                 <div className="flex items-center justify-end gap-2">
                                                     <span className="font-semibold text-base">{option.price}</span>
                                                     <Icon icon={info} className="text-gray" fontSize={22} />
-                                                    <Button color="primary" variant="outline" className="py-1 bg-[#F5F7FF]">Book Fare</Button>
+                                                    {/* <Dropdown horizontal={"left"} vertical={"bottom"}>
+                                                        <DropdownToggle button={false} className="btn btn-circle btn-ghost btn-xs">
+                                                        <Icon icon={info} className="text-gray" fontSize={22} /> 
+                                                        </DropdownToggle>
+                                                        <DropdownMenu className="card compact w-64 rounded-box bg-base-100 !p-0 shadow">
+                                                            <CardBody>
+                                                                <CardTitle tag={"h2"}>You needed more info?</CardTitle>
+                                                                <p>Here is a description!</p>
+                                                            </CardBody>
+                                                        </DropdownMenu>
+                                                    </Dropdown> */}
+                                                    <Button color="primary" variant="outline" size="sm" className="bg-[#F5F7FF]">Book Fare</Button>
                                                 </div>
                                             </div>
                                         </div>
@@ -843,7 +854,7 @@ const FlightFound = () => {
                                                 <div className="flex items-center justify-end gap-2">
                                                     <span className="font-semibold text-base">{option.price}</span>
                                                     <Icon icon={info} className="text-gray" fontSize={22} />
-                                                    <Button color="primary" variant="outline" className="py-1 bg-[#F5F7FF]">Book Fare</Button>
+                                                    <Button color="primary" variant="outline" size="sm" className="bg-[#F5F7FF]">Book Fare</Button>
                                                 </div>
                                             </div>
                                         </div>

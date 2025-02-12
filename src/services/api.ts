@@ -491,6 +491,22 @@ export const api = emptySplitApi.injectEndpoints({
         params,
       }),
     }),
+    permissionUpdate:builder.mutation({
+      query: ({ userUUid, selectedPermissionUUIDs }) => ({
+        url: `${API_END_POINTS.permissionUpdate}/${userUUid}`,
+        method: "POST",
+        body: selectedPermissionUUIDs,
+      }),
+    }),
+    permissionListByType: builder.mutation({
+      query: ({uuid, type}) => ({
+        url: `${API_END_POINTS.permissionList}/${uuid}`,
+        params: {type:type},
+        method: "GET",
+      }),
+      transformResponse: (response: any) => response.data,
+    }),
+
   }),
   overrideExisting: false,
 });
@@ -562,4 +578,8 @@ export const {
   useUpdateEmployeeMutation,
   useLocationsLookupQuery,
   useLazyLocationsLookupQuery
+  
+  /** Permission Management */
+  usePermissionListByTypeMutation,
+  usePermissionUpdateMutation,
 } = api;

@@ -26,11 +26,11 @@ const SABREConnector = () => {
     const [updateConnector, { isLoading: isUpdateLoading }] = useUpdateConnectorMutation();
 
     const connectorSchema = z.object({
-        api_key: z.string({ required_error: "UserName Required!" }),
-        api_secret: z.string({ required_error: "Password Required!" }),
-        connector_domain: z.string(),
-        printer: z.string(),
-        pcc: z.string(),
+        api_key: z.string({ required_error: "API_KEY Required!" }),
+        api_secret: z.string({ required_error: "API_SECRET Required!" }),
+        connector_domain: z.string({required_error:"DOMAIN Required!"}),
+        printer: z.string({required_error:"PRINTER Required!"}),
+        pcc: z.string({required_error:"PCC Required!"}),
         supplier_id: z.number({ required_error: "Supplier ID Required!" }).min(1, "Supplier ID is required!"),
         is_enable: z.boolean(),
     });
