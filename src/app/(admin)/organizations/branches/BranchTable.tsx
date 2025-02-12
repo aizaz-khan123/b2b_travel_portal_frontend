@@ -25,7 +25,7 @@ import {
 } from "@/components/daisyui";
 import Pagination from "@/components/Pagination/Pagination";
 import { FormInput, FormSelect } from "@/components/forms";
-import { useCreateBranchMutation, useDeleteBranchMutation, useGetBranchesQuery, useStatusUpdateMutation, useUpdateBranchMutation } from "@/services/api";
+import { usePermissionUpdateMutation, useCreateBranchMutation, useDeleteBranchMutation, useGetBranchesQuery, usePermissionListByTypeMutation, useStatusUpdateMutation, useUpdateBranchMutation } from "@/services/api";
 
 import { useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -35,18 +35,21 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { cities } from "@/dropdowndata/cities";
 import { IBranch } from "@/types/settings/branch";
+import PermissionModal from "@/components/PermissionModal";
 
 const BranchRow = ({
     branch,
     showDeleteBranchConfirmation,
     showUpdateBranchConfirmation,
+    showUpdatePermissionModal,
 }: {
     branch: IBranch;
     showDeleteBranchConfirmation: (uuid: string) => void;
     showUpdateBranchConfirmation: any
+    showUpdatePermissionModal: (uuid: any) => void;
 }) => {
     const toaster = useToast();
-    const { id, uuid, name, address, city, status, user_id, branch_manager } = branch;
+    const { id, uuid, name, branch_manager, branch_employees_count, branch_agencies_count } = branch;
     const [updateStatus] = useStatusUpdateMutation();
     const handleStatusChange = (uuid: string) => {
         const body = {
@@ -68,16 +71,16 @@ const BranchRow = ({
                     {branch_manager?.address?.length > 20 ? `${branch_manager?.address.slice(0, 20)}...` : branch_manager?.address}
                 </div>
                 <div className="inline-flex w-fit ml-8">
-                    <Tooltip message="Branch Associate 4 Employess" position="top" color="primary">
+                    <Tooltip message={`Branch Associate ${branch_employees_count} Employess`} position="top" color="primary">
                         <Button color="primary" size="xs">
-                            4
+                            {branch_employees_count}
                         </Button>
                     </Tooltip>
                 </div>
                 <div className="inline-flex w-fit ml-8">
-                    <Tooltip message="Branch Associate 4 Agencies" position="top" color="primary">
+                    <Tooltip message={`Branch Associate ${branch_agencies_count} Agencies`} position="top" color="primary">
                         <Button color="primary" size="xs">
-                            4
+                            {branch_agencies_count}
                         </Button>
                     </Tooltip>
                 </div>
@@ -97,7 +100,10 @@ const BranchRow = ({
                     </Tooltip>
                     <div className="ml-1">
                         <Tooltip message="Update Branch Permission" position="top" color="primary">
-                            <Button color="primary" size="xs">
+                            <Button color="primary" size="xs" onClick={(event) => {
+                                event.stopPropagation();
+                                showUpdatePermissionModal(branch_manager?.uuid);
+                            }}>
                                 Update Permission
                             </Button>
                         </Tooltip>
@@ -130,15 +136,21 @@ const BranchTable = () => {
     const [searchText, setSearchText] = useState<string>("");
     const [pageUrl, setPageUrl] = useState<string>("");
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isPermissionModal, setIsPermissionModal] = useState<boolean>(false);
     const [isEditMode, setIsEditMode] = useState(false);
     const [branchId, setBranchId] = useState<string>("");
+    const [permissionList, setPermissionList] = useState<any>();
+    const [selectedPermissions, setSelectedPermissions] = useState<any>();
+    const [userUUid,setuserUUid] = useState<any>();
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const { data: detail_data } = useGetBranchesQuery({ searchText, pageUrl });
     const branches = detail_data?.data;
     const links = detail_data?.links;
     const [createBranch, { isLoading: createLoading }] = useCreateBranchMutation();
     const [deleteBranch, { isLoading: deleteBranchLoading }] = useDeleteBranchMutation();
     const [updateBranch, { isLoading: branchLoading }] = useUpdateBranchMutation();
-
+    const [updatePermissions] = usePermissionUpdateMutation();
+    const [permissionListByType] = usePermissionListByTypeMutation();
     const branchSchema = z.object({
         branch_name: z.string({ required_error: "Branch Name Required!" }).min(5, "Branch Name cannot be empty!"),
         manager_name: z.string({ required_error: "Branch Manager Name Required!" }).min(5, "Branch Manager Name Should be greater than 5"),
@@ -160,7 +172,7 @@ const BranchTable = () => {
 
     const showDeleteBranchConfirmation = (uuid: any) => {
         BranchDeleteConfirmationRef.current?.showModal();
-        setBranchToBeDelete(branches?.find((b) => uuid === b.uuid));
+        setBranchToBeDelete(branches?.find((b: any) => uuid === b.uuid));
     };
 
     const showUpdateBranchConfirmation = (branch: any) => {
@@ -188,6 +200,20 @@ const BranchTable = () => {
             });
         }
     };
+
+    const showUpdatePermissionModal = async (uuid: any) => {
+        const type = 'branch';
+        await permissionListByType({uuid, type}).then((response: any) => {
+            if ("error" in response) {
+                toaster.error("something went wrong.");
+                return false;
+            }
+            setPermissionList(response?.data?.permission_list);
+            setSelectedPermissions(response?.data?.selected_permissions)
+            setIsPermissionModal(true);
+            setuserUUid(uuid);
+        })
+    }
 
     const paginationClickHandler = (url: string | null) => {
         if (url) {
@@ -256,6 +282,22 @@ const BranchTable = () => {
     const handleClose = () => {
         setIsModalOpen(false)
     }
+    const handleSubmitPermissions = async (selectedPermissionUUIDs: string[]) => {
+        setIsLoading(true)
+        await updatePermissions({ userUUid, selectedPermissionUUIDs }).then((response: any) => {
+            if ("error" in response) {
+                setErrors(response?.error?.data?.errors);
+                return;
+            }
+            toaster.success(`Permissions has been Updated`);
+            setPermissionList('');
+            setSelectedPermissions('')
+            setIsLoading(true)
+            setIsPermissionModal(false)            
+        })
+        setIsLoading(true)
+    };
+
     return (
         <>
             <Card className="mt-5 bg-base-100">
@@ -304,6 +346,7 @@ const BranchTable = () => {
                                         key={index}
                                         showDeleteBranchConfirmation={showDeleteBranchConfirmation}
                                         showUpdateBranchConfirmation={showUpdateBranchConfirmation}
+                                        showUpdatePermissionModal={showUpdatePermissionModal}
                                     />
                                 ))}
                             </TableBody>
@@ -450,6 +493,22 @@ const BranchTable = () => {
                     </form>
                 </ModalActions>
             </Modal>
+
+                {permissionList &&
+                    <PermissionModal
+                        isOpen={isPermissionModal}
+                        handleClose={()=>{
+                            setIsPermissionModal(false)
+                            setPermissionList('');
+                            setSelectedPermissions('')
+                        }}
+                        control={control}
+                        permissionList={permissionList}
+                        selectedPermissions={selectedPermissions}
+                        onSubmit={handleSubmitPermissions}
+                        loading={isLoading}
+                    />
+                }
         </>
     );
 };

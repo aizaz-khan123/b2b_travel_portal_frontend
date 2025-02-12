@@ -79,4 +79,6 @@ export const API_END_POINTS = {
   //////////////////////////////
   locations: BASE_URL_V1 + '/locations',
 
+  permissionList: BASE_URL_V1 + '/permission-list',
+  permissionUpdate: BASE_URL_V1 + '/update-permission',
 };

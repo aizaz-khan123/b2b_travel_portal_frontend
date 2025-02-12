@@ -30,14 +30,6 @@ export const getEcommerceDashboardCounterData = (): IEcommerceDashboardCounter[]
     return [
         {
             icon: circleDollarSignIcon,
-            amount: 587.54,
-            title: "Revenue",
-            changes: 10.8,
-            changesAmount: 112.58,
-            inMoney: true,
-        },
-        {
-            icon: packageIcon,
             amount: 4500,
             title: "Sales",
             changes: 21.2,
@@ -45,9 +37,17 @@ export const getEcommerceDashboardCounterData = (): IEcommerceDashboardCounter[]
             inMoney: false,
         },
         {
+            icon: packageIcon,
+            amount: 587.54,
+            title: "Total Bookings",
+            changes: 10.8,
+            changesAmount: 112.58,
+            inMoney: true,
+        },
+        {
             icon: usersIcon,
             amount: 2200,
-            title: "Customer",
+            title: "Total Issued Tickets",
             changes: -10.2,
             changesAmount: -312,
             inMoney: false,
@@ -55,7 +55,7 @@ export const getEcommerceDashboardCounterData = (): IEcommerceDashboardCounter[]
         {
             icon: eraserIcon,
             amount: 112.54,
-            title: "Spending",
+            title: "Receivable",
             changes: 8.5,
             changesAmount: 54.65,
             inMoney: true,
@@ -73,7 +73,7 @@ export const getEcommerceDashboardRevenueStatData = (): Record<
             percent: 2.14,
             series: dailyOrders.map((orders, index) => {
                 return {
-                    date: dateHelper.minusDays(10 - index),
+                    date: dateHelper.minusDays(1 - index),
                     orders: orders,
                     revenues: dailyRevenues[index] * (Math.random() + 0.5),
                 };

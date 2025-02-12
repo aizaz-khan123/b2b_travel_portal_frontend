@@ -25,7 +25,7 @@ import {
 } from "@/components/daisyui";
 import Pagination from "@/components/Pagination/Pagination";
 import { FormInput, FormSelect } from "@/components/forms";
-import { useCreateEmployeeMutation, useDeleteEmployeeMutation, useGetEmployeesQuery, useEmployeeStatusUpdateMutation, useUpdateEmployeeMutation } from "@/services/api";
+import { useCreateEmployeeMutation, useDeleteEmployeeMutation, useGetEmployeesQuery, useEmployeeStatusUpdateMutation, useUpdateEmployeeMutation, usePermissionUpdateMutation, usePermissionListByTypeMutation } from "@/services/api";
 import { useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useToast } from "@/hooks/use-toast";
@@ -33,15 +33,18 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import { z } from "zod";
 import { cities } from "@/dropdowndata/cities";
+import PermissionModal from "@/components/PermissionModal";
 
 const EmployeeRow = ({
     employee,
     showDeleteEmployeeConfirmation,
     showUpdateEmployeeConfirmation,
+    showUpdatePermissionModal,
 }: {
     employee: any;
     showDeleteEmployeeConfirmation: (uuid: string) => void;
-    showUpdateEmployeeConfirmation: any
+    showUpdateEmployeeConfirmation: any,
+    showUpdatePermissionModal: (uuid: any) => void;
 }) => {
     const toaster = useToast();
 
@@ -78,7 +81,10 @@ const EmployeeRow = ({
                     </Tooltip>
                     <div className="ml-1">
                         <Tooltip message="Update Employee Permission" position="top" color="primary">
-                            <Button color="primary" size="xs">
+                            <Button color="primary" size="xs" onClick={(event) => {
+                                event.stopPropagation();
+                                showUpdatePermissionModal(uuid);
+                            }}>
                                 Update Permission
                             </Button>
                         </Tooltip>
@@ -113,12 +119,19 @@ const EmployeeTable = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
     const [employeeId, setEmployeeId] = useState<string>("");
+    const [permissionList, setPermissionList] = useState<any>();
+    const [selectedPermissions, setSelectedPermissions] = useState<any>();
+    const [userUUid,setuserUUid] = useState<any>();
+    const [isPermissionModal, setIsPermissionModal] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const { data: detail_data } = useGetEmployeesQuery({ searchText, pageUrl });
-    const agencies = detail_data?.data;
-    const links = detail_data?.links;
     const [createEmployee, { isLoading: createLoading }] = useCreateEmployeeMutation();
     const [deleteEmployee, { isLoading: deleteEmployeeLoading }] = useDeleteEmployeeMutation();
     const [updateEmployee, { isLoading: employeeLoading }] = useUpdateEmployeeMutation();
+    const [permissionListByType] = usePermissionListByTypeMutation();
+    const [updatePermissions] = usePermissionUpdateMutation();
+    const agencies = detail_data?.data;
+    const links = detail_data?.links;
 
     const employeeSchema = z.object({
         name: z.string({ required_error: "Employee Name Required!" }).min(5, "Employee Name cannot be empty!"),
@@ -232,6 +245,36 @@ const EmployeeTable = () => {
     const handleClose = () => {
         setIsModalOpen(false)
     }
+    const showUpdatePermissionModal = async (uuid: any) => {
+        const type = 'h-employee';
+        await permissionListByType({uuid, type}).then((response: any) => {
+            if ("error" in response) {
+                toaster.error("something went wrong.");
+                return false;
+            }
+            setPermissionList(response?.data?.permission_list);
+            setSelectedPermissions(response?.data?.selected_permissions)
+            setIsPermissionModal(true);
+            setuserUUid(uuid);
+        })
+    }
+
+    const handleSubmitPermissions = async (selectedPermissionUUIDs: string[]) => {
+        setIsLoading(true)
+        await updatePermissions({ userUUid, selectedPermissionUUIDs }).then((response: any) => {
+            if ("error" in response) {
+                setErrors(response?.error?.data?.errors);
+                return;
+            }
+            toaster.success(`Permissions has been Updated`);
+            setPermissionList('');
+            setSelectedPermissions('')
+            setIsLoading(false)
+            setIsPermissionModal(false)            
+        })
+        setIsLoading(false)
+    };
+
     return (
         <>
             <Card className="mt-5 bg-base-100">
@@ -276,6 +319,7 @@ const EmployeeTable = () => {
                                         key={index}
                                         showDeleteEmployeeConfirmation={showDeleteEmployeeConfirmation}
                                         showUpdateEmployeeConfirmation={showUpdateEmployeeConfirmation}
+                                        showUpdatePermissionModal={showUpdatePermissionModal}
                                     />
                                 ))}
                             </TableBody>
@@ -411,6 +455,22 @@ const EmployeeTable = () => {
                     </form>
                 </ModalActions>
             </Modal>
+
+            {permissionList &&
+                <PermissionModal
+                    isOpen={isPermissionModal}
+                    handleClose={()=>{
+                        setIsPermissionModal(false)
+                        setPermissionList('');
+                        setSelectedPermissions('')
+                    }}
+                    control={control}
+                    permissionList={permissionList}
+                    selectedPermissions={selectedPermissions}
+                    onSubmit={handleSubmitPermissions}
+                    loading={isLoading}
+                />
+            }
         </>
     );
 };

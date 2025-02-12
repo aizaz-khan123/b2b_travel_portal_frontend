@@ -62,7 +62,6 @@ const LoginAuth = ({ redirectTo }: { redirectTo?: string }) => {
     setIsDisable(true);
     setIsLoading(true);
     await loginUser(data).then(async (response: any) => {
-      console.log(response);
       if ("error" in response) {
         setErrors(response.error.data.errors);
         setIsDisable(false);

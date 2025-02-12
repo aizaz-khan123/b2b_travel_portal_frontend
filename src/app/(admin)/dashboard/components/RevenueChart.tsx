@@ -51,11 +51,11 @@ const DashboardRevenueChart = () => {
             },
             series: [
                 {
-                    name: "Orders",
+                    name: "Bookings",
                     data: overviewStat.series.map((r) => r.orders),
                 },
                 {
-                    name: "Revenue",
+                    name: "Tickets",
                     data: overviewStat.series.map((r) => r.revenues),
                 },
             ],

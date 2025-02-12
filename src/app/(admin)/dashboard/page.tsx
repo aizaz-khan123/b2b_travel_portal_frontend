@@ -8,11 +8,12 @@ import { EcommerceDashboard } from "./EcommerceDashboard";
 import { EcommerceDashboardProvider } from "./use-ecommerce-dashboard";
 
 export const metadata: Metadata = {
-    title: "Dashboard",
+    title: "Overview",
 };
 
 const EcommerceDashboardPage = async () => {
     const response = await getEcommerceDashboardData();
+    
     let data: IEcommerceDashboardData | null = null;
     if (response.status === "success") {
         data = response.data;
@@ -21,7 +22,7 @@ const EcommerceDashboardPage = async () => {
         <div>
             <PageTitle
                 title={"Overview"}
-                breadCrumbItems={[{ label: "Dashboards", active: true }]}
+                breadCrumbItems={[{ label: "Overview", active: true }]}
             />
             <div className="mt-6">
                 {data && (

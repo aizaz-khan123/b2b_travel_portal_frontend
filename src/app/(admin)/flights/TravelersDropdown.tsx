@@ -12,9 +12,9 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import PeopleIcon from "@mui/icons-material/People";
 
 interface TravelersState {
-  adults: number;
-  children: number;
-  infants: number;
+  adult_count: number;
+  child_count: number;
+  infant_count: number;
 }
 
 interface TravelersDropdownProps<
@@ -56,7 +56,7 @@ const TravelersDropdown = <TFieldValues extends FieldValues, TName extends Field
             className="w-full h-[55px]"
             style={{ justifyContent: 'start' }}
           >
-            {`${field?.value?.adults} Adults | ${field?.value?.children} Child | ${field?.value?.infants} Infant`}
+            {`${field?.value?.adult_count} Adults | ${field?.value?.child_count} Child | ${field?.value?.infant_count} Infant`}
           </Button>
 
           <Popover
@@ -75,9 +75,9 @@ const TravelersDropdown = <TFieldValues extends FieldValues, TName extends Field
           >
             <Box p={2} >
               {[
-                { label: "Adult", subtext: "(12 years and above)", type: "adults" },
-                { label: "Children", subtext: "(2 to 11 years)", type: "children" },
-                { label: "Infants", subtext: "(0 to less than 2)", type: "infants" },
+                { label: "Adult", subtext: "(12 years and above)", type: "adult_count" },
+                { label: "Children", subtext: "(2 to 11 years)", type: "child_count" },
+                { label: "Infants", subtext: "(0 to less than 2)", type: "infant_count" },
               ].map((item) => (
                 <Box
                   key={item.type}

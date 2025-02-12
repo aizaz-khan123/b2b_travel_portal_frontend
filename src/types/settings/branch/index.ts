@@ -8,6 +8,8 @@ export type IBranch = {
     user_id: number;
     created_at: Date;
     updated_at: Date;
+    branch_agencies_count: number;
+    branch_employees_count: number;
     branch_manager: {
         id: number,
         uuid: string;
