@@ -11,8 +11,6 @@ const DashboardRevenueChart = () => {
     const { state } = useGlobalContext();
     const { overviewStat, overviewDuration } = useEcommerceDashboard();
 
-    console.log(overviewStat, "overviewStat");
-
     const options: ApexOptions = useMemo(() => {
         return {
             theme: {

@@ -25,7 +25,7 @@ import {
 } from "@/components/daisyui";
 import Pagination from "@/components/Pagination/Pagination";
 import { FormInput, FormSelect } from "@/components/forms";
-import { useCreateAgencyMutation, useDeleteAgencyMutation, useGetAgenciesQuery, useAgencystatusUpdateMutation, useUpdateAgencyMutation, useBranchDropDownQuery } from "@/services/api";
+import { useCreateAgencyMutation, useDeleteAgencyMutation, useGetAgenciesQuery, useAgencystatusUpdateMutation,usePermissionListByTypeMutation, useUpdateAgencyMutation, useBranchDropDownQuery, usePermissionUpdateMutation } from "@/services/api";
 
 import { useRef, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -34,19 +34,22 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import { z } from "zod";
 import { cities } from "@/dropdowndata/cities";
+import PermissionModal from "@/components/PermissionModal";
 
 const AgencyRow = ({
     agency,
     showDeleteAgencyConfirmation,
     showUpdateAgencyConfirmation,
+    showUpdatePermissionModal,
 }: {
     agency: any;
     showDeleteAgencyConfirmation: (uuid: string) => void;
-    showUpdateAgencyConfirmation: any
+    showUpdateAgencyConfirmation: any,
+    showUpdatePermissionModal: (uuid: any) => void;
 }) => {
     const toaster = useToast();
 
-    const { id, uuid, name, email, phone_number, status, agency_wallet } = agency;
+    const { id, uuid, name, email, phone_number, status, agency_wallet, branch } = agency;
     const [updateStatus] = useAgencystatusUpdateMutation();
     const handleStatusChange = (uuid: string) => {
         const body = {
@@ -61,6 +64,7 @@ const AgencyRow = ({
             <TableRow className="hover:bg-base-200/40">
                 <div className="font-medium">{id}</div>
                 <div className="flex items-center space-x-3 truncate">{name}</div>
+                <div className="flex items-center space-x-3 truncate">{branch?.name}</div>
                 <div className="flex items-center space-x-3 truncate">{email}</div>
                 <div className="flex items-center space-x-3 truncate">{phone_number}</div>
                 <div className="flex items-center space-x-3 truncate">{agency_wallet?.per_credit_limit}</div>
@@ -82,7 +86,10 @@ const AgencyRow = ({
                     </Tooltip>
                     <div className="ml-1">
                         <Tooltip message="Update Agency Permission" position="top" color="primary">
-                            <Button color="primary" size="xs">
+                            <Button color="primary" size="xs" onClick={(event) => {
+                                event.stopPropagation();
+                                showUpdatePermissionModal(uuid);
+                            }}>
                                 Update Permission
                             </Button>
                         </Tooltip>
@@ -117,12 +124,19 @@ const AgencyTable = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isEditMode, setIsEditMode] = useState(false);
     const [agencyId, setAgencyId] = useState<string>("");
+    const [permissionList, setPermissionList] = useState<any>();
+    const [selectedPermissions, setSelectedPermissions] = useState<any>();
+    const [userUUid,setuserUUid] = useState<any>();
+    const [isPermissionModal, setIsPermissionModal] = useState<boolean>(false);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const { data: detail_data } = useGetAgenciesQuery({ searchText, pageUrl });
     const agencies = detail_data?.data;
     const links = detail_data?.links;
     const [createAgency, { isLoading: createLoading }] = useCreateAgencyMutation();
     const [deleteAgency, { isLoading: deleteAgencyLoading }] = useDeleteAgencyMutation();
     const [updateAgency, { isLoading: agencyLoading }] = useUpdateAgencyMutation();
+    const [permissionListByType] = usePermissionListByTypeMutation();
+    const [updatePermissions] = usePermissionUpdateMutation();
     const { data: branchesDropDown } = useBranchDropDownQuery();
 
     const agencySchema = z.object({
@@ -242,6 +256,37 @@ const AgencyTable = () => {
     const handleClose = () => {
         setIsModalOpen(false)
     }
+
+    const showUpdatePermissionModal = async (uuid: any) => {
+        const type = 'agency';
+        await permissionListByType({uuid, type}).then((response: any) => {
+            if ("error" in response) {
+                toaster.error("something went wrong.");
+                return false;
+            }
+            setPermissionList(response?.data?.permission_list);
+            setSelectedPermissions(response?.data?.selected_permissions)
+            setIsPermissionModal(true);
+            setuserUUid(uuid);
+        })
+    }
+
+    const handleSubmitPermissions = async (selectedPermissionUUIDs: string[]) => {
+        setIsLoading(true)
+        await updatePermissions({ userUUid, selectedPermissionUUIDs }).then((response: any) => {
+            if ("error" in response) {
+                setErrors(response?.error?.data?.errors);
+                return;
+            }
+            toaster.success(`Permissions has been Updated`);
+            setPermissionList('')
+            setSelectedPermissions('')
+            setIsLoading(false)
+            setIsPermissionModal(false)        
+        })
+        setIsLoading(false)
+    };
+
     return (
         <>
             <Card className="mt-5 bg-base-100">
@@ -272,6 +317,7 @@ const AgencyTable = () => {
                             <TableHead>
                                 <span className="text-sm font-medium text-base-content/80">ID</span>
                                 <span className="text-sm font-medium text-base-content/80">Agency Name</span>
+                                <span className="text-sm font-medium text-base-content/80">Branch Name</span>
                                 <span className="text-sm font-medium text-base-content/80">Email</span>
                                 <span className="text-sm font-medium text-base-content/80">Phone Number</span>
                                 <span className="text-sm font-medium text-base-content/80">Permanent Limit</span>
@@ -289,6 +335,7 @@ const AgencyTable = () => {
                                         key={index}
                                         showDeleteAgencyConfirmation={showDeleteAgencyConfirmation}
                                         showUpdateAgencyConfirmation={showUpdateAgencyConfirmation}
+                                        showUpdatePermissionModal={showUpdatePermissionModal}
                                     />
                                 ))}
                             </TableBody>
@@ -454,6 +501,22 @@ const AgencyTable = () => {
                     </form>
                 </ModalActions>
             </Modal>
+
+            {permissionList &&
+                <PermissionModal
+                    isOpen={isPermissionModal}
+                    handleClose={()=>{
+                        setIsPermissionModal(false)
+                        setPermissionList('');
+                        setSelectedPermissions('')
+                    }}
+                    control={control}
+                    permissionList={permissionList}
+                    selectedPermissions={selectedPermissions}
+                    onSubmit={handleSubmitPermissions}
+                    loading={isLoading}
+                />
+            }
         </>
     );
 };
