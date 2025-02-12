@@ -73,7 +73,7 @@ const TravelersDropdown = <TFieldValues extends FieldValues, TName extends Field
               },
             }}
           >
-            <Box p={2}>
+            <Box p={2} >
               {[
                 { label: "Adult", subtext: "(12 years and above)", type: "adult_count" },
                 { label: "Children", subtext: "(2 to 11 years)", type: "child_count" },

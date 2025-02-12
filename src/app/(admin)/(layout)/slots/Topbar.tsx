@@ -27,7 +27,6 @@ import {
 import { useLayoutContext } from "@/contexts/layout";
 import { routes } from "@/lib/routes";
 
-
 import { NotificationButton } from "../components/NotificationButton";
 import { SearchButton } from "../components/SearchButton";
 import { useLogoutMutation } from "@/services/api";
@@ -65,7 +64,9 @@ const Topbar = () => {
   };
 
   return (
-    <Navbar className="topbar-wrapper z-10 border-b border-base-200 px-3">
+    // <Navbar className="topbar-wrapper z-10 border-b border-base-200 px-3">
+    <Navbar className="topbar-wrapper sticky top-0 z-50 border-b border-base-200 px-3 bg-white shadow-md">
+
       <NavbarStart className="gap-3">
         <Button
           shape="square"
@@ -83,49 +84,48 @@ const Topbar = () => {
         {/* <ThemeToggleButton shape="circle" color="ghost" size="sm" /> */}
 
         <div className="w-84">
-      <div className="relative inline-block">
-        <button
-          onClick={() => setOpen((prev) => !prev)}
-          className="flex items-center gap-2 px-4 py-2 border border-[#3E5EFF] text-[#3E5EFF] rounded-md bg-blue-50 hover:bg-blue-100"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="w-5 h-5 text-[#3E5EFF]"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M23 4v6h-6"></path>
-            <path d="M1 20v-6h6"></path>
-            <path d="M3.51 9a9 9 0 0 1 14.85-3L23 10"></path>
-            <path d="M20.49 15a9 9 0 0 1-14.85 3L1 14"></path>
-          </svg>
-          <span className="font-bold text-md">PKR 2,333,854.51</span>
-        </button>
+          <div className="relative inline-block">
+            <button
+              onClick={() => setOpen((prev) => !prev)}
+              className="flex items-center gap-2 px-4 py-2 border border-[#3E5EFF] text-[#3E5EFF] rounded-md bg-blue-50 hover:bg-blue-100"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-5 h-5 text-[#3E5EFF]"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M23 4v6h-6"></path>
+                <path d="M1 20v-6h6"></path>
+                <path d="M3.51 9a9 9 0 0 1 14.85-3L23 10"></path>
+                <path d="M20.49 15a9 9 0 0 1-14.85 3L1 14"></path>
+              </svg>
+              <span className="font-bold text-md">PKR 2,333,854.51</span>
+            </button>
 
-        <div
-          className={`absolute left-0 mt-2 w-48 bg-white border border-gray-200 shadow-lg rounded-lg transition-all duration-300 ease-in-out ${
-            open ? "max-h-40 opacity-100" : "max-h-0 opacity-0"
-          } overflow-hidden`}
-        >
-          <ul className="py-2">
-            <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-              Option 1
-            </li>
-            <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-              Option 2
-            </li>
-            <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-              Option 3
-            </li>
-          </ul>
+            <div
+              className={`absolute left-0 mt-2 w-48 bg-white border border-gray-200 shadow-lg rounded-lg transition-all duration-300 ease-in-out ${
+                open ? "max-h-40 opacity-100" : "max-h-0 opacity-0"
+              } overflow-hidden`}
+            >
+              <ul className="py-2">
+                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                  Option 1
+                </li>
+                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                  Option 2
+                </li>
+                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
+                  Option 3
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-       
 
         {/* <NotificationButton /> */}
         <Dropdown vertical="bottom" end>
