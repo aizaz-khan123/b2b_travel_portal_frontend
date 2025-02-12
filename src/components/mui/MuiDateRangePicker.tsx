@@ -1,5 +1,4 @@
 import { Control, Controller, FieldPath, FieldValues } from "react-hook-form";
-import { TextField } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DateRangePicker } from "@mui/x-date-pickers-pro/DateRangePicker";
@@ -25,7 +24,7 @@ const MuiDateRangePicker = <TFieldValues extends FieldValues, TName extends Fiel
   endLabel = "End Date",
   onChange,
   className,
-  disableEndDate = false
+  disableEndDate = false,
 }: MuiDateRangePickerProps<TFieldValues, TName>) => {
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -52,12 +51,20 @@ const MuiDateRangePicker = <TFieldValues extends FieldValues, TName extends Fiel
               disableEndDate && position === "end"
             }
             slotProps={{
-              textField: {
-                className,
+              textField: ({ position }) => ({
+                className: `${className} ${
+                  disableEndDate && position === "end"
+                    ? "bg-gray-200 rounded-lg m-10"
+                    : ""
+                }`,
                 fullWidth: true,
                 error: !!fieldState.error,
                 helperText: fieldState.error?.message,
-              } as any,
+                InputProps: {
+                  readOnly: disableEndDate && position === "end", // Prevents manual input
+                },
+                disableOpenPicker: disableEndDate && position === "end", // Prevents calendar popup
+              }) as any,
             }}
           />
         )}

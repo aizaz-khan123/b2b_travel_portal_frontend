@@ -577,9 +577,9 @@ export const {
   useGetEmployeesQuery,
   useUpdateEmployeeMutation,
   useLocationsLookupQuery,
-
+  useLazyLocationsLookupQuery
+  
   /** Permission Management */
   usePermissionListByTypeMutation,
   usePermissionUpdateMutation,
-
 } = api;
