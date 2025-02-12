@@ -43,7 +43,7 @@ const Topbar = () => {
   const navigate = useRouter();
   const dispatch = useDispatch();
   const toaster = useToast();
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
 
   const onLogout = async () => {
     logout({})

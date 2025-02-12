@@ -1,11 +1,9 @@
 "use server";
 import { cookies } from "next/headers";
 
-import { IAuthState } from "@/types/auth";
-
 const cookieKey = "user";
 
-export const updateAuthCookie = async (user: IAuthState) => {
+export const updateAuthCookie = async (user: any) => {
     cookies().set({ name: cookieKey, value: JSON.stringify(user) });
 };
 
