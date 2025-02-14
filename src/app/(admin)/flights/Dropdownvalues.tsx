@@ -10,3 +10,21 @@ export const cabin_class = [
     'FIRST_CLASS',
     'PREMUIM_ECONOMY',
 ]
+
+export const PASSENGER_TYPE = [
+    'Adult',
+    'Child',
+    'Infant'
+]
+
+export const PASSENGER_SUB_TYPE = [
+    'Mr',
+    'Mrs',
+    'Ms'
+]
+
+export const GENDER = [
+    'Male',
+    'Female',
+    'Others'
+]

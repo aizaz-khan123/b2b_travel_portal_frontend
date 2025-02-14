@@ -577,7 +577,7 @@ export const {
   useGetEmployeesQuery,
   useUpdateEmployeeMutation,
   useLocationsLookupQuery,
-  useLazyLocationsLookupQuery
+  useLazyLocationsLookupQuery,
   
   /** Permission Management */
   usePermissionListByTypeMutation,

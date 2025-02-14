@@ -36,10 +36,10 @@ const ProtectedRoutes: Record<string, any> = {
     "/notifications": ["can_view_notifications"],
     "/reservation/my-bookings": ["can_view_my_bookings"],
     "/reservation/my-voids": ["can_view_my_void_request"],
-    "/organization/sub-agents": ["can_view_sub_agents"],
+    "/organizations/sub-agents": ["can_view_sub_agents"],
     "/finance/ag-pricing": ["can_view_ag_pricing"],
     "/finance/payment-request": ["can_view_payment_request"],
-    "/organization/passenger-management": ["can_view_passenger_management"],
+    "/organizations/passenger-management": ["can_view_passenger_management"],
 };
 
 export default ProtectedRoutes;
