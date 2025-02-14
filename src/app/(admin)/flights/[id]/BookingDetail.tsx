@@ -24,6 +24,7 @@ import PersonIcon from "@mui/icons-material/Person";
 import PhoneEnabledIcon from "@mui/icons-material/PhoneEnabled";
 import { Divider, Input } from "@mui/material";
 import TravelersDropdown from "../TravelersDropdown";
+import Link from "next/link";
 
 const fareDetails = [
   { label: "Base Fare", amount: "PKR 88,358.41" },
@@ -521,7 +522,6 @@ const BookingDetail = () => {
                 <div>
                   {/* Booking Header */}
                   <Card className="bg-base-100 mb-5">
-                   
                     <CardBody>
                       <div className="space-y-4">
                         {/* Heading */}
@@ -576,7 +576,6 @@ const BookingDetail = () => {
                 <div>
                   {/* Booking Header */}
                   <Card className="bg-base-100 mb-5">
-                   
                     <CardBody>
                       <div className="space-y-4">
                         {/* Heading */}
@@ -592,23 +591,35 @@ const BookingDetail = () => {
                         <Divider sx={{ marginTop: "0.5rem" }} />
 
                         {/* Lead Traveler */}
-                        <div className="flex justify-between">
-                          <div>
-                            <p className="text-sm font-medium">Traveler 1: Adult</p>
-                            <div className="flex border border-gray-300 rounded-lg overflow-hidden mt-1 w-full">
-                            <div>
-
-Dropdown
-                                </div>
-                             
-                            </div>
-                            <p className="text-xs text-gray-500 mt-1">
-                              Please input the traveler's number here to receive
-                              flight updates
+                        <div className="grid grid-cols-1 lg:grid-cols-6 gap-4">
+                          <div className="col-span-1 lg:col-span-3">
+                            <p className="text-lg mb-3 font-medium">
+                              Traveler 1: Adult
                             </p>
+
+                            <div className="flex border border-gray-300 rounded-lg overflow-hidden mt-1 w-full">
+                              <select className="w-full p-2 border-none outline-none">
+                                <option value="option1">Option 1</option>
+                                <option value="option2">Option 2</option>
+                                <option value="option3">Option 3</option>
+                                <option value="option4">Option 4</option>
+                              </select>
+                            </div>
+
+                            <div className="flex items-center justify-center w-full my-4">
+                              <hr className="w-full border-gray-300" />
+                              <span className="mx-2 text-gray-600 font-semibold">
+                                OR
+                              </span>
+                              <hr className="w-full border-gray-300" />
+                            </div>
+                            <div className="flex justify-center items-center">
+
+                            <Link href={'#'} className="text-blue-600 text-center w-full font-bold">Add New Traveler</Link>
+                            </div>
                           </div>
 
-                        
+                          <div className="col-span-1 lg:col-span-3 "></div>
                         </div>
                       </div>
                     </CardBody>
@@ -621,19 +632,222 @@ Dropdown
                   {/* Booking Header */}
                   <Card className="bg-base-100 mb-5">
                     <CardBody>
-                      <div className="flex justify-between items-cente">
-                        <div>
-                          <p className="text-gray-600">Contact Details</p>
-                          <h2 className="text-lg font-semibold">W3T6AFHTQLN</h2>
+                      <CardTitle>
+                        <h2 className="font-semibold text-lg">Price Summary</h2>
+                      </CardTitle>
+                      <div>
+                        <div className="flex justify-between border-b pb-2">
+                          <p className="font-semibold">PIA (Adult) x 2:</p>
+                          <p className=" text-gray-400">PKR 18,963.11</p>
                         </div>
+
+                        <div className="flex justify-between mt-4">
+                          <h4 className="font-semibold">Price you Pay:</h4>
+                          <h4 className="text-blue-600 font-bold">
+                            PKR 56,788.52
+                          </h4>
+                        </div>
+                      </div>
+
+                      <Accordion className="p-0" icon="arrow">
+                        <AccordionTitle className="text-lg font-semibold px-0">
+                          Fair Breakdown
+                        </AccordionTitle>
+                        <AccordionContent className="p-0">
+                          <div className="mb-5 border p-2 rounded-md">
+                            <CardTitle className="px-0">
+                              <h2 className="font-semibold text-lg py-3">
+                                Adult
+                              </h2>
+                            </CardTitle>
+                            <hr className="mb-2 mt-0" />
+                            <div>
+                              <div className="flex justify-between items-center mb-1">
+                                <p className="text-gray-800 text-sm font-semibold">
+                                  Base Fare:
+                                </p>
+                                <p className="text-gray text-sm font-semibold text-end">
+                                  PKR 88,358.41
+                                </p>
+                              </div>
+                              <div className="flex justify-between items-center mb-1">
+                                <p className="text-gray-800 text-sm font-semibold">
+                                  Tax:
+                                </p>
+                                <p className="text-gray text-sm font-semibold text-end">
+                                  PKR 88,358.41
+                                </p>
+                              </div>
+                              <div className="flex justify-between items-center mb-1">
+                                <p className="text-gray-800 text-sm font-semibold">
+                                  Processing Fee:
+                                </p>
+                                <p className="text-gray text-sm font-semibold text-end">
+                                  PKR 88,358.41
+                                </p>
+                              </div>
+                              <hr className="border mt-3" />
+                              <div className="flex justify-between mt-4">
+                                <h4 className="font-semibold text-lg">
+                                  Total to Pay:
+                                </h4>
+                                <h4 className="text-blue-600 font-bold text-lg">
+                                  PKR 56,788.52
+                                </h4>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="mb-5 border p-2 rounded-md">
+                            <CardTitle>
+                              <h2 className="font-semibold text-lg py-3">
+                                Child
+                              </h2>
+                            </CardTitle>
+                            <hr className="mb-2 mt-0" />
+                            <div>
+                              <div className="flex justify-between items-center mb-1">
+                                <p className="text-gray-800 text-sm font-semibold">
+                                  Base Fare:
+                                </p>
+                                <p className="text-gray text-sm font-semibold text-end">
+                                  PKR 88,358.41
+                                </p>
+                              </div>
+                              <div className="flex justify-between items-center mb-1">
+                                <p className="text-gray-800 text-sm font-semibold">
+                                  Tax:
+                                </p>
+                                <p className="text-gray text-sm font-semibold text-end">
+                                  PKR 88,358.41
+                                </p>
+                              </div>
+                              <div className="flex justify-between items-center mb-1">
+                                <p className="text-gray-800 text-sm font-semibold">
+                                  Processing Fee:
+                                </p>
+                                <p className="text-gray text-sm font-semibold text-end">
+                                  PKR 88,358.41
+                                </p>
+                              </div>
+                              <hr className="border mt-3" />
+                              <div className="flex justify-between mt-4">
+                                <h4 className="font-semibold text-lg">
+                                  Total to Pay:
+                                </h4>
+                                <h4 className="text-blue-600 font-bold text-lg">
+                                  PKR 56,788.52
+                                </h4>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="mb-5 border p-2 rounded-md">
+                            <CardTitle className="px-0">
+                              <h2 className="font-semibold text-lg py-3">
+                                Infant
+                              </h2>
+                            </CardTitle>
+                            <hr className="mb-2 mt-0" />
+                            <div>
+                              <div className="flex justify-between items-center mb-1">
+                                <p className="text-gray-800 text-sm font-semibold">
+                                  Base Fare:
+                                </p>
+                                <p className="text-gray text-sm font-semibold text-end">
+                                  PKR 88,358.41
+                                </p>
+                              </div>
+                              <div className="flex justify-between items-center mb-1">
+                                <p className="text-gray-800 text-sm font-semibold">
+                                  Tax:
+                                </p>
+                                <p className="text-gray text-sm font-semibold text-end">
+                                  PKR 88,358.41
+                                </p>
+                              </div>
+                              <div className="flex justify-between items-center mb-1">
+                                <p className="text-gray-800 text-sm font-semibold">
+                                  Processing Fee:
+                                </p>
+                                <p className="text-gray text-sm font-semibold text-end">
+                                  PKR 88,358.41
+                                </p>
+                              </div>
+                              <hr className="border mt-3" />
+                              <div className="flex justify-between mt-4">
+                                <h4 className="font-semibold text-lg">
+                                  Total to Pay:
+                                </h4>
+                                <h4 className="text-blue-600 font-bold text-lg">
+                                  PKR 56,788.52
+                                </h4>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex justify-center">
+                            <img
+                              src="/media/images/study-abroad.svg"
+                              alt="img"
+                            />
+                          </div>
+                        </AccordionContent>
+                      </Accordion>
+                    </CardBody>
+                  </Card>
+                </div>
+
+                <div>
+                  {/* Booking Header */}
+                  <Card className="bg-base-100 mb-5">
+                    <CardBody>
+                      <CardTitle>
+                        <h2 className="font-semibold text-lg">Trip Summary</h2>
+                      </CardTitle>
+                      <div>
                         <Button
                           color="primary"
-                          className="text-base font-semibold"
+                          className="text-base font-semibold px-6"
                         >
-                          Confirmed
+                          Flight 1
                         </Button>
+                        <div className="flex items-center justify-between mt-5">
+                          <div className=" border-b pb-2">
+                            <p className="font-semibold">Departure</p>
+                            <p className=" text-gray-400">7 Mar 2025</p>
+                          </div>
 
-                        {/* <span className="bg-blue-500 text-white px-4 py-2 rounded-lg">Confirmed</span> */}
+                          <div className="">
+                            <p className="font-semibold">Departure</p>
+                            <p className=" text-gray-400">7 Mar 2025</p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          <div className="text-center">
+                            <h3 className="font-semibold text-base mb-0 h-4">
+                              LHR
+                            </h3>
+                            <span className="text-gray-500 text-xs">
+                              02:15 AM
+                            </span>
+                          </div>
+                          <div className="text-center">
+                            {/* <h3 className="text-gray text-xs mb-0">1 hr 15 mins</h3> */}
+                            <span className="text-gray-500 flex">
+                              -------{" "}
+                              <img src="/media/icons/plane.svg" alt="" />{" "}
+                              -------
+                            </span>
+                            {/* <h3 className="text-gray text-xs mb-0">Non-Stop</h3> */}
+                          </div>
+                          <div className="text-center">
+                            <h3 className="font-semibold text-base mb-0 h-4">
+                              ISL
+                            </h3>
+                            <span className="text-gray-500 text-xs">
+                              02:15 AM
+                            </span>
+                          </div>
+                        </div>
                       </div>
                     </CardBody>
                   </Card>
@@ -641,30 +855,7 @@ Dropdown
               </div>
             </div>
 
-            {/* Additional Services */}
-            <Card className="bg-base-100 mb-5">
-              <CardBody>
-                <CardTitle>
-                  <h2 className="font-semibold text-lg">
-                    Additional Services on 1st Flight
-                  </h2>
-                </CardTitle>
-                <div className="mt-1 space-y-2">
-                  <div className="border flex gap-2 items-center p-2 rounded max-w-80">
-                    <img src="/media/icons/food-icon.svg" alt="img" />
-                    <p className="text-gray-800 text-base font-semibold">
-                      No Meal Included
-                    </p>
-                  </div>
-                  <div className="border flex gap-2 items-center p-2 rounded max-w-80">
-                    <img src="/media/icons/baggage-icon.svg" alt="img" />
-                    <p className="text-gray-800 text-base font-semibold">
-                      Included Luggage: Total 20.0 KG (1 pc)
-                    </p>
-                  </div>
-                </div>
-              </CardBody>
-            </Card>
+         
           </div>
         </div>
       </div>
