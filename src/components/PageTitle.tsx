@@ -20,7 +20,7 @@ const PageTitle = ({ title, breadCrumbItems, centerItems }: PageTitleProps) => {
         <div className="flex items-center justify-between">
             <h3 className="text-lg font-medium">{title}</h3>
             {centerItems != null && centerItems}
-            <>
+            {/* <>
                 {breadCrumbItems && (
                     <Breadcrumbs className="hidden p-0 sm:inline">
                         <BreadcrumbsItem key={0}>FlyGloble</BreadcrumbsItem>
@@ -33,7 +33,7 @@ const PageTitle = ({ title, breadCrumbItems, centerItems }: PageTitleProps) => {
                         })}
                     </Breadcrumbs>
                 )}
-            </>
+            </> */}
         </div>
     );
 };

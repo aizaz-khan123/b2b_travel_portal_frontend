@@ -18,7 +18,7 @@ const SingleCounter = ({ counter }: { counter: IEcommerceDashboardCounter }) => 
             <CardBody className="gap-2 cursor-pointer">
                 <div className="flex items-start justify-between gap-2 text-sm">
                     <div>
-                        <p className="font-medium">{title}</p>
+                        <p className="text-lg font-medium">{title}</p>
                         <div className="mt-4 flex items-center gap-2">
                             <h5 className="inline text-2xl/none font-semibold">
                                 {inMoney && currencyHelper.sign}
