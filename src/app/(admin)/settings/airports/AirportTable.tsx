@@ -33,6 +33,7 @@ import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useToast } from "@/hooks/use-toast";
 import Image from "next/image";
+import { AnyARecord } from "dns";
 
 const AirportRow = ({
     airport,
@@ -105,7 +106,7 @@ const AirportTable = () => {
 
     const showDeleteAirportConfirmation = (uuid: any) => {
         AirportDeleteConfirmationRef.current?.showModal();
-        setAirportToBeDelete(airports?.find((b) => uuid === b.uuid));
+        setAirportToBeDelete(airports?.find((b:any) => uuid === b.uuid));
     };
 
     const handleDeleteAirport = async () => {

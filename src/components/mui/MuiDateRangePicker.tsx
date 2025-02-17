@@ -5,67 +5,76 @@ import { DateRangePicker } from "@mui/x-date-pickers-pro/DateRangePicker";
 import dayjs, { Dayjs } from "dayjs";
 
 interface MuiDateRangePickerProps<
-  TFieldValues extends FieldValues = FieldValues,
-  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+  TFieldValues extends FieldValues = FieldValues
 > {
   control: Control<TFieldValues>;
-  name: TName;
+  startName: FieldPath<TFieldValues>;
+  endName: FieldPath<TFieldValues>;
   startLabel?: string;
   endLabel?: string;
-  onChange?: (value: [string | null, string | null]) => void;
+  onChange?: (departure: string | null, returnDate: string | null) => void;
   className?: string;
   disableEndDate?: boolean;
 }
 
-const MuiDateRangePicker = <TFieldValues extends FieldValues, TName extends FieldPath<TFieldValues>>({
+const MuiDateRangePicker = <TFieldValues extends FieldValues>({
   control,
-  name,
-  startLabel = "Start Date",
-  endLabel = "End Date",
+  startName,
+  endName,
+  startLabel = "Departure Date",
+  endLabel = "Return Date",
   onChange,
   className,
   disableEndDate = false,
-}: MuiDateRangePickerProps<TFieldValues, TName>) => {
+}: MuiDateRangePickerProps<TFieldValues>) => {
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Controller
         control={control}
-        name={name}
-        render={({ field, fieldState }) => (
-          <DateRangePicker
-            value={
-              field.value
-                ? [dayjs(field.value[0]), dayjs(field.value[1])]
-                : [null, null]
-            }
-            onChange={(newValue: [Dayjs | null, Dayjs | null]) => {
-              const formattedRange: [string | null, string | null] = [
-                newValue[0] ? newValue[0].format("YYYY-MM-DD") : null,
-                newValue[1] ? newValue[1].format("YYYY-MM-DD") : null,
-              ];
-              field.onChange(formattedRange);
-              onChange?.(formattedRange);
-            }}
-            localeText={{ start: startLabel, end: endLabel }}
-            shouldDisableDate={(date, position) =>
-              disableEndDate && position === "end"
-            }
-            slotProps={{
-              textField: ({ position }) => ({
-                className: `${className} ${
+        name={startName}
+        render={({ field: startField }) => (
+          <Controller
+            control={control}
+            name={endName}
+            render={({ field: endField }) => (
+              <DateRangePicker
+                value={[
+                  startField.value ? dayjs(startField.value) : null,
+                  endField.value ? dayjs(endField.value) : null,
+                ]}
+                onChange={(newValue: [Dayjs | null, Dayjs | null]) => {
+                  const formattedDeparture = newValue[0]
+                    ? newValue[0].format("YYYY-MM-DD")
+                    : null;
+                  const formattedReturn = newValue[1]
+                    ? newValue[1].format("YYYY-MM-DD")
+                    : null;
+
+                  startField.onChange(formattedDeparture);
+                  endField.onChange(formattedReturn);
+
+                  onChange?.(formattedDeparture, formattedReturn);
+                }}
+                localeText={{ start: startLabel, end: endLabel }}
+                shouldDisableDate={(date, position) =>
                   disableEndDate && position === "end"
-                    ? "bg-gray-200 rounded-lg m-10"
-                    : ""
-                }`,
-                fullWidth: true,
-                error: !!fieldState.error,
-                helperText: fieldState.error?.message,
-                InputProps: {
-                  readOnly: disableEndDate && position === "end", // Prevents manual input
-                },
-                disableOpenPicker: disableEndDate && position === "end", // Prevents calendar popup
-              }) as any,
-            }}
+                }
+                slotProps={{
+                  textField: ({ position }) => ({
+                    className: `${className} ${
+                      disableEndDate && position === "end"
+                        ? "bg-gray-200 rounded-lg m-10"
+                        : ""
+                    }`,
+                    fullWidth: true,
+                    InputProps: {
+                      readOnly: disableEndDate && position === "end",
+                    },
+                    disableOpenPicker: disableEndDate && position === "end",
+                  }) as any,
+                }}
+              />
+            )}
           />
         )}
       />
