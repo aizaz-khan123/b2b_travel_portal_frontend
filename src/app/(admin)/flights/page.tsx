@@ -223,11 +223,11 @@ const FlightSearch = () => {
     const swapLegsLocations = (index: number) => {
         const currentOrigin = watch(`legs[${index}].origin`);
         const currentDestination = watch(`legs[${index}].destination`);
-    
+
         // Swap the values in the form
         setValue(`legs[${index}].origin`, currentDestination);
         setValue(`legs[${index}].destination`, currentOrigin);
-    
+
         // Swap the input search strings
         setLegsFromSearchStrs((prev) => ({
             ...prev,
@@ -324,7 +324,7 @@ const FlightSearch = () => {
                     </div>
                     {route_type !== "multiCity" ? (
                         <div className="grid grid-cols-12 gap-4 items-end">
-                            <div className="relative col-span-3">
+                            <div className="relative col-span-3 mb-5">
                                 <MuiAutocomplete
                                     control={control}
                                     name="origin"
@@ -354,7 +354,7 @@ const FlightSearch = () => {
                                     </svg>
                                 </button>
                             </div>
-                            <div className="col-span-3">
+                            <div className="col-span-3 mb-5">
                                 <MuiAutocomplete
                                     control={control}
                                     selectIcon={<img src="media/icons/going-to.svg" className="h-8" />}
@@ -373,7 +373,7 @@ const FlightSearch = () => {
                                 />
 
                             </div>
-                            <div className="col-span-6">
+                            <div className="col-span-6 mb-5">
                                 <MuiDateRangePicker
                                     control={control}
                                     name="return_date"
@@ -384,26 +384,7 @@ const FlightSearch = () => {
                                 />
 
                             </div>
-                            <div className="col-span-3">
-                                <TravelersDropdown control={control} name="traveler_count" />
-                            </div>
-                            <div className="col-span-3">
-                                <MuiAutocomplete
-                                    control={control}
-                                    name="cabin_class"
-                                    label="Cabin Class"
-                                    options={cabin_class.map((cabin) => ({
-                                        value: cabin,
-                                        label: `${cabin}`,
-                                    }))}
-                                    onChange={handleCityChange}
-                                />
-                            </div>
-                            <div className="col-span-2">
-                                <Button color="primary" size="md" aria-label="Search Flights" className="px-5">
-                                    Search Flights
-                                </Button>
-                            </div>
+
                         </div>
                     ) : (
                         <div>
@@ -488,36 +469,36 @@ const FlightSearch = () => {
                                 ))}
                             </div>
                             {flights.length < 5 &&
-                                <div className="mt-4">
+                                <div className="mt-4 mb-5">
                                     <h2 onClick={addFlight} className="cursor-pointer text-blue-500 mt-2 underline">
                                         + Add Another Flight
                                     </h2>
                                 </div>
                             }
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end mt-5">
-                                <div>
-                                    <TravelersDropdown control={control} name="traveler_count" />
-                                </div>
-                                <div>
-                                    <MuiAutocomplete
-                                        control={control}
-                                        name="cabin_class"
-                                        label="Cabin Class"
-                                        options={cities.map((city) => ({
-                                            value: city.code,
-                                            label: `${city.city} (${city.code})`,
-                                        }))}
-                                        onChange={handleCityChange}
-                                    />
-                                </div>
-                                <div>
-                                    <Button color="primary" size="md" aria-label="Search Flights" className="px-5">
-                                        Search Flights
-                                    </Button>
-                                </div>
-                            </div>
                         </div>
                     )}
+                    <div className="grid grid-cols-12 gap-4 items-center">
+                        <div className="col-span-3">
+                            <TravelersDropdown control={control} name="traveler_count" />
+                        </div>
+                        <div className="col-span-3">
+                            <MuiAutocomplete
+                                control={control}
+                                name="cabin_class"
+                                label="Cabin Class"
+                                options={cabin_class.map((cabin) => ({
+                                    value: cabin,
+                                    label: `${cabin}`,
+                                }))}
+                                onChange={handleCityChange}
+                            />
+                        </div>
+                        <div className="col-span-2">
+                            <Button color="primary" size="md" aria-label="Search Flights" className="px-5">
+                                Search Flights
+                            </Button>
+                        </div>
+                    </div>
                 </form>
             </CardBody>
         </Card>
