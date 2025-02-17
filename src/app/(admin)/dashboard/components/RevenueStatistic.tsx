@@ -21,7 +21,7 @@ const DashboardRevenueStatistic = () => {
             <CardBody className="px-0 pb-0">
                 <div className="px-6">
                     <div className="flex items-center justify-between">
-                        <span className="font-medium">Revenue Statistics</span>
+                        <span className="text-lg font-medium">Sales Statistics</span>
                         <Tabs variant="boxed" size={"sm"}>
                             <Tab onClick={() => setOverviewDuration("day")} active={overviewDuration == "day"}>
                                 Day

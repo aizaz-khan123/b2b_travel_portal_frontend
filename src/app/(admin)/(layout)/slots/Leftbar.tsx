@@ -31,7 +31,7 @@ const LeftMenuItem = ({ menuItem, activated }: { menuItem: IMenuItem; activated:
                     className={cn({
                         active: selected,
                     })}>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2" style={{fontSize: '1rem', lineHeight: '1.5rem'}}>
                         {icon && <Icon icon={icon} fontSize={18} />}
                         {label}
                     </div>
@@ -45,7 +45,7 @@ const LeftMenuItem = ({ menuItem, activated }: { menuItem: IMenuItem; activated:
             <MenuDetails
                 open={selected}
                 label={
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2" style={{fontSize: '1rem', lineHeight: '1.5rem'}} >
                         {icon && <Icon icon={icon} fontSize={18} />}
                         {label}
                     </div>

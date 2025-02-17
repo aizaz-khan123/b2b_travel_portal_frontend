@@ -1,8 +1,6 @@
 "use client";
 
 import downloadIcon from "@iconify/icons-lucide/download";
-import eyeIcon from "@iconify/icons-lucide/eye";
-import trashIcon from "@iconify/icons-lucide/trash";
 
 import Image from "next/image";
 import { useMemo } from "react";
@@ -30,47 +28,27 @@ const OrderRow = ({ order }: { order: IEcommerceDashboardOrder }) => {
 
     return (
         <TableRow className="cursor-pointer" onClick={() => onOrderTableSelection(order.id)}>
-            <Checkbox
-                size={"xs"}
-                checked={checked}
-                aria-label="checked-order"
-                id={`checked-order-${order.id}`}
-                onChange={() => {}}
-            />
-
             <div className="flex items-center space-x-3 truncate">
-                <Image
-                    src={order.image}
-                    height={32}
-                    width={32}
-                    alt={"order image"}
-                    className={cn("size-8 bg-base-content/10", maskClassesFn({ variant: "squircle" }))}
-                />
-
                 <p className="line-clamp-2 font-medium">{order.name}</p>
             </div>
-
             <div>
                 <div className="font-medium">
                     {currencyHelper.sign}
                     {order.amount}
                 </div>
             </div>
-            <div className="text-nowrap text-xs">{dateHelper.formatted(order.date)}</div>
+            <div className="font-medium">{dateHelper.formatted(order.date)}</div>
+            <div className="font-medium">{dateHelper.formatted(order.date)}</div>
+            <div className="font-medium">{dateHelper.formatted(order.date)}</div>
+            <div className="font-medium">{dateHelper.formatted(order.date)}</div>
+            <div className="font-medium">{dateHelper.formatted(order.date)}</div>
+            <div className="font-medium">{dateHelper.formatted(order.date)}</div>
             <div>
                 <StatusWidget status={order.status} />
             </div>
             <div className="flex items-center">
-                <Button color="ghost" size="sm" shape={"square"} aria-label="Show product">
-                    <Icon icon={eyeIcon} className="text-base-content/70" fontSize={20} />
-                </Button>
-                <Button
-                    color="ghost"
-                    className="text-error/70 hover:bg-error/20"
-                    size="sm"
-                    shape={"square"}
-                    aria-label="Delete product">
-                    <Icon icon={trashIcon} fontSize={20} />
+                <Button color="ghost" size="md" shape={"square"} aria-label="download Ticket">
+                    <Icon icon={downloadIcon} fontSize={22} />
                 </Button>
             </div>
         </TableRow>
@@ -105,37 +83,27 @@ const StatusWidget = ({ status }: { status: IEcommerceDashboardOrder["status"] }
 };
 
 const DashboardRecentOrder = () => {
-    const { orders, orderTableSelectionState, onOrderTableAllSelection } = useEcommerceDashboard();
+    const { orders } = useEcommerceDashboard();
 
     return (
         <Card className="bg-base-100">
             <CardBody>
                 <div className="flex items-center justify-between">
-                    <span className="font-medium">Recent Bookings</span>
-                    <Button
-                        startIcon={<Icon icon={downloadIcon} fontSize={16} />}
-                        color="ghost"
-                        className={"bg-base-content/5"}
-                        size={"sm"}>
-                        Report
-                    </Button>
+                    <span className="font-medium text-lg">Recent Bookings</span>
                 </div>
                 <div className="overflow-auto">
                     <Table className="rounded-box">
                         <TableHead>
-                            <Checkbox
-                                size={"xs"}
-                                aria-label="checked-all-order"
-                                checked={orderTableSelectionState == "all"}
-                                indeterminate={orderTableSelectionState == "indeterminate"}
-                                onChange={() => onOrderTableAllSelection()}
-                            />
-
-                            <span className="text-sm font-medium text-base-content/80">Product</span>
-                            <span className="text-sm font-medium text-base-content/80">Price</span>
-                            <span className="text-sm font-medium text-base-content/80">Date</span>
+                            <span className="text-sm font-medium text-base-content/80">Booking ID</span>
+                            <span className="text-sm font-medium text-base-content/80">PNR</span>
                             <span className="text-sm font-medium text-base-content/80">Status</span>
-                            <span className="text-sm font-medium text-base-content/80">Action</span>
+                            <span className="text-sm font-medium text-base-content/80">Booking Status</span>
+                            <span className="text-sm font-medium text-base-content/80">Travelers</span>
+                            <span className="text-sm font-medium text-base-content/80">Booking Time</span>
+                            <span className="text-sm font-medium text-base-content/80">Supplier</span>
+                            <span className="text-sm font-medium text-base-content/80">Travel Date</span>
+                            <span className="text-sm font-medium text-base-content/80">Agent</span>
+                            <span className="text-sm font-medium text-base-content/80">Download Ticket</span>
                         </TableHead>
 
                         <TableBody>

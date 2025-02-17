@@ -33,8 +33,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import { z } from "zod";
 import { cities } from "@/dropdowndata/cities";
-import {PASSENGER_SUB_TYPE, PASSENGER_TYPE} from '../../flights/Dropdownvalues'; 
+import {GENDER, PASSENGER_SUB_TYPE, PASSENGER_TYPE} from '../../flights/Dropdownvalues'; 
 import PermissionModal from "@/components/PermissionModal";
+import { nationalities } from "@/dropdowndata/nationalities";
 
 const EmployeeRow = ({
     employee,
@@ -376,7 +377,7 @@ const PassengerManagement = () => {
                 <ModalBody>
                     <Card className="bg-base-100">
                         <CardBody className="gap-0">
-                            <div className="mt-1 grid grid-cols-1 gap-5 gap-y-3 md:grid-cols-2">
+                            <div className="mt-1 grid grid-cols-1 gap-5 gap-y-3 lg:grid-cols-2">
 
                                 <div>
                                     <FormLabel title="Passsenger Type" htmlFor="passenger_type" />
@@ -435,69 +436,71 @@ const PassengerManagement = () => {
                                 </div>
 
                                 <div>
-                                    <FormLabel title={"Passenger Name"} htmlFor="name"></FormLabel>
-                                    <FormInput
-                                        className="w-full border-0 focus:outline-0"
+                                    <FormLabel title="Nationality" htmlFor="nationality" />
+                                    <FormSelect
                                         control={control}
+                                        name="nationality"
                                         size="md"
-                                        id="name"
-                                        name="name"
-                                        placeholder="Passenger Name"
+                                        id="nationality"
+                                        className="w-full border-0 text-base"
+                                        options={nationalities.map((nationality: any) => ({
+                                            label: nationality.label,
+                                            value: nationality.value,
+                                        }))}
+                                        placeholder="Select Nationality"
                                     />
                                 </div>
 
                                 <div>
-                                    <FormLabel title="City" htmlFor="city" />
-                                    <FormSelect
-                                        control={control}
-                                        name="city"
-                                        size="md"
-                                        id="city"
-                                        className="w-full border-0 text-base"
-                                        options={cities.map((city: any) => ({
-                                            label: city.label,
-                                            value: city.value,
-                                        }))}
-                                        placeholder="Select City"
-                                    />
-                                </div>
-                                <div>
-                                    <FormLabel title={"Email"} htmlFor="email"></FormLabel>
+                                    <FormLabel title={"CNIC Number"} htmlFor="cnic"></FormLabel>
                                     <FormInput
-                                        type="email"
                                         className="w-full border-0 focus:outline-0"
                                         control={control}
                                         size="md"
-                                        id="email"
-                                        name="email"
-                                        placeholder="employee@example.com"
+                                        id="cnic"
+                                        name="cnic"
+                                        placeholder="CNIC Number"
                                     />
                                 </div>
 
                                 <div>
-                                    <FormLabel title={"Address"} htmlFor="address"></FormLabel>
+                                    <FormLabel title="Gender" htmlFor="gender" />
+                                    <FormSelect
+                                        control={control}
+                                        name="gender"
+                                        size="md"
+                                        id="gender"
+                                        className="w-full border-0 text-base"
+                                        options={GENDER.map((type: any) => ({
+                                            label: type,
+                                            value: type,
+                                        }))}
+                                        placeholder="Select Gender"
+                                    />
+                                </div>
+
+                                <div>
+                                    <FormLabel title={"Passport Number"} htmlFor="passport_number"></FormLabel>
                                     <FormInput
                                         className="w-full border-0 focus:outline-0"
                                         control={control}
                                         size="md"
-                                        id="address"
-                                        name="address"
-                                        placeholder="Enter Address"
+                                        id="passport_number"
+                                        name="passport_number"
+                                        placeholder="Passport Number"
                                     />
                                 </div>
+
                                 <div>
-                                    <FormLabel title="City" htmlFor="city" />
-                                    <FormSelect
+                                    <FormLabel title={"Passport Expiry"} htmlFor="passport_expiry_date"></FormLabel>
+                                    <FormInput
+                                    type="date"
+                                        className="w-full border-0 focus:outline-0"
                                         control={control}
-                                        name="city"
                                         size="md"
-                                        id="city"
-                                        className="w-full border-0 text-base"
-                                        options={cities.map((city: any) => ({
-                                            label: city.label,
-                                            value: city.value,
-                                        }))}
-                                        placeholder="Select City"
+                                        id="passport_expiry_date"
+                                        name="passport_expiry_date"
+                                        placeholder="Passport Expiry"
                                     />
                                 </div>
                             </div>
