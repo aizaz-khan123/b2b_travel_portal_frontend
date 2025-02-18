@@ -379,7 +379,7 @@ export const api = emptySplitApi.injectEndpoints({
       }),
       invalidatesTags: ['Branches'],
     }),
-    updateBranch:builder.mutation({
+    updateBranch: builder.mutation({
       query: ({ branchId, updated_data }) => ({
         url: `${API_END_POINTS.updateBranch}/${branchId}`,
         method: "POST",
@@ -395,7 +395,7 @@ export const api = emptySplitApi.injectEndpoints({
       transformResponse: (response: any) => response.data,
     }),
     statusUpdate: builder.mutation({
-      query: ({uuid, body}) => ({
+      query: ({ uuid, body }) => ({
         url: API_END_POINTS.statusUpdate + `/${uuid}`,
         method: 'POST',
         body,
@@ -427,7 +427,7 @@ export const api = emptySplitApi.injectEndpoints({
       }),
       invalidatesTags: ['Agencies'],
     }),
-    updateAgency:builder.mutation({
+    updateAgency: builder.mutation({
       query: ({ agencyId, updated_data }) => ({
         url: `${API_END_POINTS.updateAgency}/${agencyId}`,
         method: "POST",
@@ -436,7 +436,7 @@ export const api = emptySplitApi.injectEndpoints({
       invalidatesTags: ['Agencies'],
     }),
     agencystatusUpdate: builder.mutation({
-      query: ({uuid, body}) => ({
+      query: ({ uuid, body }) => ({
         url: API_END_POINTS.agencystatusUpdate + `/${uuid}`,
         method: 'POST',
         body,
@@ -469,7 +469,7 @@ export const api = emptySplitApi.injectEndpoints({
       }),
       invalidatesTags: ['Agencies'],
     }),
-    updateEmployee:builder.mutation({
+    updateEmployee: builder.mutation({
       query: ({ employeeId, updated_data }) => ({
         url: `${API_END_POINTS.updateEmployee}/${employeeId}`,
         method: "POST",
@@ -478,7 +478,7 @@ export const api = emptySplitApi.injectEndpoints({
       invalidatesTags: ['Agencies'],
     }),
     employeeStatusUpdate: builder.mutation({
-      query: ({uuid, body}) => ({
+      query: ({ uuid, body }) => ({
         url: API_END_POINTS.employeeStatusUpdate + `/${uuid}`,
         method: 'POST',
         body,
@@ -491,7 +491,7 @@ export const api = emptySplitApi.injectEndpoints({
         params,
       }),
     }),
-    permissionUpdate:builder.mutation({
+    permissionUpdate: builder.mutation({
       query: ({ userUUid, selectedPermissionUUIDs }) => ({
         url: `${API_END_POINTS.permissionUpdate}/${userUUid}`,
         method: "POST",
@@ -499,12 +499,21 @@ export const api = emptySplitApi.injectEndpoints({
       }),
     }),
     permissionListByType: builder.mutation({
-      query: ({uuid, type}) => ({
+      query: ({ uuid, type }) => ({
         url: `${API_END_POINTS.permissionList}/${uuid}`,
-        params: {type:type},
+        params: { type: type },
         method: "GET",
       }),
       transformResponse: (response: any) => response.data,
+    }),
+
+
+    flightSearch: builder.mutation({
+      query: (body) => ({
+        url: `${API_END_POINTS.flightSearch}`,
+        method: "POST",
+        body
+      }),
     }),
 
   }),
@@ -578,8 +587,12 @@ export const {
   useUpdateEmployeeMutation,
   useLocationsLookupQuery,
   useLazyLocationsLookupQuery,
-  
+
   /** Permission Management */
   usePermissionListByTypeMutation,
   usePermissionUpdateMutation,
+
+  ////// flight ////////
+  useFlightSearchMutation
+
 } = api;

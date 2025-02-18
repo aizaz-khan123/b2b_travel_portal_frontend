@@ -113,7 +113,7 @@ const BankAccountTable = () => {
 
     const showDeleteBankAccountConfirmation = (uuid: any) => {
         bankAccountDeleteConfirmationRef.current?.showModal();
-        setBankAccountToBeDelete(bank_accounts?.find((b) => uuid === b.uuid));
+        setBankAccountToBeDelete(bank_accounts?.find((b:any) => uuid === b.uuid));
     };
 
     const handleDeleteBankAccount = async () => {

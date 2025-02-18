@@ -161,7 +161,7 @@ const AgencyTable = () => {
 
     const showDeleteAgencyConfirmation = (uuid: any) => {
         agencyDeleteConfirmationRef.current?.showModal();
-        setAgencyToBeDelete(agencies?.find((b) => uuid === b.uuid));
+        setAgencyToBeDelete(agencies?.find((b:any) => uuid === b.uuid));
     };
 
     const showUpdateAgencyConfirmation = (agency: any) => {

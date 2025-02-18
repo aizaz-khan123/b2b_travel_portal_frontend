@@ -81,4 +81,11 @@ export const API_END_POINTS = {
 
   permissionList: BASE_URL_V1 + '/permission-list',
   permissionUpdate: BASE_URL_V1 + '/update-permission',
+
+
+
+///////// fight /////////
+flightSearch: BASE_URL_V1 + '/flight/search',
+
+
 };
