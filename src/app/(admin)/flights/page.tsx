@@ -13,9 +13,13 @@ import MuiDatePicker from "@/components/mui/MuiDatePicker";
 import MuiDateRangePicker from "@/components/mui/MuiDateRangePicker";
 import { useFlightSearchMutation, useLazyLocationsLookupQuery } from "@/services/api";
 import { debounce } from 'lodash';
-import { Fragment, useCallback, useState } from "react";
+import { Fragment, useCallback, useEffect, useState } from "react";
 import { cabin_class } from "./Dropdownvalues";
 import TravelersDropdown from "./TravelersDropdown";
+import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { useDispatch, useSelector } from "react-redux";
+import { setFlightData } from "@/redux/searchFlightSlice";
 
 const airports = [
     { city: "Islamabad, Pakistan", code: "ISB", name: "Islamabad International Airport" },
@@ -97,11 +101,13 @@ type FormValues = {
 
 
 const FlightSearch = () => {
-    // const { control, handleSubmit, setValue, watch } = useForm();
-    const [flightSearchTrigger, { isLoading: flightSreachIsloading }] = useFlightSearchMutation();
+    const router = useRouter();
+    const dispatch = useDispatch();
+    const [flightSearchTrigger, { data: flightSearchData, isLoading: flightSreachIsloading }] = useFlightSearchMutation();
 
+    const [payloadValues, setPayloadValues] = useState('')
 
-    const { control, handleSubmit, setValue, watch } = useForm<FormValues>({
+    const { control, handleSubmit, setValue, watch, setError } = useForm<FormValues>({
         defaultValues: {
             traveler_count: {
                 adult_count: 0,
@@ -250,21 +256,53 @@ const FlightSearch = () => {
 
 
 
-    const handleAirportChange = (value: string | null) => {
+    const handleOriginChange = (value: string | null) => {
         if (value) {
-            // Handle the selected airport code
-            console.log("Selected Airport:", value);
+            const match = value.match(/\(([^)]+)\)/); // Extract text inside parentheses
+            const airportCode = match ? match[1] : value; // Get code if exists
+            setValue("origin", airportCode);
         } else {
-            // Handle case when selection is cleared
             console.log("Airport selection cleared");
         }
+    };
+    const handleDestinationChange = (value: string | null) => {
+        if (value) {
+            const match = value.match(/\(([^)]+)\)/); // Extract text inside parentheses
+            const airportCode = match ? match[1] : value; // Get code if exists
+            setValue("destination", airportCode);
+        } else {
+            console.log("Airport selection cleared");
+        }
+    };
+
+
+    const handleMultiOriginChange = (index: number, value: string | null) => {
+        if (value) {
+            const match = value.match(/\(([^)]+)\)/); // Extract airport code
+            const airportCode = match ? match[1] : value;
+            setValue(`legs[${index}].origin`, airportCode);
+        }
+    };
+
+    const handleMultiDestinationChange = (index: number, value: string | null) => {
+        if (value) {
+            const match = value.match(/\(([^)]+)\)/); // Extract airport code
+            const airportCode = match ? match[1] : value;
+            setValue(`legs[${index}].destination`, airportCode);
+        }
+    };
+
+    const setErrors = (errors: Record<string, any>) => {
+        Object.entries(errors).forEach(([key, value]: any[]) =>
+            setError(key, { message: value })
+        );
     };
 
     const handleCityChange = (value: string | null) => {
         console.log("Selected City:", value);
     };
 
-    const onSubmit = (data: FormValues) => {
+    const onSubmit = async (data: FormValues) => {
         let payload;
         if (route_type === "oneWay") {
             payload = {
@@ -294,9 +332,50 @@ const FlightSearch = () => {
                 traveler_count: data.traveler_count,
             };
         }
-        flightSearchTrigger(payload)
+        // flightSearchTrigger(payload)
         console.log("Form submitted:", payload);
+        // const queryString = new URLSearchParams(payload as any).toString();
+
+        if (!payload) return; // Ensure payload is defined before proceeding
+
+        const { traveler_count, ...restPayload } = payload;
+
+        const queryString = new URLSearchParams(
+            Object.entries({
+                ...restPayload, // Spread remaining payload properties
+                ...(traveler_count || {}), // Spread traveler_count properties separately
+            }).reduce((acc, [key, value]) => {
+                acc[key] = String(value); // Convert all values to strings
+                return acc;
+            }, {} as Record<string, string>)
+        ).toString();
+        setPayloadValues(queryString)
+        router.push(`/flights/search/result?${queryString}`);
+        // await flightSearchTrigger(payload).then(async (response: any) => {
+        //     if ("error" in response) {
+        //         setErrors(response.error.data.errors);
+        //         return;
+        //     }
+
+        //     const flightSearchData = response.data.data;
+        //     console.log('flightSearchData-------->', flightSearchData);
+
+        //     if (response.data.code === 200) {
+        //         console.log("✅ Dispatching flight data...");
+        //         dispatch(setFlightData({ flightData: flightSearchData }));
+        //         console.log("✅ Dispatched:", flightSearchData);
+        
+        //         router.push(`/flights/search/result?${payloadValues}`);
+        //     }
+        // });
     };
+
+    useEffect(() => {
+        if (isSuccess) {
+            // router.push(`/flights/search/result?${payloadValues}`);
+            // dispatch(setFlightData({ flightSearchData }))
+        }
+    }, [isSuccess]);
 
 
 
@@ -321,7 +400,7 @@ const FlightSearch = () => {
                         ))}
                     </div>
                     {route_type !== "multiCity" ? (
-                        <div className="grid grid-cols-12 gap-4 items-end">
+                        <div className="grid grid-cols-12 gap-6 items-end">
                             <div className="relative col-span-3 mb-5">
                                 <MuiAutocomplete
                                     control={control}
@@ -337,25 +416,23 @@ const FlightSearch = () => {
                                     onInputChange={handleFromSearchChange}
                                     inputValue={fromSearchStr}
                                     setInputValue={setFromSearchStr}
-                                    onChange={handleAirportChange}
+                                    onChange={handleOriginChange}
                                     selectLabelInsteadOfValue={true}
-                                    // selectLabelValueForOnchange={(option) => {
-                                    //     return option ? option.iata_code : null; // Ensure option is defined
-                                    // }}
-                                    
                                 />
-                                <button
-                                    onClick={swapLocations}
-                                    type="button"
-                                    className="absolute right-[-30px] bottom-1 p-2 bg-white border border-gray-300 rounded-full shadow hover:bg-gray-300"
-                                >
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                        <path d="M8 3 4 7l4 4" />
-                                        <path d="M4 7h16" />
-                                        <path d="m16 21 4-4-4-4" />
-                                        <path d="M20 17H4" />
-                                    </svg>
-                                </button>
+                                <div>
+                                    <button
+                                        onClick={swapLocations}
+                                        type="button"
+                                        className="absolute right-[-30px] bottom-2 p-2 bg-white border border-gray-300 rounded-full shadow hover:bg-gray-300 z-10"
+                                    >
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                            <path d="M8 3 4 7l4 4" />
+                                            <path d="M4 7h16" />
+                                            <path d="m16 21 4-4-4-4" />
+                                            <path d="M20 17H4" />
+                                        </svg>
+                                    </button>
+                                </div>
                             </div>
                             <div className="col-span-3 mb-5">
                                 <MuiAutocomplete
@@ -372,7 +449,7 @@ const FlightSearch = () => {
                                     onInputChange={handleToSearchChange}
                                     inputValue={toSearchStr}
                                     setInputValue={setToSearchStr}
-                                    onChange={handleAirportChange}
+                                    onChange={handleDestinationChange}
                                     selectLabelInsteadOfValue={true}
                                 />
 
@@ -401,7 +478,7 @@ const FlightSearch = () => {
                         </div>
                     ) : (
                         <div>
-                            <div className="grid grid-cols-12 gap-4 items-center">
+                            <div className="grid grid-cols-12 gap-6 items-center">
                                 {flights.map((flight, index) => (
                                     <Fragment key={index}>
                                         <div className="col-span-1">
@@ -423,21 +500,27 @@ const FlightSearch = () => {
                                                 onInputChange={(event, value) => handleLegsFromSearchChange(index, value)}
                                                 inputValue={legsFromSearchStrs[index] || ""}
                                                 setInputValue={(value) => handleLegsFromSearchChange(index, value)}
-                                                onChange={handleAirportChange}
+                                                // onChange={handleOriginChange}
+                                                // onChange={(event: any, value: string | null) => handleMultiOriginChange(index, value)}
+                                                onChange={(value: string | null) => handleMultiOriginChange(index, value)}
+
+
                                                 selectLabelInsteadOfValue={true}
                                             />
-                                            <button
-                                                onClick={() => swapLegsLocations(index)}
-                                                type="button"
-                                                className="absolute right-[-30px] bottom-2 p-2 bg-white border border-gray-300 rounded-full shadow hover:bg-gray-300"
-                                            >
-                                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                                    <path d="M8 3 4 7l4 4" />
-                                                    <path d="M4 7h16" />
-                                                    <path d="m16 21 4-4-4-4" />
-                                                    <path d="M20 17H4" />
-                                                </svg>
-                                            </button>
+                                            <div>
+                                                <button
+                                                    onClick={() => swapLegsLocations(index)}
+                                                    type="button"
+                                                    className="absolute right-[-30px] bottom-2 p-2 bg-white border border-gray-300 rounded-full shadow hover:bg-gray-300 z-10"
+                                                >
+                                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                        <path d="M8 3 4 7l4 4" />
+                                                        <path d="M4 7h16" />
+                                                        <path d="m16 21 4-4-4-4" />
+                                                        <path d="M20 17H4" />
+                                                    </svg>
+                                                </button>
+                                            </div>
                                         </div>
                                         <div className="col-span-3">
                                             <MuiAutocomplete
@@ -455,7 +538,11 @@ const FlightSearch = () => {
                                                 onInputChange={(event, value) => handleLegsToSearchChange(index, value)}
                                                 inputValue={legsToSearchStrs[index] || ""}
                                                 setInputValue={(value) => handleLegsToSearchChange(index, value)}
-                                                onChange={handleAirportChange}
+                                                // onChange={handleDestinationChange}
+                                                // onChange={(event: any, value: any) => handleMultiDestinationChange(index, value)}
+                                                onChange={(value: string | null) => handleMultiDestinationChange(index, value)}
+
+
                                                 selectLabelInsteadOfValue={true}
                                             />
 
@@ -505,7 +592,7 @@ const FlightSearch = () => {
                                     value: cabin,
                                     label: `${cabin}`,
                                 }))}
-                                onChange={handleCityChange}
+                            // onChange={handleCityChange}
                             />
                         </div>
                         <div className="col-span-2">
