@@ -17,6 +17,7 @@ const AdminLayout = ({ children }: { children: any }) => {
     const USER_PERMISSIONS = user?.permissions;
     const PATHNAME = usePathname();
 
+    console.log(PATHNAME);
     const { hideLeftbar, hideMobileLeftbar } = useLayoutContext();
 
     useEffect(() => {
@@ -31,7 +32,7 @@ const AdminLayout = ({ children }: { children: any }) => {
                         <Leftbar menuItems={adminMenuItems} userRole={USER_ROLES} userPermissions={USER_PERMISSIONS}/>
                         <div className="main-wrapper overflow-auto">
                             <div className="flex h-full flex-col">
-                                <Topbar />
+                                {PATHNAME != '/flights/search/result' && <Topbar />}
                                 <div className="content-wrapper">{children}</div>
                             </div>
                         </div>
