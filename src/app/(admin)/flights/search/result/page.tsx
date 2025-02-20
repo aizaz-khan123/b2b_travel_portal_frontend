@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Card, CardBody, FormLabel } from "@/components/daisyui";
+import { Button, Card, CardBody, CardTitle, Dropdown, DropdownMenu, DropdownToggle, FormLabel } from "@/components/daisyui";
 import { FormSelect } from "@/components/forms";
 import { Icon } from "@/components/Icon";
 import info from "@iconify/icons-lucide/info";
@@ -32,7 +32,7 @@ const FlightFound = () => {
     };
 
     return (
-        <div className="p-6 bg-gray-100 min-h-screen">
+        <div className=" bg-gray-100 min-h-screen">
             {/* Flight Filters & Results */}
             <div className="grid grid-cols-12 gap-6">
                 {/* Filters Section */}
@@ -43,7 +43,7 @@ const FlightFound = () => {
                         </h4>
                     </div>
                     <p className="text-sm text-center my-2">Book before the search expires!</p>
-                    
+
                     <div className="bg-white p-4 rounded-md shadow-md">
                         <h3 className="text-lg font-semibold mb-4">Filters</h3>
                         <div className="mb-2">
@@ -112,8 +112,13 @@ const FlightFound = () => {
                                     <span className="text-gray-500 text-sm">Round-Trip • 2 Travelers Mon • Economy</span>
                                 </div>
                                 <div className="flex flex-col md:flex-row items-center gap-2">
-                                    <Button color="primary" variant="outline" size="md" className="font-bold text-base">
-                                        <Icon icon={plus} className="text-primary" fontSize={22} />
+                                    <Button
+                                        color="primary"
+                                        variant="outline"
+                                        size="md"
+                                        className="font-bold text-base hover:bg-primary hover:text-white group"
+                                    >
+                                        <Icon icon={plus} className="text-primary group-hover:text-white" fontSize={22} />
                                         Add Commission
                                     </Button>
 
@@ -168,9 +173,7 @@ const FlightFound = () => {
 
                             <div>
                                 {[
-                                    { label: "VALUE", baggage: "No Baggage", price: "PKR 205,021.8" },
-                                    { label: "FLEXI", baggage: "Total 10.0 KGs (1 pc)", price: "PKR 205,021.8" },
-                                    { label: "XTRA", baggage: "Total 20.0 KGs (1 pc)", price: "PKR 205,021.8" },
+                                    { label: "ECO - Y", baggage: "No Baggage", price: "PKR 205,021.8" },
                                 ].map((option, idx) => (
                                     <>
                                         <div className="grid grid-cols-12 items-center gap-6 border-t border-b py-2 overflow-auto">
@@ -190,17 +193,6 @@ const FlightFound = () => {
                                                 <div className="flex items-center justify-end gap-2">
                                                     <span className="font-semibold text-base">{option.price}</span>
                                                     <Icon icon={info} className="text-gray" fontSize={22} />
-                                                    {/* <Dropdown horizontal={"left"} vertical={"bottom"}>
-                                                        <DropdownToggle button={false} className="btn btn-circle btn-ghost btn-xs">
-                                                        <Icon icon={info} className="text-gray" fontSize={22} /> 
-                                                        </DropdownToggle>
-                                                        <DropdownMenu className="card compact w-64 rounded-box bg-base-100 !p-0 shadow">
-                                                            <CardBody>
-                                                                <CardTitle tag={"h2"}>You needed more info?</CardTitle>
-                                                                <p>Here is a description!</p>
-                                                            </CardBody>
-                                                        </DropdownMenu>
-                                                    </Dropdown> */}
                                                     <Button color="primary" variant="outline" size="sm" className="bg-[#F5F7FF]">Book Fare</Button>
                                                 </div>
                                             </div>
@@ -208,6 +200,18 @@ const FlightFound = () => {
                                     </>
                                 ))}
                             </div>
+
+                            {/* <Dropdown horizontal={"left"} vertical={"bottom"}>
+                                <DropdownToggle button={false} className="btn btn-circle btn-ghost btn-xs">
+                                    <Icon icon={info} className="text-gray" fontSize={22} />
+                                </DropdownToggle>
+                                <DropdownMenu className="card compact w-64 rounded-box bg-base-100 !p-0 shadow">
+                                    <CardBody>
+                                        <CardTitle tag={"h2"}>You needed more info?</CardTitle>
+                                        <p>Here is a description!</p>
+                                    </CardBody>
+                                </DropdownMenu>
+                            </Dropdown> */}
                         </CardBody>
                     </Card>
                     <Card className="bg-base-100/80 backdrop-blur-lg rounded-lg shadow-md mb-5">
