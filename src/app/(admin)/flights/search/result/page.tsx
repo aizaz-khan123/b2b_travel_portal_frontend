@@ -317,7 +317,7 @@ const FlightFound = () => {
                   <div className="text-center">
                     <h3 className="text-gray text-xs mb-0">1 hr 15 mins</h3>
                     <span className="text-gray-500 flex">
-                      ---------- <img src="media/icons/plane.svg" alt="" />{" "}
+                      ---------- <span className="w-4">✈</span>
                       ----------
                     </span>
                     <h3 className="text-gray text-xs mb-0">Non-Stop</h3>
@@ -333,18 +333,7 @@ const FlightFound = () => {
                                         <span>|</span>
                                         <img src="media/icons/detail-icon.svg" className="" alt="" />
                                     </div> */}
-                                    <div data-v-7ed8aeb6="" style={{
-                                        display:'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        height: '24px',
-                                        padding: '0 12px',
-                                        fontSize: '12px',
-                                        fontWeight: 500,
-                                        color: 'white',
-                                        backgroundColor: 'var(--fallback-p, oklch(var(--p) / 1))',
-                                        borderRadius: '4px'
-                                    }}>PIAAPI</div>
+                                    <div className="flex items-center justify-center h-6 px-3 text-xs font-medium text-white rounded bg-primary">PIAAPI</div>
                   <Link href={`/flights/1`}>
                     <Button
                       variant="outline"
@@ -475,18 +464,7 @@ const FlightFound = () => {
                                         <span>|</span>
                                         <img src="media/icons/detail-icon.svg" className="" alt="" />
                                     </div> */}
-                                       <div data-v-7ed8aeb6="" style={{
-                                        display:'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        height: '24px',
-                                        padding: '0 12px',
-                                        fontSize: '12px',
-                                        fontWeight: 500,
-                                        color: 'white',
-                                        backgroundColor: 'var(--fallback-p, oklch(var(--p) / 1))',
-                                        borderRadius: '4px'
-                                    }}>AIRBLUEAPI</div>
+                                       <div className="flex items-center justify-center h-6 px-3 text-xs font-medium text-white rounded bg-primary">AIRBLUEAPI</div>
                   <Button
                     variant="outline"
                     className="border-0 font-semibold text-sm hover:bg-transparent hover:text-gray px-0"
