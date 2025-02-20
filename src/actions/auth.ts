@@ -2,7 +2,6 @@
 
 import { dummyAuthData } from "@/database/auth";
 import { IResponse, IResponseValidationError } from "@/types/actions";
-import { IAuthUser } from "@/types/auth";
 
 export const login = async ({
     email,
@@ -10,7 +9,7 @@ export const login = async ({
 }: {
     email: string;
     password: string;
-}): Promise<IResponse<IAuthUser, IResponseValidationError>> => {
+}): Promise<IResponse<any, IResponseValidationError>> => {
     const fakeUser = dummyAuthData.findUser({ email, password });
     if (fakeUser) {
         return {

@@ -58,9 +58,9 @@ const FlightFound = () => {
   });
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
+    <div className="bg-gray-100 min-h-screen">
       {/* Flight Filters & Results */}
-      <h3 className="text-xl mb-2 font-bold">2 Flights Found</h3>
+      <h3 className="text-xl mb-5 font-bold">2 Flights Found</h3>
 
       <div className="grid grid-cols-12 gap-6">
         {/* Filters Section */}
