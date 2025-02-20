@@ -7,8 +7,8 @@ export const cities = [
 export const cabin_class = [
     "ECONOMY",
     'BUSINESS',
-    'FIRST_CLASS',
-    'PREMUIM_ECONOMY',
+    'FIRSTCLASS',
+    'PREMUIMECONOMY',
 ]
 
 export const PASSENGER_TYPE = [

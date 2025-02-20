@@ -13,6 +13,7 @@ import authSlice from "./authSlice";
 import { persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import { combineReducers } from "redux";
+import { searchFlightSlice } from "./searchFlightSlice";
 
 const persistConfig = {
   key: "rootSlice",
@@ -22,6 +23,7 @@ const persistConfig = {
 
 const rootReducer = combineReducers({
   authSlice,
+  searchFlight: searchFlightSlice
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
