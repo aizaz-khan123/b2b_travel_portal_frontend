@@ -17,7 +17,6 @@ const AdminLayout = ({ children }: { children: any }) => {
     const USER_PERMISSIONS = user?.permissions;
     const PATHNAME = usePathname();
 
-    console.log(PATHNAME);
     const { hideLeftbar, hideMobileLeftbar } = useLayoutContext();
 
     useEffect(() => {

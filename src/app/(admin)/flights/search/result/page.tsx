@@ -58,9 +58,9 @@ const FlightFound = () => {
   });
 
   return (
-    <div className="p-6 bg-gray-100 min-h-screen">
+    <div className="bg-gray-100 min-h-screen">
       {/* Flight Filters & Results */}
-      <h3 className="text-xl mb-2 font-bold">2 Flights Found</h3>
+      <h3 className="text-xl mb-5 font-bold">2 Flights Found</h3>
 
       <div className="grid grid-cols-12 gap-6">
         {/* Filters Section */}
@@ -317,7 +317,7 @@ const FlightFound = () => {
                   <div className="text-center">
                     <h3 className="text-gray text-xs mb-0">1 hr 15 mins</h3>
                     <span className="text-gray-500 flex">
-                      ---------- <img src="media/icons/plane.svg" alt="" />{" "}
+                      ---------- <span className="w-4">✈</span>
                       ----------
                     </span>
                     <h3 className="text-gray text-xs mb-0">Non-Stop</h3>
@@ -333,6 +333,7 @@ const FlightFound = () => {
                                         <span>|</span>
                                         <img src="media/icons/detail-icon.svg" className="" alt="" />
                                     </div> */}
+                                    <div className="flex items-center justify-center h-6 px-3 text-xs font-medium text-white rounded bg-primary">PIAAPI</div>
                   <Link href={`/flights/1`}>
                     <Button
                       variant="outline"
@@ -463,6 +464,7 @@ const FlightFound = () => {
                                         <span>|</span>
                                         <img src="media/icons/detail-icon.svg" className="" alt="" />
                                     </div> */}
+                                       <div className="flex items-center justify-center h-6 px-3 text-xs font-medium text-white rounded bg-primary">AIRBLUEAPI</div>
                   <Button
                     variant="outline"
                     className="border-0 font-semibold text-sm hover:bg-transparent hover:text-gray px-0"
