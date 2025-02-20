@@ -333,6 +333,18 @@ const FlightFound = () => {
                                         <span>|</span>
                                         <img src="media/icons/detail-icon.svg" className="" alt="" />
                                     </div> */}
+                                    <div data-v-7ed8aeb6="" style={{
+                                        display:'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        height: '24px',
+                                        padding: '0 12px',
+                                        fontSize: '12px',
+                                        fontWeight: 500,
+                                        color: 'white',
+                                        backgroundColor: 'var(--fallback-p, oklch(var(--p) / 1))',
+                                        borderRadius: '4px'
+                                    }}>PIAAPI</div>
                   <Link href={`/flights/1`}>
                     <Button
                       variant="outline"
@@ -463,6 +475,18 @@ const FlightFound = () => {
                                         <span>|</span>
                                         <img src="media/icons/detail-icon.svg" className="" alt="" />
                                     </div> */}
+                                       <div data-v-7ed8aeb6="" style={{
+                                        display:'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        height: '24px',
+                                        padding: '0 12px',
+                                        fontSize: '12px',
+                                        fontWeight: 500,
+                                        color: 'white',
+                                        backgroundColor: 'var(--fallback-p, oklch(var(--p) / 1))',
+                                        borderRadius: '4px'
+                                    }}>AIRBLUEAPI</div>
                   <Button
                     variant="outline"
                     className="border-0 font-semibold text-sm hover:bg-transparent hover:text-gray px-0"
