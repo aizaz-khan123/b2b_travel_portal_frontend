@@ -28,3 +28,13 @@ export const GENDER = [
     'Female',
     'Others'
 ]
+export const gender = [
+    'Male',
+    'Female',
+    'Others'
+]
+export const genderTitle = [
+    'Mr',
+    'Mrs',
+    'Ms'
+]

@@ -94,9 +94,12 @@ type FormValues = {
     return_date: string;
     cabin_class: string;
     traveler: string;
-    legs: [];
+    legs: [
+        { origin: string, destination: string, departure_date: string },
+        { origin: string, destination: string, departure_date: string },
+    ];
     // Include dynamic flight fields
-    [key: string]: any; // Allows additional fields
+    [key: string]: any; // Allows additional fields 
 };
 
 
@@ -110,7 +113,7 @@ const FlightSearch = () => {
     const { control, handleSubmit, setValue, watch, setError } = useForm<FormValues>({
         defaultValues: {
             traveler_count: {
-                adult_count: 0,
+                adult_count: 1,
                 child_count: 0,
                 infant_count: 0,
             },
@@ -119,9 +122,12 @@ const FlightSearch = () => {
             destination: null,
             departure_date: '',
             return_date: '',
-            cabin_class: '',
+            cabin_class: 'ECONOMY',
             traveler: '',
-            legs: [],
+            legs: [
+                { origin: "", destination: "", departure_date: "" },
+                { origin: "", destination: "", departure_date: "" },
+            ],
         },
     });
     const route_type = watch("route_type", "oneWay");
@@ -209,9 +215,6 @@ const FlightSearch = () => {
         legsToDelayedSearch(value); // Pass 'value' instead of 'newValue'
     };
 
-
-
-
     const swapLocations = () => {
         const origin = watch("origin");
         const destination = watch("destination");
@@ -242,8 +245,6 @@ const FlightSearch = () => {
             [index]: legsFromSearchStrs[index] || "",
         }));
     };
-
-
     const addFlight = () => {
         if (flights.length < 5) {
             setFlights([...flights, { origin: '', destination: '', departure_date: "" }]);
@@ -253,8 +254,6 @@ const FlightSearch = () => {
     const removeFlight = (index: number) => {
         setFlights((prevFlights) => prevFlights.filter((_, i) => i !== index));
     };
-
-
 
     const handleOriginChange = (value: string | null) => {
         if (value) {
@@ -275,7 +274,6 @@ const FlightSearch = () => {
         }
     };
 
-
     const handleMultiOriginChange = (index: number, value: string | null) => {
         if (value) {
             const match = value.match(/\(([^)]+)\)/); // Extract airport code
@@ -289,6 +287,11 @@ const FlightSearch = () => {
             const match = value.match(/\(([^)]+)\)/); // Extract airport code
             const airportCode = match ? match[1] : value;
             setValue(`legs[${index}].destination`, airportCode);
+
+            // If there is a next flight, set its origin to the same value
+            if (index < flights.length - 1) {
+                setValue(`legs[${index + 1}].origin`, airportCode);
+            }
         }
     };
 
@@ -338,12 +341,16 @@ const FlightSearch = () => {
 
         if (!payload) return; // Ensure payload is defined before proceeding
 
-        const { traveler_count, ...restPayload } = payload;
+        const { traveler_count, legs, ...restPayload } = payload;
+        const serializedLegs = legs
+            ?.map((leg) => `${leg.origin},${leg.destination},${leg.departure_date}`)
+            .join(",");
 
         const queryString = new URLSearchParams(
             Object.entries({
                 ...restPayload, // Spread remaining payload properties
                 ...(traveler_count || {}), // Spread traveler_count properties separately
+                ...(legs ? { legs: serializedLegs } : {}), // Spread traveler_count properties separately
             }).reduce((acc, [key, value]) => {
                 acc[key] = String(value); // Convert all values to strings
                 return acc;
@@ -364,7 +371,7 @@ const FlightSearch = () => {
         //         console.log("✅ Dispatching flight data...");
         //         dispatch(setFlightData({ flightData: flightSearchData }));
         //         console.log("✅ Dispatched:", flightSearchData);
-        
+
         //         router.push(`/flights/search/result?${payloadValues}`);
         //     }
         // });
